@@ -11,7 +11,7 @@ public class JobType {
     private Long id;
 
     private String name;        // e.g., "Consumer Unit Replacement"
-    private String description; // optional
+    private String description; 
 
     @OneToOne(mappedBy = "jobType")
     private ComplianceChecklist complianceChecklist;
@@ -23,7 +23,6 @@ public class JobType {
     @OneToMany(mappedBy = "jobType")
     private List<Job> jobs;
 
-    // No-args constructor
     public JobType() {}
 
     // Getters and setters
