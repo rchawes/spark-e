@@ -1,4 +1,9 @@
 package com.electrician.spark_e.repository;
 
-public class ComplianceChecklistRepository {
+import com.electrician.spark_e.model.ComplianceChecklist;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface ComplianceChecklistRepository extends JpaRepository<ComplianceChecklist, Long> {
 }
