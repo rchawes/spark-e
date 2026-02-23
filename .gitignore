@@ -1,0 +1,111 @@
+### Java ###
+*.class
+*.jar
+*.war
+*.ear
+*.log
+*.logs
+*.tmp
+*.temp
+hs_err_pid*
+target/
+build/
+!**/src/main/**/target/
+!**/src/test/**/target/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### Maven ###
+.mvn/
+mvnw
+mvnw.cmd
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+
+### Gradle ###
+.gradle/
+gradle-app.setting
+!gradle-wrapper.jar
+gradle-wrapper.jar
+gradlew
+gradlew.bat
+
+### IntelliJ IDEA ###
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+### Eclipse ###
+.project
+.classpath
+.settings/
+.factorypath
+.springBeans
+.sts4-cache
+bin/
+
+### NetBeans ###
+nbproject/private/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+### VS Code ###
+.vscode/
+
+### macOS ###
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+### Linux ###
+*~
+.swp
+.swo
+
+### Logs ###
+logs/
+*.log
+*.lck
+
+### Package Managers ###
+node_modules/
+npm-debug.log
+yarn-error.log
+
+### Environment & Secrets ###
+application.properties
+application-*.properties
+application.yml
+application-*.yml
+.env
+*.p12
+*.jks
+*.key
+*.crt
+*.cer
+secrets/
+!**/src/main/resources/application-example.properties
+
+### Docker ###
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+### Helpers ###
+HELP.md
