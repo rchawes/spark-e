@@ -46,6 +46,7 @@ Derived query methods – Spring Data is magic until it isn't. I learned to fall
 
 Debugging – I spent way too much time staring at stack traces. But every error taught me something.
 
+
 🚀 How to Run It
 Locally (with H2)
 Clone the repo:
@@ -80,6 +81,7 @@ SPRING_PROFILES_ACTIVE=prod
 
 Render builds and runs it. Your API will have a live URL.
 
+
 🧪 Testing the API
 After starting the app, hit the Swagger UI to explore endpoints.
 To get a token:
@@ -98,12 +100,14 @@ Click "Authorize" in Swagger and enter Bearer <token>.
 
 Then you can try creating customers, jobs, etc.
 
+
 🧗 What's Next
 Write unit and integration tests (I know I should have done this earlier).
 
 Maybe a simple React frontend – I want to see if I can build a full‑stack app.
 
 Deploy properly and share the live link on my resume.
+
 
 🙏 Thanks
 If you're reading this, thanks for checking out my project. I'm actively looking for my first developer job – if you have feedback or want to chat, reach out!
