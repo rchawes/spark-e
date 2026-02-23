@@ -17,7 +17,7 @@ public class InvoiceService {
     private InvoiceRepository invoiceRepository;
 
     @Autowired
-    private PartRepository partRepository;  // we'll need this for stock reduction
+    private PartRepository partRepository;  // Stock reduction use
 
     @Transactional
     public Invoice generateInvoiceForJob(Job job) {
@@ -40,7 +40,7 @@ public class InvoiceService {
 
         // Calculate tax (e.g., 20% VAT)
         double subtotal = laborCost + materialsCost;
-        double tax = subtotal * 0.20;  // You could make this configurable later
+        double tax = subtotal * 0.20;  // Change config later
 
         // Total
         double total = subtotal + tax;
@@ -77,5 +77,5 @@ public class InvoiceService {
         }
     }
 
-    // You can add other methods like markAsPaid() later
+    // Add other methods like markAsPaid() later
 }
