@@ -82,7 +82,6 @@ public class ComplianceChecklistController {
 
     @DeleteMapping("/items/{itemId}")
     public ResponseEntity<Void> deleteChecklistItem(@PathVariable Long itemId) {
-        // This would require a ChecklistItemRepository; for simplicity we'll skip deletion here.
-        return ResponseEntity.status(501).build(); // Not implemented
+        return ResponseEntity.status(501).build();
     }
 }
