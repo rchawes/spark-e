@@ -6,6 +6,7 @@ import com.electrician.spark_e.repository.ComplianceChecklistRepository;
 import com.electrician.spark_e.repository.JobTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,7 +27,7 @@ public class ComplianceChecklistController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ComplianceChecklist> getChecklistById(@PathVariable Long id) {
+    public ResponseEntity<ComplianceChecklist> getChecklistById(@NonNull @PathVariable Long id) {
         return checklistRepository.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -36,20 +37,20 @@ public class ComplianceChecklistController {
     public ResponseEntity<?> createChecklist(@RequestBody ComplianceChecklist checklist) {
         // Ensure job type exists
         if (checklist.getJobType() != null && checklist.getJobType().getId() != null) {
-            jobTypeRepository.findById(checklist.getJobType().getId())
+            jobTypeRepository.findById((Long) checklist.getJobType().getId())
                     .orElseThrow(() -> new RuntimeException("Job type not found"));
         }
         return ResponseEntity.ok(checklistRepository.save(checklist));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ComplianceChecklist> updateChecklist(@PathVariable Long id, @RequestBody ComplianceChecklist checklistDetails) {
+    public ResponseEntity<ComplianceChecklist> updateChecklist(@NonNull @PathVariable Long id, @RequestBody ComplianceChecklist checklistDetails) {
         return checklistRepository.findById(id)
                 .map(checklist -> {
                     checklist.setName(checklistDetails.getName());
                     checklist.setRegulationReference(checklistDetails.getRegulationReference());
                     if (checklistDetails.getJobType() != null && checklistDetails.getJobType().getId() != null) {
-                        jobTypeRepository.findById(checklistDetails.getJobType().getId())
+                        jobTypeRepository.findById((Long) checklistDetails.getJobType().getId())
                                 .ifPresent(checklist::setJobType);
                     }
                     return checklistRepository.save(checklist);
@@ -59,7 +60,7 @@ public class ComplianceChecklistController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteChecklist(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteChecklist(@NonNull @PathVariable Long id) {
         if (checklistRepository.existsById(id)) {
             checklistRepository.deleteById(id);
             return ResponseEntity.noContent().build();
@@ -69,7 +70,7 @@ public class ComplianceChecklistController {
 
     // Endpoints for managing checklist items
     @PostMapping("/{checklistId}/items")
-    public ResponseEntity<?> addItemToChecklist(@PathVariable Long checklistId, @RequestBody ChecklistItem item) {
+    public ResponseEntity<?> addItemToChecklist(@NonNull @PathVariable Long checklistId, @RequestBody ChecklistItem item) {
         return checklistRepository.findById(checklistId)
                 .map(checklist -> {
                     item.setChecklist(checklist);
@@ -81,7 +82,7 @@ public class ComplianceChecklistController {
     }
 
     @DeleteMapping("/items/{itemId}")
-    public ResponseEntity<Void> deleteChecklistItem(@PathVariable Long itemId) {
+    public ResponseEntity<Void> deleteChecklistItem(@NonNull @PathVariable Long itemId) {
         return ResponseEntity.status(501).build();
     }
 }

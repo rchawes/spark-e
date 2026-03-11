@@ -4,6 +4,7 @@ import com.electrician.spark_e.model.Customer;
 import com.electrician.spark_e.repository.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,19 +22,19 @@ public class CustomerController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Customer> GetCustomerById(@PathVariable Long id) {
+    public ResponseEntity<Customer> GetCustomerById(@NonNull @PathVariable Long id) {
         return customerRepository.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public Customer CreateCustomer(@RequestBody Customer customer) {
+    public Customer CreateCustomer(@NonNull @RequestBody Customer customer) {
         return customerRepository.save(customer);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Customer> UpdateCustomer(@PathVariable Long id, @RequestBody Customer customerDetails) {
+    public ResponseEntity<Customer> UpdateCustomer(@NonNull @PathVariable Long id, @NonNull @RequestBody Customer customerDetails) {
         return customerRepository.findById(id)
                 .map(customer -> {
                     customer.setFirstName(customerDetails.getFirstName());
@@ -47,7 +48,7 @@ public class CustomerController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Customer> DeleteCustomer(@PathVariable Long id) {
+    public ResponseEntity<Customer> DeleteCustomer(@NonNull @PathVariable Long id) {
         if (customerRepository.existsById(id)) {
             customerRepository.deleteById(id);
             return ResponseEntity.noContent().build();

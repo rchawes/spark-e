@@ -4,6 +4,7 @@ import com.electrician.spark_e.model.Electrician;
 import com.electrician.spark_e.repository.ElectricianRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,19 +22,19 @@ public class ElectricianController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Electrician> getElectricianById(@PathVariable Long id) {
+    public ResponseEntity<Electrician> getElectricianById(@NonNull @PathVariable Long id) {
         return electricianRepository.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public Electrician createElectrician(@RequestBody Electrician electrician) {
+    public Electrician createElectrician(@NonNull @RequestBody Electrician electrician) {
         return  electricianRepository.save(electrician);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Electrician> updateElectrician(@PathVariable Long id, @RequestBody Electrician electricianDetails) {
+    public ResponseEntity<Electrician> updateElectrician(@NonNull @PathVariable Long id, @NonNull @RequestBody Electrician electricianDetails) {
         return electricianRepository.findById(id)
                 .map(electrician -> {
                     electrician.setName(electricianDetails.getName());
@@ -46,7 +47,7 @@ public class ElectricianController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteElectrician(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteElectrician(@NonNull @PathVariable Long id) {
         if (electricianRepository.existsById(id)) {
             electricianRepository.deleteById(id);
             return ResponseEntity.noContent().build();

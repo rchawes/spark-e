@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spark-E Frontend Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Custom styles from style.css */
+        .fade-in { animation: fadeIn 0.5s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .hover-lift:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .toast { position: fixed; bottom: 20px; right: 20px; background: white; padding: 16px 24px; border-radius: 8px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); z-index: 1000; display: none; }
+        .toast.success { border-left: 4px solid #10b981; }
+        .toast.error { border-left: 4px solid #ef4444; }
+        .toast.warning { border-left: 4px solid #f59e0b; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation Header -->
+    <nav class="bg-blue-600 text-white shadow-lg">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-bolt text-2xl"></i>
+                    <h1 class="text-xl font-bold">Spark-E</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button id="loginBtn" class="bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded transition">
+                        <i class="fas fa-sign-in-alt mr-2"></i>Login
+                    </button>
+                    <button id="registerBtn" class="bg-green-500 hover:bg-green-700 px-4 py-2 rounded transition">
+                        <i class="fas fa-user-plus mr-2"></i>Register
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Hero Section -->
+        <section class="bg-white rounded-lg shadow-md p-8 mb-8 fade-in">
+            <div class="text-center">
+                <h2 class="text-4xl font-bold text-gray-800 mb-4">Electrician Trade Business Manager</h2>
+                <p class="text-gray-600 text-lg mb-6">Manage your electrical business efficiently with Spark-E</p>
+                <div class="grid md:grid-cols-3 gap-6 mt-8">
+                    <div class="bg-blue-50 p-6 rounded-lg hover-lift">
+                        <i class="fas fa-users text-blue-600 text-3xl mb-4"></i>
+                        <h3 class="font-semibold text-lg mb-2">Client Management</h3>
+                        <p class="text-gray-600">Keep track of your clients and their contact information</p>
+                    </div>
+                    <div class="bg-green-50 p-6 rounded-lg hover-lift">
+                        <i class="fas fa-clipboard-list text-green-600 text-3xl mb-4"></i>
+                        <h3 class="font-semibold text-lg mb-2">Job Tracking</h3>
+                        <p class="text-gray-600">Monitor your jobs from quote to completion</p>
+                    </div>
+                    <div class="bg-purple-50 p-6 rounded-lg hover-lift">
+                        <i class="fas fa-dollar-sign text-purple-600 text-3xl mb-4"></i>
+                        <h3 class="font-semibold text-lg mb-2">Invoicing</h3>
+                        <p class="text-gray-600">Create and manage invoices for your services</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dashboard Section (Hidden by default) -->
+        <section id="dashboard" class="hidden fade-in">
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-lg shadow-md hover-lift">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm">Active Jobs</p>
+                            <p class="text-2xl font-bold text-gray-800" id="activeJobsCount">5</p>
+                        </div>
+                        <i class="fas fa-tools text-blue-500 text-2xl"></i>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md hover-lift">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm">Total Clients</p>
+                            <p class="text-2xl font-bold text-gray-800" id="totalClientsCount">23</p>
+                        </div>
+                        <i class="fas fa-users text-green-500 text-2xl"></i>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md hover-lift">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm">Pending Invoices</p>
+                            <p class="text-2xl font-bold text-gray-800" id="pendingInvoicesCount">3</p>
+                        </div>
+                        <i class="fas fa-file-invoice text-yellow-500 text-2xl"></i>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md hover-lift">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm">Monthly Revenue</p>
+                            <p class="text-2xl font-bold text-gray-800" id="monthlyRevenue">$12,500</p>
+                        </div>
+                        <i class="fas fa-chart-line text-purple-500 text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="bg-white rounded-lg shadow-md p-6 hover-lift">
+                <h3 class="text-xl font-semibold mb-4">Quick Actions</h3>
+                <div class="grid md:grid-cols-3 gap-4">
+                    <button class="bg-blue-500 hover:bg-blue-600 text-white py-3 px-4 rounded transition">
+                        <i class="fas fa-plus mr-2"></i>New Job
+                    </button>
+                    <button class="bg-green-500 hover:bg-green-600 text-white py-3 px-4 rounded transition">
+                        <i class="fas fa-user-plus mr-2"></i>Add Client
+                    </button>
+                    <button class="bg-purple-500 hover:bg-purple-600 text-white py-3 px-4 rounded transition">
+                        <i class="fas fa-file-invoice-dollar mr-2"></i>Create Invoice
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4">
+            <h3 class="text-2xl font-bold mb-6">Login</h3>
+            <form id="loginForm">
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="username">
+                        Username
+                    </label>
+                    <input class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                           id="username" type="text" required>
+                </div>
+                <div class="mb-6">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="password">
+                        Password
+                    </label>
+                    <input class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                           id="password" type="password" required>
+                </div>
+                <div class="flex justify-between">
+                    <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded transition">
+                        Login
+                    </button>
+                    <button type="button" id="closeLoginModal" class="bg-gray-300 hover:bg-gray-400 text-gray-800 py-2 px-4 rounded transition">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Demo JavaScript -->
+    <script>
+        class SparkEApp {
+            constructor() {
+                this.init();
+            }
+
+            init() {
+                this.setupEventListeners();
+            }
+
+            setupEventListeners() {
+                document.getElementById('loginBtn').addEventListener('click', () => this.showLoginModal());
+                document.getElementById('registerBtn').addEventListener('click', () => this.showRegisterModal());
+                document.getElementById('closeLoginModal').addEventListener('click', () => this.hideLoginModal());
+                document.getElementById('loginForm').addEventListener('submit', (e) => this.handleLogin(e));
+                
+                document.getElementById('loginModal').addEventListener('click', (e) => {
+                    if (e.target.id === 'loginModal') {
+                        this.hideLoginModal();
+                    }
+                });
+            }
+
+            showLoginModal() {
+                document.getElementById('loginModal').classList.remove('hidden');
+                document.getElementById('loginModal').classList.add('flex');
+            }
+
+            hideLoginModal() {
+                document.getElementById('loginModal').classList.add('hidden');
+                document.getElementById('loginModal').classList.remove('flex');
+                document.getElementById('loginForm').reset();
+            }
+
+            showRegisterModal() {
+                this.showToast('Registration feature coming soon!', 'warning');
+            }
+
+            handleLogin(e) {
+                e.preventDefault();
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+
+                // Simulate login
+                this.hideLoginModal();
+                this.showDashboard();
+                this.showToast('Login successful!', 'success');
+            }
+
+            showDashboard() {
+                document.getElementById('dashboard').classList.remove('hidden');
+                document.getElementById('loginBtn').style.display = 'none';
+                document.getElementById('registerBtn').style.display = 'none';
+                
+                const nav = document.querySelector('nav .flex.items-center.space-x-4');
+                const logoutBtn = document.createElement('button');
+                logoutBtn.id = 'logoutBtn';
+                logoutBtn.className = 'bg-red-500 hover:bg-red-700 px-4 py-2 rounded transition';
+                logoutBtn.innerHTML = '<i class="fas fa-sign-out-alt mr-2"></i>Logout';
+                logoutBtn.addEventListener('click', () => this.handleLogout());
+                nav.appendChild(logoutBtn);
+            }
+
+            handleLogout() {
+                document.getElementById('dashboard').classList.add('hidden');
+                document.getElementById('loginBtn').style.display = 'block';
+                document.getElementById('registerBtn').style.display = 'block';
+                document.getElementById('logoutBtn').remove();
+                this.showToast('Logged out successfully', 'success');
+            }
+
+            showToast(message, type = 'info') {
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+                toast.textContent = message;
+                
+                document.body.appendChild(toast);
+                toast.style.display = 'block';
+                
+                setTimeout(() => {
+                    toast.style.display = 'none';
+                    document.body.removeChild(toast);
+                }, 3000);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            window.sparkEApp = new SparkEApp();
+        });
+    </script>
+</body>
+</html>

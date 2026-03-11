@@ -1,10 +1,10 @@
 package com.electrician.spark_e.service;
 
 import com.electrician.spark_e.model.*;
-import com.electrician.spark_e.repository.ComplianceChecklistRepository;
 import com.electrician.spark_e.repository.JobRepository;
 import com.electrician.spark_e.repository.ChecklistItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,9 +14,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class ComplianceService {
-
-    @Autowired
-    private ComplianceChecklistRepository checklistRepository;
 
     @Autowired
     private JobRepository jobRepository;          // single declaration
@@ -34,7 +31,7 @@ public class ComplianceService {
 
     // Mark a checklist item as completed for a job
     @Transactional
-    public Job completeChecklistItem(Long jobId, Long itemId) {
+    public Job completeChecklistItem(@NonNull Long jobId, @NonNull Long itemId) {
         Job job = jobRepository.findById(jobId)
                 .orElseThrow(() -> new RuntimeException("Job not found"));
         ChecklistItem item = checklistItemRepository.findById(itemId)
@@ -47,7 +44,7 @@ public class ComplianceService {
     }
 
     // Generate a compliance report for a job
-    public ComplianceReport generateReport(Long jobId) {
+    public ComplianceReport generateReport(@NonNull Long jobId) {
         Job job = jobRepository.findById(jobId)
                 .orElseThrow(() -> new RuntimeException("Job not found"));
 
@@ -85,7 +82,7 @@ public class ComplianceService {
 
         // getters and setters
         public Long getJobId() { return jobId; }
-        public void setJobId(Long jobId) { this.jobId = jobId; }
+        public void setJobId(@NonNull Long jobId) { this.jobId = jobId; }
 
         public String getCustomerName() { return customerName; }
         public void setCustomerName(String customerName) { this.customerName = customerName; }

@@ -4,8 +4,8 @@ import com.electrician.spark_e.model.Part;
 import com.electrician.spark_e.repository.PartRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
@@ -21,19 +21,19 @@ public class PartController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Part> getPartById(@PathVariable Long id) {
+    public ResponseEntity<Part> getPartById(@NonNull @PathVariable Long id) {
         return partRepository.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public Part createPart(@RequestBody Part part) {
+    public Part createPart(@NonNull @RequestBody Part part) {
         return partRepository.save(part);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Part> updatePart(@PathVariable Long id, @RequestBody Part partDetails) {
+    public ResponseEntity<Part> updatePart(@NonNull @PathVariable Long id, @NonNull @RequestBody Part partDetails) {
         return partRepository.findById(id)
                 .map(part -> {
                     part.setName(partDetails.getName());
@@ -47,7 +47,7 @@ public class PartController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePart(@PathVariable Long id) {
+    public ResponseEntity<Void> deletePart(@NonNull @PathVariable Long id) {
         if (partRepository.existsById(id)) {
             partRepository.deleteById(id);
             return ResponseEntity.noContent().build();

@@ -63,6 +63,7 @@ public class AuthController {
     private static class AuthResponse {
         private String token;
         public AuthResponse(String token) { this.token = token; }
+        @SuppressWarnings("unused")
         public String getToken() { return token; }
     }
 }

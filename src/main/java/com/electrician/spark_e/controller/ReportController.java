@@ -3,6 +3,7 @@ package com.electrician.spark_e.controller;
 import com.electrician.spark_e.service.ReportingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.YearMonth;
@@ -16,7 +17,7 @@ public class ReportController {
 
     @GetMapping("/electrician/{electricianId}")
     public ResponseEntity<?> getElectricianPerformance(
-            @PathVariable Long electricianId,
+            @NonNull @PathVariable Long electricianId,
             @RequestParam int year,
             @RequestParam int month) {
         YearMonth yearMonth = YearMonth.of(year, month);
@@ -31,7 +32,7 @@ public class ReportController {
     }
 
     @GetMapping("/customer/{customerId}")
-    public ResponseEntity<?> getCustomerProfitability(@PathVariable Long customerId) {
+    public ResponseEntity<?> getCustomerProfitability(@NonNull @PathVariable Long customerId) {
         return ResponseEntity.ok(reportingService.getCustomerProfitability(customerId));
     }
 }

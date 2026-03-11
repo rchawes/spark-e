@@ -4,6 +4,7 @@ import com.electrician.spark_e.model.Invoice;
 import com.electrician.spark_e.repository.InvoiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,7 +24,7 @@ public class InvoiceController {
 
     // GET invoice by ID
     @GetMapping("/{id}")
-    public ResponseEntity<Invoice> getInvoiceById(@PathVariable Long id) {
+    public ResponseEntity<Invoice> getInvoiceById(@NonNull @PathVariable Long id) {
         return invoiceRepository.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -31,7 +32,7 @@ public class InvoiceController {
 
     // GET invoice by Job ID
     @GetMapping("/job/{jobId}")
-    public ResponseEntity<Invoice> getInvoiceByJobId(@PathVariable Long jobId) {
+    public ResponseEntity<Invoice> getInvoiceByJobId(@NonNull @PathVariable Long jobId) {
         return invoiceRepository.findByJobId(jobId)   // uses the @Query method we added
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -39,7 +40,7 @@ public class InvoiceController {
 
     // PUT to mark invoice as paid
     @PutMapping("/{id}/pay")
-    public ResponseEntity<Invoice> markInvoiceAsPaid(@PathVariable Long id) {
+    public ResponseEntity<Invoice> markInvoiceAsPaid(@NonNull @PathVariable Long id) {
         return invoiceRepository.findById(id)
                 .map(invoice -> {
                     invoice.setPaid(true);

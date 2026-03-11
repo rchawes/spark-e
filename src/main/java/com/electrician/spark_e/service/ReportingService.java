@@ -1,15 +1,16 @@
 package com.electrician.spark_e.service;
 
 import com.electrician.spark_e.model.*;
-import com.electrician.spark_e.repository.*;
+import com.electrician.spark_e.repository.JobRepository;
+import com.electrician.spark_e.repository.InvoiceRepository;
+import com.electrician.spark_e.repository.PartRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class ReportingService {
@@ -23,14 +24,8 @@ public class ReportingService {
     @Autowired
     private PartRepository partRepository;
 
-    @Autowired
-    private CustomerRepository customerRepository;
-
-    @Autowired
-    private ElectricianRepository electricianRepository;
-
     // 1. Electrician performance report
-    public ElectricianPerformanceReport getElectricianPerformance(Long electricianId, YearMonth month) {
+    public ElectricianPerformanceReport getElectricianPerformance(@NonNull Long electricianId, YearMonth month) {
         LocalDate start = month.atDay(1);
         LocalDate end = month.atEndOfMonth();
 
@@ -67,7 +62,7 @@ public class ReportingService {
     }
 
     // 3. Customer profitability report
-    public CustomerProfitabilityReport getCustomerProfitability(Long customerId) {
+    public CustomerProfitabilityReport getCustomerProfitability(@NonNull Long customerId) {
         List<Invoice> invoices = invoiceRepository.findByJobCustomerId(customerId);
 
         CustomerProfitabilityReport report = new CustomerProfitabilityReport();
@@ -98,7 +93,7 @@ public class ReportingService {
         private double averageJobValue;
         // getters/setters (generate using IntelliJ)
         public Long getElectricianId() { return electricianId; }
-        public void setElectricianId(Long electricianId) { this.electricianId = electricianId; }
+        public void setElectricianId(@NonNull Long electricianId) { this.electricianId = electricianId; }
         public YearMonth getMonth() { return month; }
         public void setMonth(YearMonth month) { this.month = month; }
         public long getTotalJobs() { return totalJobs; }
@@ -142,7 +137,7 @@ public class ReportingService {
         private double paymentTimeAverage; // days
         // getters/setters
         public Long getCustomerId() { return customerId; }
-        public void setCustomerId(Long customerId) { this.customerId = customerId; }
+        public void setCustomerId(@NonNull Long customerId) { this.customerId = customerId; }
         public long getTotalJobs() { return totalJobs; }
         public void setTotalJobs(long totalJobs) { this.totalJobs = totalJobs; }
         public double getTotalRevenue() { return totalRevenue; }

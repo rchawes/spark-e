@@ -11,6 +11,7 @@ import com.electrician.spark_e.repository.ElectricianRepository;
 import com.electrician.spark_e.service.InvoiceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -37,7 +38,7 @@ public class JobController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Job> getJobById(@PathVariable Long id) {
+    public ResponseEntity<Job> getJobById(@NonNull @PathVariable Long id) {
         return jobRepository.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -54,9 +55,9 @@ public class JobController {
         }
 
         // Fetch full entities from database
-        Customer customer = customerRepository.findById(job.getCustomer().getId())
+        Customer customer = customerRepository.findById((Long) job.getCustomer().getId())
                 .orElse(null);
-        Electrician electrician = electricianRepository.findById(job.getElectrician().getId())
+        Electrician electrician = electricianRepository.findById((Long) job.getElectrician().getId())
                 .orElse(null);
 
         if (customer == null) {
@@ -79,7 +80,7 @@ public class JobController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateJob(@PathVariable Long id, @RequestBody Job jobDetails) {
+    public ResponseEntity<?> updateJob(@NonNull @PathVariable Long id, @RequestBody Job jobDetails) {
         return jobRepository.findById(id)
                 .map(job -> {
                     // Update simple fields
@@ -91,11 +92,11 @@ public class JobController {
 
                     // Update relationships
                     if (jobDetails.getCustomer() != null && jobDetails.getCustomer().getId() != null) {
-                        Customer customer = customerRepository.findById(jobDetails.getCustomer().getId()).orElse(null);
+                        Customer customer = customerRepository.findById((Long) jobDetails.getCustomer().getId()).orElse(null);
                         if (customer != null) job.setCustomer(customer);
                     }
                     if (jobDetails.getElectrician() != null && jobDetails.getElectrician().getId() != null) {
-                        Electrician electrician = electricianRepository.findById(jobDetails.getElectrician().getId()).orElse(null);
+                        Electrician electrician = electricianRepository.findById((Long) jobDetails.getElectrician().getId()).orElse(null);
                         if (electrician != null) job.setElectrician(electrician);
                     }
 
@@ -118,7 +119,7 @@ public class JobController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteJob(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteJob(@NonNull @PathVariable Long id) {
         if (jobRepository.existsById(id)) {
             jobRepository.deleteById(id);
             return ResponseEntity.noContent().build();
@@ -128,7 +129,7 @@ public class JobController {
 
     // Endpoint to manually generate invoice for a job
     @PostMapping("/{id}/generate-invoice")
-    public ResponseEntity<?> generateInvoiceForJob(@PathVariable Long id) {
+    public ResponseEntity<?> generateInvoiceForJob(@NonNull @PathVariable Long id) {
         return jobRepository.findById(id)
                 .map(job -> {
                     try {

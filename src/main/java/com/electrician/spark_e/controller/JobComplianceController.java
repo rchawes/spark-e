@@ -6,6 +6,7 @@ import com.electrician.spark_e.repository.JobRepository;
 import com.electrician.spark_e.service.ComplianceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,7 +20,7 @@ public class JobComplianceController {
     private JobRepository jobRepository;
 
     @GetMapping("/checklist")
-    public ResponseEntity<?> getChecklistForJob(@PathVariable Long jobId) {
+    public ResponseEntity<?> getChecklistForJob(@NonNull @PathVariable Long jobId) {
         return jobRepository.findById(jobId)
                 .map(job -> {
                     ComplianceChecklist checklist = complianceService.getChecklistForJob(job);
@@ -32,7 +33,7 @@ public class JobComplianceController {
     }
 
     @PostMapping("/items/{itemId}/complete")
-    public ResponseEntity<?> completeChecklistItem(@PathVariable Long jobId, @PathVariable Long itemId) {
+    public ResponseEntity<?> completeChecklistItem(@NonNull @PathVariable Long jobId, @NonNull @PathVariable Long itemId) {
         try {
             Job updatedJob = complianceService.completeChecklistItem(jobId, itemId);
             return ResponseEntity.ok(updatedJob);
@@ -42,7 +43,7 @@ public class JobComplianceController {
     }
 
     @GetMapping("/report")
-    public ResponseEntity<?> getComplianceReport(@PathVariable Long jobId) {
+    public ResponseEntity<?> getComplianceReport(@NonNull @PathVariable Long jobId) {
         try {
             ComplianceService.ComplianceReport report = complianceService.generateReport(jobId);
             return ResponseEntity.ok(report);
