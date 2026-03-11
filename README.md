@@ -83,7 +83,7 @@ LinkedIn: https://www.linkedin.com/in/richard-hawes-a4533399/
 GitHub: https://github.com/rchawes
 
 
-Thanks for checking out my project.
+Thanks you!
 =======
 Thanks for checking out my project.
 
