@@ -37,7 +37,7 @@ public class ComplianceChecklistController {
     public ResponseEntity<?> createChecklist(@RequestBody ComplianceChecklist checklist) {
         // Ensure job type exists
         if (checklist.getJobType() != null && checklist.getJobType().getId() != null) {
-            jobTypeRepository.findById((Long) checklist.getJobType().getId())
+            jobTypeRepository.findById(checklist.getJobType().getId())
                     .orElseThrow(() -> new RuntimeException("Job type not found"));
         }
         return ResponseEntity.ok(checklistRepository.save(checklist));
@@ -50,7 +50,7 @@ public class ComplianceChecklistController {
                     checklist.setName(checklistDetails.getName());
                     checklist.setRegulationReference(checklistDetails.getRegulationReference());
                     if (checklistDetails.getJobType() != null && checklistDetails.getJobType().getId() != null) {
-                        jobTypeRepository.findById((Long) checklistDetails.getJobType().getId())
+                        jobTypeRepository.findById(checklistDetails.getJobType().getId())
                                 .ifPresent(checklist::setJobType);
                     }
                     return checklistRepository.save(checklist);

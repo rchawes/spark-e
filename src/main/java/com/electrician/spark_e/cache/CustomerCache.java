@@ -7,6 +7,8 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -28,7 +30,7 @@ public class CustomerCache {
      * Find customer by ID - cached
      */
     @Cacheable(key = "#id", unless = "#result == null")
-    public Optional<Customer> findById(Long id) {
+    public Optional<Customer> findById(@NonNull Long id) {
         return customerRepository.findById(id);
     }
 
@@ -52,7 +54,7 @@ public class CustomerCache {
      * Find customers by electrician ID
      */
     @Cacheable(key = "'electrician:' + #electricianId")
-    public List<Customer> findByElectricianId(Long electricianId) {
+    public List<Customer> findByElectricianId(@NonNull Long electricianId) {
         return customerRepository.findByElectricianId(electricianId);
     }
 
@@ -60,7 +62,7 @@ public class CustomerCache {
      * Check if customer exists - cached
      */
     @Cacheable(key = "'exists:' + #id")
-    public boolean existsById(Long id) {
+    public boolean existsById(@NonNull Long id) {
         return customerRepository.existsById(id);
     }
 
@@ -76,7 +78,7 @@ public class CustomerCache {
             @CacheEvict(key = "'email:' + #customer.email", condition = "#customer.email != null")
         }
     )
-    public Customer save(Customer customer) {
+    public @NonNull Customer save(@NonNull Customer customer) {
         return customerRepository.save(customer);
     }
 
@@ -91,7 +93,7 @@ public class CustomerCache {
             @CacheEvict(key = "'electrician:' + #customer.electrician.id", condition = "#customer.electrician != null")
         }
     )
-    public Customer update(Long id, Customer customer) {
+    public @NonNull Customer update(@NonNull Long id, @NonNull Customer customer) {
         customer.setId(id);
         return customerRepository.save(customer);
     }
@@ -105,7 +107,7 @@ public class CustomerCache {
         @CacheEvict(key = "'email:' + #result?.email", condition = "#result != null", beforeInvocation = false),
         @CacheEvict(key = "'exists:' + #id")
     })
-    public Optional<Customer> deleteById(Long id) {
+    public Optional<Customer> deleteById(@NonNull Long id) {
         Optional<Customer> customer = customerRepository.findById(id);
         customerRepository.deleteById(id);
         return customer;
@@ -117,7 +119,7 @@ public class CustomerCache {
      * Save multiple customers
      */
     @CacheEvict(value = "allCustomers", allEntries = true)
-    public List<Customer> saveAll(List<Customer> customers) {
+    public @NonNull List<Customer> saveAll(@NonNull List<Customer> customers) {
         return customerRepository.saveAll(customers);
     }
 

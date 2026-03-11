@@ -55,9 +55,9 @@ public class JobController {
         }
 
         // Fetch full entities from database
-        Customer customer = customerRepository.findById((Long) job.getCustomer().getId())
+        Customer customer = customerRepository.findById(job.getCustomer().getId())
                 .orElse(null);
-        Electrician electrician = electricianRepository.findById((Long) job.getElectrician().getId())
+        Electrician electrician = electricianRepository.findById(job.getElectrician().getId())
                 .orElse(null);
 
         if (customer == null) {
@@ -92,11 +92,11 @@ public class JobController {
 
                     // Update relationships
                     if (jobDetails.getCustomer() != null && jobDetails.getCustomer().getId() != null) {
-                        Customer customer = customerRepository.findById((Long) jobDetails.getCustomer().getId()).orElse(null);
+                        Customer customer = customerRepository.findById(jobDetails.getCustomer().getId()).orElse(null);
                         if (customer != null) job.setCustomer(customer);
                     }
                     if (jobDetails.getElectrician() != null && jobDetails.getElectrician().getId() != null) {
-                        Electrician electrician = electricianRepository.findById((Long) jobDetails.getElectrician().getId()).orElse(null);
+                        Electrician electrician = electricianRepository.findById(jobDetails.getElectrician().getId()).orElse(null);
                         if (electrician != null) job.setElectrician(electrician);
                     }
 
