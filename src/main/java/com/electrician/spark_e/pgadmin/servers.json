@@ -1,0 +1,14 @@
+{
+  "Servers": {
+    "1": {
+      "Name": "Spark-e PostgreSQL",
+      "Group": "Servers",
+      "Host": "postgres",
+      "Port": 5432,
+      "MaintenanceDB": "sparke",
+      "Username": "sparke_user",
+      "Password": "sparke_pass",
+      "SSLMode": "prefer"
+    }
+  }
+}
