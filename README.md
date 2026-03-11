@@ -82,8 +82,8 @@ I'm actively looking for my first software engineering role. If you have feedbac
 LinkedIn: https://www.linkedin.com/in/richard-hawes-a4533399/
 GitHub: https://github.com/rchawes
 
-<<<<<<< HEAD
+
 Thanks for checking out my project.
 =======
 Thanks for checking out my project.
->>>>>>> 7fc015f53e558b1f3566b315e4b61ff946a44094
+
