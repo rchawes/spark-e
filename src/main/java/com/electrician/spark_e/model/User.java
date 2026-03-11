@@ -16,16 +16,15 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    private String role; // e.g., "ROLE_ELECTRICIAN", "ROLE_ADMIN"
+    private String role; // example: "ROLE_ELECTRICIAN", "ROLE_ADMIN"
 
     @OneToOne
     @JoinColumn(name = "electrician_id")
     private Electrician electrician;
 
-    // No-args constructor (required by JPA)
     public User() {}
 
-    // All-args constructor (optional, useful for testing)
+    // All-args constructor
     public User(String username, String password, String role, Electrician electrician) {
         this.username = username;
         this.password = password;
@@ -49,7 +48,7 @@ public class User {
     public Electrician getElectrician() { return electrician; }
     public void setElectrician(Electrician electrician) { this.electrician = electrician; }
 
-    // Optional: override equals, hashCode, toString
+    // Override equals, hashCode, toString
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

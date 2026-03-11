@@ -14,7 +14,6 @@ public class Customer {
     private String phone;
     private String address;
 
-    // No-args constructor (required by JPA)
     public Customer() {}
 
     // Getters and setters
@@ -36,7 +35,7 @@ public class Customer {
     public String getAddress() { return address; }
     public void setAddress(String address) { this.address = address; }
 
-    // Optional: override equals/hashCode/toString if needed
+    // Override equals/hashCode/toString if needed
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -29,7 +29,7 @@ public class JobController {
     private ElectricianRepository electricianRepository;
 
     @Autowired
-    private InvoiceService invoiceService;   // <-- This was missing
+    private InvoiceService invoiceService;
 
     @GetMapping
     public List<Job> getAllJobs() {
@@ -69,7 +69,7 @@ public class JobController {
         job.setCustomer(customer);
         job.setElectrician(electrician);
 
-        // Set default status if not provided
+        // Set default status
         if (job.getStatus() == null) {
             job.setStatus(JobStatus.SCHEDULED);
         }
@@ -89,7 +89,7 @@ public class JobController {
                     job.setHoursWorked(jobDetails.getHoursWorked());
                     job.setStatus(jobDetails.getStatus());
 
-                    // Update relationships if provided
+                    // Update relationships
                     if (jobDetails.getCustomer() != null && jobDetails.getCustomer().getId() != null) {
                         Customer customer = customerRepository.findById(jobDetails.getCustomer().getId()).orElse(null);
                         if (customer != null) job.setCustomer(customer);
