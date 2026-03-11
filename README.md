@@ -12,7 +12,7 @@ I wanted to solve a real problem I actually understood. Electricians juggle a lo
 
 ## What's Inside
 
-[ Preview ](https://github.com/rchawes/spark-e/blob/main/Spark-E-ss1.png)
+![Preview](https://github.com/rchawes/spark-e/blob/main/Spark-E-ss1.png)
 
 Customer management with full CRUD operations and contact history tracking. Job scheduling with create, assign, and status tracking. Parts inventory with stock levels and low-stock alerts. Invoice automation that triggers when a job is marked complete - it calculates labor based on hours worked times hourly rate plus materials used times price. Compliance checklists tied to job types, so a consumer unit replacement has specific safety items that must be checked off. Reporting for electrician performance metrics, inventory status, and customer profitability. JWT security protecting all endpoints. Swagger UI for interactive API documentation.
 
