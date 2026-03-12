@@ -16,8 +16,7 @@ public class Job {
     private LocalDateTime scheduledDate;
     private LocalDateTime completedDate;
     private Double hoursWorked;
-
-
+    private LocalDateTime createdAt;
 
     @Enumerated(EnumType.STRING)
     private JobStatus status;
@@ -52,6 +51,11 @@ public class Job {
         return completedChecklistItems.containsAll(requiredItems);
     }
 
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
+
     @ManyToOne
     @JoinColumn(name = "customer_id")
     private Customer customer;
@@ -80,6 +84,9 @@ public class Job {
 
     public Double getHoursWorked() { return hoursWorked; }
     public void setHoursWorked(Double hoursWorked) { this.hoursWorked = hoursWorked; }
+
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 
     public JobStatus getStatus() { return status; }
     public void setStatus(JobStatus status) { this.status = status; }

@@ -1,7 +1,7 @@
 // Spark-E Frontend Application
 class SparkEApp {
     constructor() {
-        this.apiBase = '/api';
+        this.apiBase = 'http://localhost:8080/api';
         this.token = localStorage.getItem('jwtToken');
         this.currentUser = null;
         this.init();
@@ -13,30 +13,107 @@ class SparkEApp {
     }
 
     setupEventListeners() {
+        console.log('Setting up event listeners');
+        
+        // Check if elements exist
+        const loginBtn = document.getElementById('loginBtn');
+        const registerBtn = document.getElementById('registerBtn');
+        
+        console.log('Login button found:', loginBtn);
+        console.log('Register button found:', registerBtn);
+        
         // Login/Register buttons
-        document.getElementById('loginBtn').addEventListener('click', () => this.showLoginModal());
-        document.getElementById('registerBtn').addEventListener('click', () => this.showRegisterModal());
+        if (loginBtn) {
+            console.log('Adding login button listener');
+            loginBtn.addEventListener('click', () => {
+                console.log('Login button clicked');
+                this.showLoginModal();
+            });
+        }
+        
+        if (registerBtn) {
+            console.log('Adding register button listener');
+            registerBtn.addEventListener('click', () => {
+                console.log('Register button clicked');
+                this.showRegisterModal();
+            });
+        }
         
         // Modal close buttons
-        document.getElementById('closeLoginModal').addEventListener('click', () => this.hideLoginModal());
-        document.getElementById('closeRegisterModal').addEventListener('click', () => this.hideRegisterModal());
+        const closeLoginModal = document.getElementById('closeLoginModal');
+        const closeRegisterModal = document.getElementById('closeRegisterModal');
+        
+        console.log('Close login modal found:', closeLoginModal);
+        console.log('Close register modal found:', closeRegisterModal);
+        
+        if (closeLoginModal) {
+            closeLoginModal.addEventListener('click', () => this.hideLoginModal());
+        }
+        if (closeRegisterModal) {
+            closeRegisterModal.addEventListener('click', () => this.hideRegisterModal());
+        }
         
         // Forms
-        document.getElementById('loginForm').addEventListener('submit', (e) => this.handleLogin(e));
-        document.getElementById('registerForm').addEventListener('submit', (e) => this.handleRegister(e));
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        
+        console.log('Login form found:', loginForm);
+        console.log('Register form found:', registerForm);
+        
+        if (loginForm) {
+            loginForm.addEventListener('submit', (e) => this.handleLogin(e));
+        }
+        if (registerForm) {
+            registerForm.addEventListener('submit', (e) => this.handleRegister(e));
+        }
         
         // Close modal on backdrop click
-        document.getElementById('loginModal').addEventListener('click', (e) => {
-            if (e.target.id === 'loginModal') {
-                this.hideLoginModal();
-            }
-        });
+        const loginModal = document.getElementById('loginModal');
+        const registerModal = document.getElementById('registerModal');
         
-        document.getElementById('registerModal').addEventListener('click', (e) => {
-            if (e.target.id === 'registerModal') {
-                this.hideRegisterModal();
-            }
-        });
+        if (loginModal) {
+            loginModal.addEventListener('click', (e) => {
+                if (e.target.id === 'loginModal') {
+                    this.hideLoginModal();
+                }
+            });
+        }
+        
+        if (registerModal) {
+            registerModal.addEventListener('click', (e) => {
+                if (e.target.id === 'registerModal') {
+                    this.hideRegisterModal();
+                }
+            });
+        }
+        
+        // Dashboard action buttons
+        const newJobBtn = document.getElementById('newJobBtn');
+        const addClientBtn = document.getElementById('addClientBtn');
+        const createInvoiceBtn = document.getElementById('createInvoiceBtn');
+        
+        console.log('Action buttons found:', { newJobBtn, addClientBtn, createInvoiceBtn });
+        
+        if (newJobBtn) {
+            newJobBtn.addEventListener('click', () => {
+                console.log('New Job button clicked');
+                this.showToast('New Job feature coming soon!', 'info');
+            });
+        }
+        
+        if (addClientBtn) {
+            addClientBtn.addEventListener('click', () => {
+                console.log('Add Client button clicked');
+                this.showAddClientModal();
+            });
+        }
+        
+        if (createInvoiceBtn) {
+            createInvoiceBtn.addEventListener('click', () => {
+                console.log('Create Invoice button clicked');
+                this.showToast('Create Invoice feature coming soon!', 'info');
+            });
+        }
     }
 
     // Authentication methods
@@ -66,6 +143,7 @@ class SparkEApp {
 
     async handleRegister(e) {
         e.preventDefault();
+        
         const username = document.getElementById('registerUsername').value;
         const password = document.getElementById('registerPassword').value;
         const confirmPassword = document.getElementById('confirmPassword').value;
@@ -141,6 +219,11 @@ class SparkEApp {
         document.getElementById('registerForm').reset();
     }
 
+    showAddClientModal() {
+        // Simple implementation - just show toast for now
+        this.showToast('Add Client feature - This would open a form to add new clients', 'info');
+    }
+
     showDashboard() {
         document.getElementById('dashboard').classList.remove('hidden');
         document.getElementById('loginBtn').style.display = 'none';
@@ -203,7 +286,7 @@ class SparkEApp {
             
         } catch (error) {
             console.error('Failed to load dashboard data:', error);
-            // Use mock data for demo
+            // Use mock data for demo since endpoints don't exist yet
             this.loadMockData();
         }
     }

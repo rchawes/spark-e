@@ -10,11 +10,15 @@ import com.electrician.spark_e.repository.CustomerRepository;
 import com.electrician.spark_e.repository.ElectricianRepository;
 import com.electrician.spark_e.service.InvoiceService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/jobs")
@@ -35,6 +39,19 @@ public class JobController {
     @GetMapping
     public List<Job> getAllJobs() {
         return jobRepository.findAll();
+    }
+
+    @GetMapping("/recent")
+    public ResponseEntity<?> getRecentJobs() {
+        try {
+            // Get recent jobs (limited to 10, sorted by creation date)
+            Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "id"));
+            List<Job> recentJobs = jobRepository.findAll(pageable).getContent();
+
+            return ResponseEntity.ok(recentJobs);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("error", "Failed to load recent jobs"));
+        }
     }
 
     @GetMapping("/{id}")
