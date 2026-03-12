@@ -20,6 +20,36 @@
             align-items: center;
             justify-content: center;
             z-index: 50;
+            animation: fadeIn 0.3s ease-out;
+        }
+        .modal-overlay.revenue-modal {
+            z-index: 100;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideIn {
+            from { transform: translateY(-30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        @keyframes slideInLeft {
+            from { transform: translateX(-20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes bounce {
+            0%, 20%, 53%, 80%, 100% { transform: translate3d(0,0,0); }
+            40%, 43% { transform: translate3d(0,-30px,0); }
+            70% { transform: translate3d(0,-15px,0); }
+            90% { transform: translate3d(0,-4px,0); }
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
         .modal-content {
             background: white;
@@ -28,6 +58,8 @@
             max-width: 90%;
             max-height: 90vh;
             overflow-y: auto;
+            animation: slideIn 0.3s ease-out;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
         }
         .form-input {
             width: 100%;
@@ -35,6 +67,13 @@
             border: 1px solid #d1d5db;
             border-radius: 0.375rem;
             margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            transform: translateY(-1px);
         }
         .btn {
             padding: 0.5rem 1rem;
@@ -42,14 +81,35 @@
             border: none;
             cursor: pointer;
             font-weight: 500;
-            transition: all 0.2s;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        .btn:active::after {
+            width: 300px;
+            height: 300px;
         }
         .btn-primary {
             background-color: #3b82f6;
             color: white;
+            animation: slideInLeft 0.5s ease-out;
         }
         .btn-primary:hover {
             background-color: #2563eb;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
         }
         .btn-secondary {
             background-color: #6b7280;
@@ -57,12 +117,67 @@
         }
         .btn-secondary:hover {
             background-color: #5b6218;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(107, 114, 128, 0.3);
         }
         .card {
             background: white;
             border-radius: 0.5rem;
             padding: 1.5rem;
             box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        .card:hover::before {
+            left: 100%;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+        .hover-scale {
+            transition: transform 0.3s ease;
+        }
+        .hover-scale:hover {
+            transform: scale(1.05);
+        }
+        .hover-bounce:hover {
+            animation: bounce 1s;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .loading-spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3b82f6;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+        }
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        .slide-in-animation {
+            animation: slideInLeft 0.5s ease-out;
         }
     </style>
 </head>
@@ -106,10 +221,17 @@
             const [showViewJobs, setShowViewJobs] = useState(false);
             const [showViewInvoices, setShowViewInvoices] = useState(false);
             const [showAddInvoice, setShowAddInvoice] = useState(false);
+            const [showViewRevenue, setShowViewRevenue] = useState(false);
+            const [showEditInvoice, setShowEditInvoice] = useState(false);
+            const [editingInvoice, setEditingInvoice] = useState(null);
+            const [showEditJob, setShowEditJob] = useState(false);
+            const [editingJob, setEditingJob] = useState(null);
+            const [revenuePeriod, setRevenuePeriod] = useState('monthly'); // monthly, yearly, total
             
             const [clients, setClients] = useState([]);
             const [jobs, setJobs] = useState([]);
             const [invoices, setInvoices] = useState([]);
+            const [electricians, setElectricians] = useState([]);
             const [dashboardStats, setDashboardStats] = useState({});
 
             // Check authentication on mount
@@ -160,7 +282,7 @@
             const Dashboard = () => {
                 return React.createElement('div', { className: 'container mx-auto px-4 py-8' },
                     React.createElement('div', { className: 'grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8' },
-                        React.createElement('div', { className: 'bg-white p-6 rounded-lg shadow-md' },
+                        React.createElement('div', { className: 'bg-white p-6 rounded-lg shadow-md card hover-scale' },
                             React.createElement('div', { className: 'flex items-center justify-between' },
                                 React.createElement('div', null,
                                     React.createElement('p', { className: 'text-gray-500 text-sm' }, 'Active Jobs'),
@@ -169,7 +291,7 @@
                                 React.createElement('i', { className: 'fas fa-briefcase text-blue-500 text-2xl' })
                             )
                         ),
-                        React.createElement('div', { className: 'bg-white p-6 rounded-lg shadow-md' },
+                        React.createElement('div', { className: 'bg-white p-6 rounded-lg shadow-md card hover-scale' },
                             React.createElement('div', { className: 'flex items-center justify-between' },
                                 React.createElement('div', null,
                                     React.createElement('p', { className: 'text-gray-500 text-sm' }, 'Total Clients'),
@@ -178,7 +300,7 @@
                                 React.createElement('i', { className: 'fas fa-users text-green-500 text-2xl' })
                             )
                         ),
-                        React.createElement('div', { className: 'bg-white p-6 rounded-lg shadow-md' },
+                        React.createElement('div', { className: 'bg-white p-6 rounded-lg shadow-md card hover-scale' },
                             React.createElement('div', { className: 'flex items-center justify-between' },
                                 React.createElement('div', null,
                                     React.createElement('p', { className: 'text-gray-500 text-sm' }, 'Pending Invoices'),
@@ -187,11 +309,30 @@
                                 React.createElement('i', { className: 'fas fa-file-invoice text-yellow-500 text-2xl' })
                             )
                         ),
-                        React.createElement('div', { className: 'bg-white p-6 rounded-lg shadow-md' },
+                        React.createElement('div', { className: 'bg-white p-6 rounded-lg shadow-md card hover-scale' },
                             React.createElement('div', { className: 'flex items-center justify-between' },
                                 React.createElement('div', null,
                                     React.createElement('p', { className: 'text-gray-500 text-sm' }, 'Monthly Revenue'),
-                                    React.createElement('p', { className: 'text-2xl font-bold text-gray-800' }, '$' + (dashboardStats.monthlyRevenue || 0))
+                                    React.createElement('p', { className: 'text-2xl font-bold text-gray-800' }, '$' + (() => {
+                                        // Calculate monthly revenue from completed jobs and their invoices
+                                        const now = new Date();
+                                        const currentYear = now.getFullYear();
+                                        const currentMonth = now.getMonth();
+                                        
+                                        // Get invoices from current month
+                                        const monthlyInvoices = invoices.filter(inv => {
+                                            if (!inv.issueDate) return false;
+                                            const invDate = new Date(inv.issueDate);
+                                            return invDate.getFullYear() === currentYear && invDate.getMonth() === currentMonth;
+                                        });
+                                        
+                                        // Calculate revenue from paid and unpaid invoices
+                                        const monthlyRevenue = monthlyInvoices.reduce((sum, inv) => 
+                                            sum + (inv.totalAmount || inv.amount || 0), 0
+                                        );
+                                        
+                                        return monthlyRevenue.toFixed(2);
+                                    })())
                                 ),
                                 React.createElement('i', { className: 'fas fa-chart-line text-purple-500 text-2xl' })
                             )
@@ -203,15 +344,28 @@
                         React.createElement('h3', { className: 'text-xl font-semibold mb-4' }, 'Quick Actions'),
                         React.createElement('div', { className: 'grid md:grid-cols-3 gap-4' },
                             React.createElement('button', {
-                                onClick: () => setShowAddJob(true),
+                                onClick: async () => {
+                                    await Promise.all([loadClientsData(), loadElectricians()]);
+                                    setShowAddJob(true);
+                                },
                                 className: 'btn btn-primary'
                             }, 'New Job'),
                             React.createElement('button', {
-                                onClick: () => setShowAddClient(true),
+                                onClick: () => {
+                                    if (!user) {
+                                        alert('Please login to add a client');
+                                        setShowLogin(true);
+                                    } else {
+                                        setShowAddClient(true);
+                                    }
+                                },
                                 className: 'btn btn-secondary'
                             }, 'Add Client'),
                             React.createElement('button', {
-                                onClick: () => setShowAddInvoice(true),
+                                onClick: async () => {
+                                    await loadJobsData();
+                                    setShowAddInvoice(true);
+                                },
                                 className: 'btn btn-secondary'
                             }, 'Create Invoice')
                         )
@@ -246,20 +400,20 @@
             const LandingPage = () => {
                 return React.createElement('div', { className: 'container mx-auto px-4 py-8' },
                     React.createElement('div', { className: 'text-center mb-12' },
-                        React.createElement('h1', { className: 'text-4xl font-bold text-gray-800 mb-4' }, '⚡ Spark-E'),
+                        React.createElement('h1', { className: 'text-4xl font-bold gradient-text mb-4 pulse-animation' }, '⚡ Spark-E'),
                         React.createElement('p', { className: 'text-xl text-gray-600 mb-8' }, 'Electrician Trade Business Manager'),
                         React.createElement('div', { className: 'grid md:grid-cols-3 gap-8 max-w-4xl mx-auto' },
-                            React.createElement('div', { className: 'bg-white p-6 rounded-lg shadow-md' },
+                            React.createElement('div', { className: 'bg-white p-6 rounded-lg shadow-md card hover-scale' },
                                 React.createElement('i', { className: 'fas fa-users text-blue-500 text-3xl mb-4' }),
                                 React.createElement('h3', { className: 'font-semibold text-lg mb-2' }, 'Client Management'),
                                 React.createElement('p', { className: 'text-gray-600' }, 'Keep track of your clients and their contact information')
                             ),
-                            React.createElement('div', { className: 'bg-white p-6 rounded-lg shadow-md' },
+                            React.createElement('div', { className: 'bg-white p-6 rounded-lg shadow-md card hover-scale' },
                                 React.createElement('i', { className: 'fas fa-briefcase text-green-500 text-3xl mb-4' }),
                                 React.createElement('h3', { className: 'font-semibold text-lg mb-2' }, 'Job Tracking'),
                                 React.createElement('p', { className: 'text-gray-600' }, 'Manage jobs, track progress, and schedule appointments')
                             ),
-                            React.createElement('div', { className: 'bg-white p-6 rounded-lg shadow-md' },
+                            React.createElement('div', { className: 'bg-white p-6 rounded-lg shadow-md card hover-scale' },
                                 React.createElement('i', { className: 'fas fa-file-invoice text-purple-500 text-3xl mb-4' }),
                                 React.createElement('h3', { className: 'font-semibold text-lg mb-2' }, 'Invoice Management'),
                                 React.createElement('p', { className: 'text-gray-600' }, 'Create invoices, track payments, and manage revenue')
@@ -303,6 +457,15 @@
                 }
             };
 
+            const loadClientsData = async () => {
+                try {
+                    const data = await api.call('/customers');
+                    setClients(data);
+                } catch (error) {
+                    console.error('Failed to load clients data:', error);
+                }
+            };
+
             const loadJobs = async () => {
                 try {
                     const data = await api.call('/jobs');
@@ -310,6 +473,16 @@
                     setShowViewJobs(true);
                 } catch (error) {
                     console.error('Failed to load jobs:', error);
+                }
+            };
+
+            const loadJobsData = async () => {
+                try {
+                    const data = await api.call('/jobs');
+                    setJobs(data);
+                    console.log('Loaded jobs for invoice:', data);
+                } catch (error) {
+                    console.error('Failed to load jobs data:', error);
                 }
             };
 
@@ -323,10 +496,28 @@
                 }
             };
 
+            const loadElectricians = async () => {
+                try {
+                    const data = await api.call('/electricians');
+                    setElectricians(data);
+                    console.log('Loaded electricians:', data);
+                } catch (error) {
+                    console.error('Failed to load electricians:', error);
+                    // Create default electrician if API fails or no electricians exist
+                    setElectricians([{ 
+                        id: 1, 
+                        name: 'Default Electrician',
+                        email: 'electrician@spark-e.com',
+                        phone: '555-0123',
+                        hourlyRate: 75.0
+                    }]);
+                }
+            };
+
             const loadRevenue = async () => {
                 try {
-                    const stats = await api.call('/dashboard/stats');
-                    setDashboardStats(stats);
+                    // Only refresh data and open revenue modal
+                    await Promise.all([loadInvoices(), loadJobs(), loadClients(), loadElectricians()]);
                     setShowViewRevenue(true);
                 } catch (error) {
                     console.error('Failed to load revenue data:', error);
@@ -387,8 +578,8 @@
                             React.createElement('input', { type: 'text', name: 'username', placeholder: 'Username', className: 'form-input', required: true }),
                             React.createElement('input', { type: 'password', name: 'password', placeholder: 'Password', className: 'form-input', required: true }),
                             React.createElement('div', { className: 'flex justify-between mt-4' },
-                                React.createElement('button', { type: 'submit', className: 'btn btn-primary' }, 'Login'),
-                                React.createElement('button', { type: 'button', onClick: () => setShowLogin(false), className: 'btn btn-secondary' }, 'Cancel')
+                                React.createElement('button', { type: 'submit', className: 'btn btn-primary hover-bounce' }, 'Login'),
+                                React.createElement('button', { type: 'button', onClick: () => setShowLogin(false), className: 'btn btn-secondary hover-bounce' }, 'Cancel')
                             )
                         )
                     )
@@ -418,6 +609,12 @@
 
             const AddClientModal = () => {
                 if (!showAddClient) return null;
+                if (!user) {
+                    alert('Please login to add a client');
+                    setShowAddClient(false);
+                    setShowLogin(true);
+                    return null;
+                }
                 return React.createElement('div', { className: 'modal-overlay' },
                     React.createElement('div', { className: 'modal-content' },
                         React.createElement('h3', { className: 'text-2xl font-bold mb-6' }, 'Add New Client'),
@@ -470,7 +667,9 @@
                                 const jobData = {
                                     description: formData.get('description'),
                                     status: formData.get('status'),
-                                    hoursWorked: parseFloat(formData.get('hoursWorked')) || 0
+                                    hoursWorked: parseFloat(formData.get('hoursWorked')) || 0,
+                                    customer: { id: parseInt(formData.get('customerId')) },
+                                    electrician: { id: parseInt(formData.get('electricianId')) }
                                 };
                                 try {
                                     await api.call('/jobs', {
@@ -485,6 +684,22 @@
                             }
                         },
                             React.createElement('textarea', { name: 'description', placeholder: 'Job Description', className: 'form-input', rows: 3, required: true }),
+                            React.createElement('select', { name: 'customerId', className: 'form-input', required: true },
+                                React.createElement('option', { value: '' }, 'Select Customer'),
+                                ...clients.map(client => 
+                                    React.createElement('option', { key: client.id, value: client.id }, 
+                                        client.firstName + ' ' + client.lastName
+                                    )
+                                )
+                            ),
+                            React.createElement('select', { name: 'electricianId', className: 'form-input', required: true },
+                                React.createElement('option', { value: '' }, 'Select Electrician'),
+                                ...electricians.map(electrician => 
+                                    React.createElement('option', { key: electrician.id, value: electrician.id }, 
+                                        electrician.name || 'Electrician ' + electrician.id
+                                    )
+                                )
+                            ),
                             React.createElement('select', { name: 'status', className: 'form-input', required: true },
                                 React.createElement('option', { value: 'SCHEDULED' }, 'Scheduled'),
                                 React.createElement('option', { value: 'IN_PROGRESS' }, 'In Progress'),
@@ -494,6 +709,79 @@
                             React.createElement('div', { className: 'flex justify-end mt-4' },
                                 React.createElement('button', { type: 'submit', className: 'btn btn-primary' }, 'Create Job'),
                                 React.createElement('button', { type: 'button', onClick: () => setShowAddJob(false), className: 'btn btn-secondary' }, 'Cancel')
+                            )
+                        )
+                    )
+                );
+            };
+
+            const EditJobModal = () => {
+                if (!showEditJob || !editingJob) return null;
+                return React.createElement('div', { className: 'modal-overlay' },
+                    React.createElement('div', { className: 'modal-content' },
+                        React.createElement('h3', { className: 'text-2xl font-bold mb-6' }, 'Edit Job'),
+                        React.createElement('form', {
+                            onSubmit: async (e) => {
+                                e.preventDefault();
+                                const formData = new FormData(e.target);
+                                const jobData = {
+                                    id: editingJob.id,
+                                    description: formData.get('description'),
+                                    status: formData.get('status'),
+                                    hoursWorked: parseFloat(formData.get('hoursWorked')) || 0,
+                                    customer: { id: parseInt(formData.get('customerId')) },
+                                    electrician: { id: parseInt(formData.get('electricianId')) }
+                                };
+                                try {
+                                    await api.call('/jobs/' + editingJob.id, {
+                                        method: 'PUT',
+                                        body: JSON.stringify(jobData)
+                                    });
+                                    setShowEditJob(false);
+                                    setEditingJob(null);
+                                    alert('Job updated successfully!');
+                                    loadJobs(); // Refresh the jobs list
+                                    setShowViewJobs(true); // Reopen view modal to see updated job
+                                } catch (error) {
+                                    alert('Failed to update job: ' + error.message);
+                                }
+                            }
+                        },
+                            React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1' }, 'Job Description'),
+                            React.createElement('textarea', { name: 'description', placeholder: 'Job Description', className: 'form-input', rows: 3, required: true, defaultValue: editingJob.description }),
+                            React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1 mt-3' }, 'Customer'),
+                            React.createElement('select', { name: 'customerId', className: 'form-input', required: true, defaultValue: editingJob.customer?.id },
+                                React.createElement('option', { value: '' }, 'Select Customer'),
+                                ...clients.map(client => 
+                                    React.createElement('option', { key: client.id, value: client.id }, 
+                                        client.firstName + ' ' + client.lastName
+                                    )
+                                )
+                            ),
+                            React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1 mt-3' }, 'Electrician'),
+                            React.createElement('select', { name: 'electricianId', className: 'form-input', required: true, defaultValue: editingJob.electrician?.id },
+                                React.createElement('option', { value: '' }, 'Select Electrician'),
+                                ...electricians.map(electrician => 
+                                    React.createElement('option', { key: electrician.id, value: electrician.id }, 
+                                        electrician.name || 'Electrician ' + electrician.id
+                                    )
+                                )
+                            ),
+                            React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1 mt-3' }, 'Status'),
+                            React.createElement('select', { name: 'status', className: 'form-input', required: true, defaultValue: editingJob.status },
+                                React.createElement('option', { value: 'SCHEDULED' }, 'Scheduled'),
+                                React.createElement('option', { value: 'IN_PROGRESS' }, 'In Progress'),
+                                React.createElement('option', { value: 'COMPLETED' }, 'Completed')
+                            ),
+                            React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1 mt-3' }, 'Hours Worked'),
+                            React.createElement('input', { type: 'number', name: 'hoursWorked', placeholder: 'Hours Worked', className: 'form-input', step: '0.5', min: '0', defaultValue: editingJob.hoursWorked || 0 }),
+                            React.createElement('div', { className: 'flex justify-end mt-6' },
+                                React.createElement('button', { type: 'submit', className: 'btn btn-primary' }, 'Update Job'),
+                                React.createElement('button', { type: 'button', onClick: () => {
+                                    setShowEditJob(false);
+                                    setEditingJob(null);
+                                    setShowViewJobs(true); // Reopen view modal
+                                }, className: 'btn btn-secondary' }, 'Cancel')
                             )
                         )
                     )
@@ -518,12 +806,19 @@
                                     notes: formData.get('notes')
                                 };
                                 try {
-                                    await api.call('/invoices', {
+                                    const createdInvoice = await api.call('/invoices', {
                                         method: 'POST',
                                         body: JSON.stringify(invoiceData)
                                     });
                                     setShowAddInvoice(false);
                                     alert('Invoice created successfully!');
+                                    
+                                    // Load the created invoice and show it
+                                    await loadInvoices();
+                                    const invoiceDetails = await api.call('/invoices/' + createdInvoice.id);
+                                    
+                                    // Show invoice details in a simple modal
+                                    alert(`Invoice #${invoiceDetails.invoiceNumber || invoiceDetails.id} created for Job: ${invoiceDetails.job?.description || 'No description'}\nAmount: $${invoiceDetails.totalAmount || invoiceDetails.amount || '0.00'}\nStatus: ${invoiceDetails.paid ? 'Paid' : 'Unpaid'}`);
                                 } catch (error) {
                                     alert('Failed to create invoice: ' + error.message);
                                 }
@@ -555,6 +850,83 @@
                 );
             };
 
+            const EditInvoiceModal = () => {
+                if (!showEditInvoice || !editingInvoice) return null;
+                return React.createElement('div', { className: 'modal-overlay' },
+                    React.createElement('div', { className: 'modal-content' },
+                        React.createElement('h3', { className: 'text-2xl font-bold mb-6' }, 'Edit Invoice'),
+                        React.createElement('form', {
+                            onSubmit: async (e) => {
+                                e.preventDefault();
+                                const formData = new FormData(e.target);
+                                const invoiceData = {
+                                    id: editingInvoice.id,
+                                    jobId: parseInt(formData.get('jobId')),
+                                    laborCost: parseFloat(formData.get('laborCost')) || 0,
+                                    materialsCost: parseFloat(formData.get('materialsCost')) || 0,
+                                    tax: parseFloat(formData.get('tax')) || 0,
+                                    totalAmount: parseFloat(formData.get('totalAmount')) || 0,
+                                    issueDate: formData.get('issueDate'),
+                                    dueDate: formData.get('dueDate'),
+                                    paid: formData.get('paid') === 'true',
+                                    notes: formData.get('notes')
+                                };
+                                try {
+                                    await api.call('/invoices/' + editingInvoice.id, {
+                                        method: 'PUT',
+                                        body: JSON.stringify(invoiceData)
+                                    });
+                                    setShowEditInvoice(false);
+                                    setEditingInvoice(null);
+                                    alert('Invoice updated successfully!');
+                                    loadInvoices(); // Refresh the invoices list
+                                    setShowViewInvoices(true); // Reopen view modal to see updated invoice
+                                } catch (error) {
+                                    alert('Failed to update invoice: ' + error.message);
+                                }
+                            }
+                        },
+                            React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1' }, 'Job'),
+                            React.createElement('select', { name: 'jobId', className: 'form-input', required: true, defaultValue: editingInvoice.job?.id },
+                                React.createElement('option', { value: '' }, 'Select Job'),
+                                ...jobs.map(job => 
+                                    React.createElement('option', { key: job.id, value: job.id }, 
+                                        job.description ? job.description.substring(0, 50) + '...' : 'Job ' + job.id
+                                    )
+                                )
+                            ),
+                            React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1 mt-3' }, 'Labor Cost ($)'),
+                            React.createElement('input', { type: 'number', name: 'laborCost', placeholder: 'Labor Cost ($)', className: 'form-input', step: '0.01', min: '0', defaultValue: editingInvoice.laborCost || 0 }),
+                            React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1 mt-3' }, 'Materials Cost ($)'),
+                            React.createElement('input', { type: 'number', name: 'materialsCost', placeholder: 'Materials Cost ($)', className: 'form-input', step: '0.01', min: '0', defaultValue: editingInvoice.materialsCost || 0 }),
+                            React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1 mt-3' }, 'Tax ($)'),
+                            React.createElement('input', { type: 'number', name: 'tax', placeholder: 'Tax ($)', className: 'form-input', step: '0.01', min: '0', defaultValue: editingInvoice.tax || 0 }),
+                            React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1 mt-3' }, 'Total Amount ($)'),
+                            React.createElement('input', { type: 'number', name: 'totalAmount', placeholder: 'Total Amount ($)', className: 'form-input', step: '0.01', min: '0', defaultValue: editingInvoice.totalAmount || editingInvoice.amount || 0 }),
+                            React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1 mt-3' }, 'Issue Date'),
+                            React.createElement('input', { type: 'date', name: 'issueDate', className: 'form-input', defaultValue: editingInvoice.issueDate }),
+                            React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1 mt-3' }, 'Due Date'),
+                            React.createElement('input', { type: 'date', name: 'dueDate', className: 'form-input', defaultValue: editingInvoice.dueDate }),
+                            React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1 mt-3' }, 'Payment Status'),
+                            React.createElement('select', { name: 'paid', className: 'form-input', defaultValue: editingInvoice.paid ? 'true' : 'false' },
+                                React.createElement('option', { value: 'false' }, 'Unpaid'),
+                                React.createElement('option', { value: 'true' }, 'Paid')
+                            ),
+                            React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1 mt-3' }, 'Notes'),
+                            React.createElement('textarea', { name: 'notes', placeholder: 'Notes (optional)', className: 'form-input', rows: 3, defaultValue: editingInvoice.notes }),
+                            React.createElement('div', { className: 'flex justify-end mt-6' },
+                                React.createElement('button', { type: 'submit', className: 'btn btn-primary' }, 'Update Invoice'),
+                                React.createElement('button', { type: 'button', onClick: () => {
+                                    setShowEditInvoice(false);
+                                    setEditingInvoice(null);
+                                    setShowViewInvoices(true); // Reopen view modal
+                                }, className: 'btn btn-secondary' }, 'Cancel')
+                            )
+                        )
+                    )
+                );
+            };
+
             const ViewClientsModal = () => {
                 if (!showViewClients) return null;
                 return React.createElement('div', { className: 'modal-overlay' },
@@ -572,7 +944,44 @@
                                         ),
                                         React.createElement('div', { className: 'flex space-x-2' },
                                             React.createElement('button', { className: 'bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm' }, 'Edit'),
-                                            React.createElement('button', { className: 'bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm' }, 'Delete')
+                                            React.createElement('button', { 
+                                                onClick: async () => {
+                                                    // Find all invoices for this client's jobs
+                                                    const clientInvoices = invoices.filter(inv => 
+                                                        inv.job && jobs.find(job => 
+                                                            job.id === inv.job.id && 
+                                                            job.customer && 
+                                                            job.customer.id === client.id
+                                                        )
+                                                    );
+                                                    
+                                                    if (clientInvoices.length > 0) {
+                                                        const invoiceList = clientInvoices.map(inv => 
+                                                            `Invoice #${inv.invoiceNumber || inv.id}: $${inv.totalAmount || inv.amount || '0.00'} - ${inv.paid ? 'Paid' : 'Unpaid'}`
+                                                        ).join('\n');
+                                                        alert(`Invoices for ${client.firstName} ${client.lastName}:\n\n${invoiceList}`);
+                                                    } else {
+                                                        alert(`No invoices found for ${client.firstName} ${client.lastName}. Create jobs and invoices first.`);
+                                                    }
+                                                }, 
+                                                className: 'bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm' 
+                                            }, 'View Invoices'),
+                                            React.createElement('button', { 
+                                                onClick: async () => {
+                                                    if (confirm(`Are you sure you want to delete this client: "${client.firstName} ${client.lastName}"?`)) {
+                                                        try {
+                                                            await api.call('/customers/' + client.id, {
+                                                                method: 'DELETE'
+                                                            });
+                                                            await loadClients(); // Refresh clients list
+                                                            alert('Client deleted successfully!');
+                                                        } catch (error) {
+                                                            alert('Failed to delete client: ' + error.message);
+                                                        }
+                                                    }
+                                                }, 
+                                                className: 'bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm' 
+                                            }, 'Delete')
                                         )
                                     )
                                 )
@@ -600,8 +1009,142 @@
                                             React.createElement('p', { className: 'text-gray-600 text-sm' }, 'Hours: ' + (job.hoursWorked || 0))
                                         ),
                                         React.createElement('div', { className: 'flex space-x-2' },
-                                            React.createElement('button', { className: 'bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm' }, 'Edit'),
-                                            React.createElement('button', { className: 'bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm' }, 'Delete')
+                                            React.createElement('button', { 
+                                                onClick: async () => {
+                                                    await Promise.all([loadClientsData(), loadElectricians()]);
+                                                    setEditingJob(job);
+                                                    setShowViewJobs(false);
+                                                    setShowEditJob(true);
+                                                }, 
+                                                className: 'bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm' 
+                                            }, 'Edit'),
+                                            React.createElement('button', { 
+                                                onClick: async () => {
+                                                    // Load invoices for this specific job
+                                                    try {
+                                                        console.log('Looking for invoice for job ID:', job.id);
+                                                        const jobInvoice = await api.call('/invoices/job/' + job.id);
+                                                        console.log('Found invoice:', jobInvoice);
+                                                        if (jobInvoice) {
+                                                            alert(`Invoice for this job:\nInvoice #${jobInvoice.invoiceNumber || jobInvoice.id}\nAmount: $${jobInvoice.totalAmount || jobInvoice.amount || '0.00'}\nStatus: ${jobInvoice.paid ? 'Paid' : 'Unpaid'}\nIssue Date: ${jobInvoice.issueDate || 'N/A'}\nDue Date: ${jobInvoice.dueDate || 'N/A'}`);
+                                                        } else {
+                                                            alert('No invoice found for this job. Click "Create Invoice" to generate one.');
+                                                        }
+                                                    } catch (error) {
+                                                        console.error('Error looking up invoice:', error);
+                                                        // Try to find invoice by checking all invoices
+                                                        const matchingInvoice = invoices.find(inv => 
+                                                            inv.job && inv.job.id === job.id
+                                                        );
+                                                        if (matchingInvoice) {
+                                                            alert(`Invoice for this job:\nInvoice #${matchingInvoice.invoiceNumber || matchingInvoice.id}\nAmount: $${matchingInvoice.totalAmount || matchingInvoice.amount || '0.00'}\nStatus: ${matchingInvoice.paid ? 'Paid' : 'Unpaid'}\nIssue Date: ${matchingInvoice.issueDate || 'N/A'}\nDue Date: ${matchingInvoice.dueDate || 'N/A'}`);
+                                                        } else {
+                                                            alert('No invoice found for this job. Click "Create Invoice" to generate one.');
+                                                        }
+                                                    }
+                                                }, 
+                                                className: 'bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm' 
+                                            }, 'View Invoice'),
+                                            React.createElement('button', { 
+                                                onClick: async () => {
+                                                    // Generate invoice for this job
+                                                    try {
+                                                        console.log('Generating invoice for job:', job);
+                                                        
+                                                        // Check if invoice already exists
+                                                        try {
+                                                            const existingInvoice = await api.call('/invoices/job/' + job.id);
+                                                            if (existingInvoice) {
+                                                                alert('Invoice already exists for this job. Use "View Invoice" to see details.');
+                                                                return;
+                                                            }
+                                                        } catch (existingError) {
+                                                            console.log('No existing invoice found, proceeding with creation');
+                                                        }
+                                                        
+                                                        // Load jobs data for the invoice modal
+                                                        await loadJobsData();
+                                                        
+                                                        // Pre-fill invoice data with job information
+                                                        const invoiceData = {
+                                                            jobId: job.id,
+                                                            amount: (job.hoursWorked || 1) * 75, // Default hourly rate
+                                                            issueDate: new Date().toISOString().split('T')[0],
+                                                            dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 30 days from now
+                                                            status: 'PENDING',
+                                                            notes: `Invoice for: ${job.description}`
+                                                        };
+                                                        
+                                                        console.log('Creating invoice with data:', invoiceData);
+                                                        
+                                                        // Create the invoice directly
+                                                        const createdInvoice = await api.call('/invoices', {
+                                                            method: 'POST',
+                                                            body: JSON.stringify(invoiceData)
+                                                        });
+                                                        
+                                                        console.log('Created invoice:', createdInvoice);
+                                                        
+                                                        // Refresh invoices
+                                                        await loadInvoices();
+                                                        
+                                                        alert(`Invoice #${createdInvoice.invoiceNumber || createdInvoice.id} generated successfully for job: ${job.description}\nAmount: $${invoiceData.amount}\nDue Date: ${invoiceData.dueDate}`);
+                                                        
+                                                    } catch (error) {
+                                                        console.error('Error generating invoice:', error);
+                                                        alert('Failed to generate invoice: ' + error.message);
+                                                    }
+                                                }, 
+                                                className: 'bg-purple-500 hover:bg-purple-600 text-white px-3 py-1 rounded text-sm' 
+                                            }, 'Generate Invoice'),
+                                            React.createElement('button', { 
+                                                onClick: async () => {
+                                                    // Find invoice for this job and open edit modal
+                                                    try {
+                                                        const jobInvoice = await api.call('/invoices/job/' + job.id);
+                                                        if (jobInvoice) {
+                                                            // Load jobs data first
+                                                            await loadJobsData();
+                                                            // Set up edit invoice and close view jobs, then open edit invoice
+                                                            setEditingInvoice(jobInvoice);
+                                                            setShowViewJobs(false);
+                                                            setShowEditInvoice(true);
+                                                        } else {
+                                                            alert('No invoice found for this job. Generate an invoice first.');
+                                                        }
+                                                    } catch (error) {
+                                                        // Try to find invoice by checking all invoices
+                                                        const matchingInvoice = invoices.find(inv => 
+                                                            inv.job && inv.job.id === job.id
+                                                        );
+                                                        if (matchingInvoice) {
+                                                            await loadJobsData();
+                                                            setEditingInvoice(matchingInvoice);
+                                                            setShowViewJobs(false);
+                                                            setShowEditInvoice(true);
+                                                        } else {
+                                                            alert('No invoice found for this job. Generate an invoice first.');
+                                                        }
+                                                    }
+                                                }, 
+                                                className: 'bg-orange-500 hover:bg-orange-600 text-white px-3 py-1 rounded text-sm' 
+                                            }, 'Edit Invoice'),
+                                            React.createElement('button', { 
+                                                onClick: async () => {
+                                                    if (confirm(`Are you sure you want to delete this job: "${job.description}"?`)) {
+                                                        try {
+                                                            await api.call('/jobs/' + job.id, {
+                                                                method: 'DELETE'
+                                                            });
+                                                            await loadJobs(); // Refresh jobs list
+                                                            alert('Job deleted successfully!');
+                                                        } catch (error) {
+                                                            alert('Failed to delete job: ' + error.message);
+                                                        }
+                                                    }
+                                                }, 
+                                                className: 'bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm' 
+                                            }, 'Delete')
                                         )
                                     )
                                 )
@@ -623,14 +1166,66 @@
                             ...invoices.map(invoice => 
                                 React.createElement('div', { key: invoice.id, className: 'card' },
                                     React.createElement('div', { className: 'flex justify-between items-start' },
-                                        React.createElement('div', null,
-                                            React.createElement('h4', { className: 'font-semibold text-lg' }, 'Invoice #' + invoice.id),
-                                            React.createElement('p', { className: 'text-gray-600 text-sm' }, 'Amount: $' + (invoice.amount || '0.00')),
-                                            React.createElement('p', { className: 'text-gray-600 text-sm' }, 'Status: ' + invoice.status)
+                                        React.createElement('div', { className: 'flex-1' },
+                                            React.createElement('div', { className: 'flex justify-between items-start mb-2' },
+                                                React.createElement('h4', { className: 'font-semibold text-lg' }, 
+                                                    invoice.invoiceNumber ? 'Invoice #' + invoice.invoiceNumber : 'Invoice #' + invoice.id
+                                                ),
+                                                React.createElement('span', { 
+                                                    className: invoice.paid ? 'bg-green-100 text-green-800 px-2 py-1 rounded text-sm' : 'bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-sm'
+                                                }, invoice.paid ? 'Paid' : 'Pending')
+                                            ),
+                                            invoice.job && React.createElement('p', { className: 'text-gray-600 text-sm mb-1' }, 
+                                                'Job: ' + (invoice.job.description || 'No description')
+                                            ),
+                                            React.createElement('div', { className: 'grid grid-cols-2 gap-2 text-sm text-gray-600' },
+                                                React.createElement('div', null,
+                                                    React.createElement('p', null, 'Issue Date: ' + (invoice.issueDate || 'N/A')),
+                                                    React.createElement('p', null, 'Due Date: ' + (invoice.dueDate || 'N/A'))
+                                                ),
+                                                React.createElement('div', null,
+                                                    invoice.paidDate && React.createElement('p', null, 'Paid Date: ' + invoice.paidDate)
+                                                )
+                                            ),
+                                            React.createElement('div', { className: 'mt-2 pt-2 border-t' },
+                                                React.createElement('div', { className: 'grid grid-cols-2 gap-2 text-sm' },
+                                                    React.createElement('div', null,
+                                                        React.createElement('p', { className: 'text-gray-600' }, 'Labor: $' + (invoice.laborCost || '0.00')),
+                                                        React.createElement('p', { className: 'text-gray-600' }, 'Materials: $' + (invoice.materialsCost || '0.00'))
+                                                    ),
+                                                    React.createElement('div', null,
+                                                        React.createElement('p', { className: 'text-gray-600' }, 'Tax: $' + (invoice.tax || '0.00')),
+                                                        React.createElement('p', { className: 'font-semibold text-gray-800' }, 'Total: $' + (invoice.totalAmount || invoice.amount || '0.00'))
+                                                    )
+                                                )
+                                            )
                                         ),
-                                        React.createElement('div', { className: 'flex space-x-2' },
-                                            React.createElement('button', { className: 'bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm' }, 'Edit'),
-                                            React.createElement('button', { className: 'bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm' }, 'Delete')
+                                        React.createElement('div', { className: 'flex space-x-2 ml-4' },
+                                            React.createElement('button', { 
+                                            onClick: async () => {
+                                                await loadJobsData(); // Load jobs first
+                                                setEditingInvoice(invoice);
+                                                setShowViewInvoices(false); 
+                                                setShowEditInvoice(true); 
+                                            }, 
+                                            className: 'bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm' 
+                                        }, 'Edit'),
+                                            React.createElement('button', { 
+                                                onClick: async () => {
+                                                    if (confirm(`Are you sure you want to delete this invoice: "${invoice.invoiceNumber ? 'Invoice #' + invoice.invoiceNumber : 'Invoice #' + invoice.id}"?`)) {
+                                                        try {
+                                                            await api.call('/invoices/' + invoice.id, {
+                                                                method: 'DELETE'
+                                                            });
+                                                            await loadInvoices(); // Refresh invoices list
+                                                            alert('Invoice deleted successfully!');
+                                                        } catch (error) {
+                                                            alert('Failed to delete invoice: ' + error.message);
+                                                        }
+                                                    }
+                                                }, 
+                                                className: 'bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm' 
+                                            }, 'Delete')
                                         )
                                     )
                                 )
@@ -645,23 +1240,152 @@
 
             const ViewRevenueModal = () => {
                 if (!showViewRevenue) return null;
-                return React.createElement('div', { className: 'modal-overlay' },
+                
+                // Get current date for filtering
+                const now = new Date();
+                const currentYear = now.getFullYear();
+                const currentMonth = now.getMonth();
+                
+                // Filter invoices based on selected period
+                const getFilteredInvoices = () => {
+                    if (revenuePeriod === 'monthly') {
+                        return invoices.filter(inv => {
+                            if (!inv.issueDate) return false;
+                            const invDate = new Date(inv.issueDate);
+                            return invDate.getFullYear() === currentYear && invDate.getMonth() === currentMonth;
+                        });
+                    } else if (revenuePeriod === 'yearly') {
+                        return invoices.filter(inv => {
+                            if (!inv.issueDate) return false;
+                            const invDate = new Date(inv.issueDate);
+                            return invDate.getFullYear() === currentYear;
+                        });
+                    } else {
+                        return invoices; // total - all invoices
+                    }
+                };
+                
+                const filteredInvoices = getFilteredInvoices();
+                
+                // Calculate revenue from filtered invoices
+                const paidRevenue = filteredInvoices
+                    .filter(inv => inv.paid)
+                    .reduce((sum, inv) => sum + (inv.totalAmount || inv.amount || 0), 0);
+                
+                const unpaidRevenue = filteredInvoices
+                    .filter(inv => !inv.paid)
+                    .reduce((sum, inv) => sum + (inv.totalAmount || inv.amount || 0), 0);
+                
+                const totalRevenue = paidRevenue + unpaidRevenue;
+                
+                // Calculate job-based revenue
+                const completedJobs = jobs.filter(job => job.status === 'COMPLETED');
+                const activeJobs = jobs.filter(job => job.status === 'IN_PROGRESS');
+                const scheduledJobs = jobs.filter(job => job.status === 'SCHEDULED');
+                
+                // Get period label
+                const getPeriodLabel = () => {
+                    if (revenuePeriod === 'monthly') {
+                        return now.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+                    } else if (revenuePeriod === 'yearly') {
+                        return currentYear.toString();
+                    } else {
+                        return 'All Time';
+                    }
+                };
+                
+                return React.createElement('div', { className: 'modal-overlay revenue-modal' },
                     React.createElement('div', { className: 'modal-content' },
-                        React.createElement('h3', { className: 'text-2xl font-bold mb-6' }, 'Revenue Summary'),
-                        React.createElement('div', { className: 'grid md:grid-cols-2 gap-6' },
-                            React.createElement('div', { className: 'bg-blue-50 p-6 rounded-lg' },
-                                React.createElement('h4', { className: 'font-semibold text-lg text-blue-800' }, 'Total Revenue'),
-                                React.createElement('p', { className: 'text-3xl font-bold text-blue-600' }, '$' + (dashboardStats.monthlyRevenue || '0.00'))
-                            ),
-                            React.createElement('div', { className: 'bg-green-50 p-6 rounded-lg' },
-                                React.createElement('h4', { className: 'font-semibold text-lg text-green-800' }, 'Paid Invoices'),
-                                React.createElement('p', { className: 'text-3xl font-bold text-green-600' }, dashboardStats.totalClients || 0)
+                        React.createElement('div', { className: 'flex justify-between items-center mb-6' },
+                            React.createElement('h3', { className: 'text-2xl font-bold' }, 'Revenue Summary'),
+                            React.createElement('div', { className: 'flex space-x-2' },
+                                React.createElement('button', {
+                                    onClick: () => setRevenuePeriod('monthly'),
+                                    className: revenuePeriod === 'monthly' ? 'bg-blue-500 text-white px-4 py-2 rounded' : 'bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300'
+                                }, 'Monthly'),
+                                React.createElement('button', {
+                                    onClick: () => setRevenuePeriod('yearly'),
+                                    className: revenuePeriod === 'yearly' ? 'bg-blue-500 text-white px-4 py-2 rounded' : 'bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300'
+                                }, 'Yearly'),
+                                React.createElement('button', {
+                                    onClick: () => setRevenuePeriod('total'),
+                                    className: revenuePeriod === 'total' ? 'bg-blue-500 text-white px-4 py-2 rounded' : 'bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300'
+                                }, 'Total')
                             )
                         ),
-                        React.createElement('div', { className: 'mt-6 bg-gray-100 p-4 rounded-lg' },
-                            React.createElement('h4', { className: 'font-semibold text-lg text-gray-800' }, 'Revenue Breakdown'),
-                            React.createElement('p', { className: 'text-gray-600' }, 'Active Jobs: ' + (dashboardStats.activeJobs || 0)),
-                            React.createElement('p', { className: 'text-gray-600' }, 'Pending Invoices: ' + (dashboardStats.pendingInvoices || 0))
+                        React.createElement('div', { className: 'bg-gray-50 p-4 rounded-lg mb-6' },
+                            React.createElement('p', { className: 'text-center text-gray-600' }, 'Revenue for ' + getPeriodLabel())
+                        ),
+                        React.createElement('div', { className: 'grid md:grid-cols-3 gap-4 mb-6' },
+                            React.createElement('div', { className: 'bg-blue-50 p-6 rounded-lg' },
+                                React.createElement('h4', { className: 'font-semibold text-lg text-blue-800' }, 'Total Revenue'),
+                                React.createElement('p', { className: 'text-3xl font-bold text-blue-600' }, '$' + totalRevenue.toFixed(2))
+                            ),
+                            React.createElement('div', { className: 'bg-green-50 p-6 rounded-lg' },
+                                React.createElement('h4', { className: 'font-semibold text-lg text-green-800' }, 'Paid Revenue'),
+                                React.createElement('p', { className: 'text-3xl font-bold text-green-600' }, '$' + paidRevenue.toFixed(2))
+                            ),
+                            React.createElement('div', { className: 'bg-yellow-50 p-6 rounded-lg' },
+                                React.createElement('h4', { className: 'font-semibold text-lg text-yellow-800' }, 'Unpaid Revenue'),
+                                React.createElement('p', { className: 'text-3xl font-bold text-yellow-600' }, '$' + unpaidRevenue.toFixed(2))
+                            )
+                        ),
+                        React.createElement('div', { className: 'grid md:grid-cols-2 gap-6 mb-6' },
+                            React.createElement('div', { className: 'bg-purple-50 p-6 rounded-lg' },
+                                React.createElement('h4', { className: 'font-semibold text-lg text-purple-800 mb-3' }, 'Invoice Status'),
+                                React.createElement('div', { className: 'space-y-2' },
+                                    React.createElement('div', { className: 'flex justify-between' },
+                                        React.createElement('span', { className: 'text-gray-600' }, 'Total Invoices:'),
+                                        React.createElement('span', { className: 'font-semibold' }, filteredInvoices.length)
+                                    ),
+                                    React.createElement('div', { className: 'flex justify-between' },
+                                        React.createElement('span', { className: 'text-green-600' }, 'Paid Invoices:'),
+                                        React.createElement('span', { className: 'font-semibold text-green-600' }, filteredInvoices.filter(inv => inv.paid).length)
+                                    ),
+                                    React.createElement('div', { className: 'flex justify-between' },
+                                        React.createElement('span', { className: 'text-yellow-600' }, 'Unpaid Invoices:'),
+                                        React.createElement('span', { className: 'font-semibold text-yellow-600' }, filteredInvoices.filter(inv => !inv.paid).length)
+                                    )
+                                )
+                            ),
+                            React.createElement('div', { className: 'bg-indigo-50 p-6 rounded-lg' },
+                                React.createElement('h4', { className: 'font-semibold text-lg text-indigo-800 mb-3' }, 'Job Status'),
+                                React.createElement('div', { className: 'space-y-2' },
+                                    React.createElement('div', { className: 'flex justify-between' },
+                                        React.createElement('span', { className: 'text-gray-600' }, 'Total Jobs:'),
+                                        React.createElement('span', { className: 'font-semibold' }, jobs.length)
+                                    ),
+                                    React.createElement('div', { className: 'flex justify-between' },
+                                        React.createElement('span', { className: 'text-green-600' }, 'Completed:'),
+                                        React.createElement('span', { className: 'font-semibold text-green-600' }, completedJobs.length)
+                                    ),
+                                    React.createElement('div', { className: 'flex justify-between' },
+                                        React.createElement('span', { className: 'text-blue-600' }, 'In Progress:'),
+                                        React.createElement('span', { className: 'font-semibold text-blue-600' }, activeJobs.length)
+                                    ),
+                                    React.createElement('div', { className: 'flex justify-between' },
+                                        React.createElement('span', { className: 'text-gray-500' }, 'Scheduled:'),
+                                        React.createElement('span', { className: 'font-semibold text-gray-500' }, scheduledJobs.length)
+                                    )
+                                )
+                            )
+                        ),
+                        React.createElement('div', { className: 'bg-gray-100 p-4 rounded-lg' },
+                            React.createElement('h4', { className: 'font-semibold text-lg text-gray-800 mb-2' }, 'Business Overview'),
+                            React.createElement('div', { className: 'grid md:grid-cols-3 gap-4 text-sm' },
+                                React.createElement('div', null,
+                                    React.createElement('p', { className: 'text-gray-600' }, 'Total Clients: ' + clients.length),
+                                    React.createElement('p', { className: 'text-gray-600' }, 'Total Electricians: ' + electricians.length)
+                                ),
+                                React.createElement('div', null,
+                                    React.createElement('p', { className: 'text-gray-600' }, 'Avg Invoice Value: $' + (filteredInvoices.length > 0 ? (paidRevenue / filteredInvoices.length).toFixed(2) : '0.00')),
+                                    React.createElement('p', { className: 'text-gray-600' }, 'Payment Rate: ' + (filteredInvoices.length > 0 ? ((paidRevenue / totalRevenue) * 100).toFixed(1) : '0') + '%')
+                                ),
+                                React.createElement('div', null,
+                                    React.createElement('p', { className: 'text-gray-600' }, 'Active Jobs: ' + activeJobs.length),
+                                    React.createElement('p', { className: 'text-gray-600' }, 'Pending Revenue: $' + unpaidRevenue.toFixed(2))
+                                )
+                            )
                         ),
                         React.createElement('div', { className: 'flex justify-end mt-6' },
                             React.createElement('button', { onClick: () => setShowViewRevenue(false), className: 'btn btn-secondary' }, 'Close')
@@ -679,7 +1403,9 @@
                 React.createElement(RegisterModal),
                 React.createElement(AddClientModal),
                 React.createElement(AddJobModal),
+                React.createElement(EditJobModal),
                 React.createElement(AddInvoiceModal),
+                React.createElement(EditInvoiceModal),
                 React.createElement(ViewClientsModal),
                 React.createElement(ViewJobsModal),
                 React.createElement(ViewInvoicesModal),

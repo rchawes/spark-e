@@ -13,6 +13,10 @@ public class Invoice {
     @OneToOne
     @JoinColumn(name = "job_id", unique = true)
     private Job job;
+    
+    // Transient field for JSON deserialization
+    @Transient
+    private Long jobId;
 
     private String invoiceNumber;
     private LocalDate issueDate;
@@ -32,6 +36,9 @@ public class Invoice {
 
     public Job getJob() { return job; }
     public void setJob(Job job) { this.job = job; }
+
+    public Long getJobId() { return jobId; }
+    public void setJobId(Long jobId) { this.jobId = jobId; }
 
     public String getInvoiceNumber() { return invoiceNumber; }
     public void setInvoiceNumber(String invoiceNumber) { this.invoiceNumber = invoiceNumber; }

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>React Debug</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div id="root"></div>
+    <script>
+        console.log('Debug: Starting React app...');
+        
+        try {
+            const { useState } = React;
+            console.log('Debug: React hooks available');
+            
+            const TestApp = () => {
+                const [count, setCount] = useState(0);
+                console.log('Debug: TestApp rendering, count:', count);
+                
+                return React.createElement('div', {
+                    className: 'container mx-auto px-4 py-8 text-center'
+                }, [
+                    React.createElement('h1', {
+                        key: 'title',
+                        className: 'text-4xl font-bold text-blue-600 mb-4'
+                    }, '⚡ Spark-E Test'),
+                    React.createElement('p', {
+                        key: 'subtitle',
+                        className: 'text-xl text-gray-600 mb-6'
+                    }, 'React is working!'),
+                    React.createElement('button', {
+                        key: 'button',
+                        onClick: () => setCount(count + 1),
+                        className: 'bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg'
+                    }, `Clicked ${count} times`)
+                ]);
+            };
+            
+            console.log('Debug: Creating root...');
+            const root = ReactDOM.createRoot(document.getElementById('root'));
+            console.log('Debug: Rendering app...');
+            root.render(React.createElement(TestApp));
+            console.log('Debug: App rendered successfully!');
+            
+        } catch (error) {
+            console.error('Debug: Error:', error);
+            document.getElementById('root').innerHTML = `
+                <div class="container mx-auto px-4 py-8 text-center">
+                    <h1 class="text-4xl font-bold text-red-600 mb-4">React Error</h1>
+                    <p class="text-xl text-gray-600">${error.message}</p>
+                    <pre class="bg-gray-100 p-4 mt-4 text-left">${error.stack}</pre>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

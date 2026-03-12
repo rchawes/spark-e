@@ -1,7 +1,9 @@
 package com.electrician.spark_e.controller;
 
 import com.electrician.spark_e.model.User;
+import com.electrician.spark_e.model.Electrician;
 import com.electrician.spark_e.repository.UserRepository;
+import com.electrician.spark_e.repository.ElectricianRepository;
 import com.electrician.spark_e.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +32,9 @@ public class AuthController {
     private UserRepository userRepository;
 
     @Autowired
+    private ElectricianRepository electricianRepository;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @PostMapping("/register")
@@ -42,6 +47,17 @@ public class AuthController {
             user.setRole("ROLE_ELECTRICIAN");
         }
         userRepository.save(user);
+        
+        // Create electrician record if registering as electrician
+        if ("ROLE_ELECTRICIAN".equals(user.getRole())) {
+            Electrician electrician = new Electrician();
+            electrician.setName(user.getUsername());
+            electrician.setEmail(user.getUsername() + "@spark-e.com");
+            electrician.setPhone("555-0000");
+            electrician.setHourlyRate(75.0);
+            electricianRepository.save(electrician);
+        }
+        
         return ResponseEntity.ok(Map.of("message", "User registered successfully"));
     }
 
