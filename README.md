@@ -84,6 +84,16 @@ I'm actively looking for my first software engineering role. If you have feedbac
 LinkedIn: https://www.linkedin.com/in/richard-hawes-a4533399/
 GitHub: https://github.com/rchawes
 
+## License
+
+© 2026 Richard Hawes. All rights reserved.
+
+This source code is provided for viewing and educational purposes only. 
+No permission is granted to use, copy, modify, distribute, or create 
+derivative works from this software without explicit written permission.
+
+For licensing inquiries: rchawes@gmail.com
+
 
 Thank you!
 =======
