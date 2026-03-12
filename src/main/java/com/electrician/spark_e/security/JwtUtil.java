@@ -20,9 +20,15 @@ public class JwtUtil {
     private final Long expiration;
     private Key signingKey;
 
-    public JwtUtil(@Value("${jwt.secret}") String secret, @Value("${jwt.expiration}") Long expiration) {
+    public JwtUtil(@Value("${jwt.secret}") String secret, @Value("${jwt.expiration:86400000}") String expiration) {
         this.secret = secret;
-        this.expiration = expiration;
+        Long parsedExpiration;
+        try {
+            parsedExpiration = Long.parseLong(expiration);
+        } catch (NumberFormatException e) {
+            parsedExpiration = 86400000L; // default 24 hours
+        }
+        this.expiration = parsedExpiration;
     }
 
     @PostConstruct

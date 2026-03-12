@@ -19,9 +19,11 @@ class SparkEApp {
         
         // Modal close buttons
         document.getElementById('closeLoginModal').addEventListener('click', () => this.hideLoginModal());
+        document.getElementById('closeRegisterModal').addEventListener('click', () => this.hideRegisterModal());
         
         // Forms
         document.getElementById('loginForm').addEventListener('submit', (e) => this.handleLogin(e));
+        document.getElementById('registerForm').addEventListener('submit', (e) => this.handleRegister(e));
         
         // Close modal on backdrop click
         document.getElementById('loginModal').addEventListener('click', (e) => {
@@ -29,13 +31,19 @@ class SparkEApp {
                 this.hideLoginModal();
             }
         });
+        
+        document.getElementById('registerModal').addEventListener('click', (e) => {
+            if (e.target.id === 'registerModal') {
+                this.hideRegisterModal();
+            }
+        });
     }
 
     // Authentication methods
     async handleLogin(e) {
         e.preventDefault();
-        const username = document.getElementById('username').value;
-        const password = document.getElementById('password').value;
+        const username = document.getElementById('loginUsername').value;
+        const password = document.getElementById('loginPassword').value;
 
         try {
             const response = await this.apiCall('/auth/login', {
@@ -53,6 +61,37 @@ class SparkEApp {
             }
         } catch (error) {
             this.showToast('Login failed: ' + error.message, 'error');
+        }
+    }
+
+    async handleRegister(e) {
+        e.preventDefault();
+        const username = document.getElementById('registerUsername').value;
+        const password = document.getElementById('registerPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        const role = document.getElementById('userRole').value;
+
+        // Validate passwords match
+        if (password !== confirmPassword) {
+            this.showToast('Passwords do not match!', 'error');
+            return;
+        }
+
+        try {
+            const response = await this.apiCall('/auth/register', {
+                method: 'POST',
+                body: JSON.stringify({ username, password, role })
+            });
+
+            this.hideRegisterModal();
+            this.showToast('Registration successful! Please login.', 'success');
+            
+            // Auto-fill login form and show login modal
+            document.getElementById('loginUsername').value = username;
+            this.showLoginModal();
+            
+        } catch (error) {
+            this.showToast('Registration failed: ' + error.message, 'error');
         }
     }
 
@@ -92,8 +131,14 @@ class SparkEApp {
     }
 
     showRegisterModal() {
-        // TODO: Implement registration modal
-        this.showToast('Registration feature coming soon!', 'warning');
+        document.getElementById('registerModal').classList.remove('hidden');
+        document.getElementById('registerModal').classList.add('flex');
+    }
+
+    hideRegisterModal() {
+        document.getElementById('registerModal').classList.add('hidden');
+        document.getElementById('registerModal').classList.remove('flex');
+        document.getElementById('registerForm').reset();
     }
 
     showDashboard() {

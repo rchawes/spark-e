@@ -51,14 +51,6 @@ public class CustomerCache {
     }
 
     /**
-     * Find customers by electrician ID
-     */
-    @Cacheable(key = "'electrician:' + #electricianId")
-    public List<Customer> findByElectricianId(@NonNull Long electricianId) {
-        return customerRepository.findByElectricianId(electricianId);
-    }
-
-    /**
      * Check if customer exists - cached
      */
     @Cacheable(key = "'exists:' + #id")
@@ -89,8 +81,7 @@ public class CustomerCache {
         put = @CachePut(key = "#id"),
         evict = {
             @CacheEvict(value = "allCustomers", allEntries = true),
-            @CacheEvict(key = "'email:' + #customer.email", condition = "#customer.email != null"),
-            @CacheEvict(key = "'electrician:' + #customer.electrician.id", condition = "#customer.electrician != null")
+            @CacheEvict(key = "'email:' + #customer.email", condition = "#customer.email != null")
         }
     )
     public @NonNull Customer update(@NonNull Long id, @NonNull Customer customer) {
