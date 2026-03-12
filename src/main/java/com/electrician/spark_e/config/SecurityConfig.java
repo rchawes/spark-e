@@ -28,7 +28,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())   // <-- this disables CSRF
                 .headers(headers -> headers.frameOptions().disable())
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/", "/index.html", "/index-react.html", "/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
+                        .requestMatchers("/", "/index.html", "/index-react.html", "/spark-e.html", "/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/dashboard/**").permitAll()
                         .requestMatchers("/api/jobs/**").permitAll()

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>React Debug Test</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script>
+        console.log('Starting React debug test...');
+        console.log('React available:', typeof React !== 'undefined');
+        console.log('ReactDOM available:', typeof ReactDOM !== 'undefined');
+        console.log('Babel available:', typeof Babel !== 'undefined');
+        
+        if (typeof React === 'undefined') {
+            document.getElementById('root').innerHTML = '<h1 style="color: red;">React not loaded</h1>';
+        } else if (typeof ReactDOM === 'undefined') {
+            document.getElementById('root').innerHTML = '<h1 style="color: red;">ReactDOM not loaded</h1>';
+        } else if (typeof Babel === 'undefined') {
+            document.getElementById('root').innerHTML = '<h1 style="color: red;">Babel not loaded</h1>';
+        } else {
+            console.log('All libraries loaded, trying JSX...');
+            
+            try {
+                const { useState } = React;
+                console.log('React hooks available:', typeof useState !== 'undefined');
+                
+                // Simple JSX test
+                const TestComponent = () => {
+                    const [count, setCount] = React.useState(0);
+                    return React.createElement('div', null,
+                        React.createElement('h1', null, 'React Test Working!'),
+                        React.createElement('p', null, `Count: ${count}`),
+                        React.createElement('button', {
+                            onClick: () => setCount(count + 1)
+                        }, 'Click me')
+                    );
+                };
+                
+                const root = ReactDOM.createRoot(document.getElementById('root'));
+                root.render(React.createElement(TestComponent));
+                console.log('React component rendered successfully');
+                
+            } catch (error) {
+                console.error('React error:', error);
+                document.getElementById('root').innerHTML = `<h1 style="color: red;">React Error: ${error.message}</h1>`;
+            }
+        }
+    </script>
+</body>
+</html>

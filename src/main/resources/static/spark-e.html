@@ -6,7 +6,6 @@
     <title>Spark-E - Electrician Trade Manager</title>
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -69,8 +68,8 @@
 </head>
 <body>
     <div id="root"></div>
-    <script type="text/babel">
-        console.log('React app starting...');
+    <script>
+        console.log('Spark-E React app starting...');
         
         const { useState, useEffect } = React;
         
@@ -106,7 +105,7 @@
             const [showViewClients, setShowViewClients] = useState(false);
             const [showViewJobs, setShowViewJobs] = useState(false);
             const [showViewInvoices, setShowViewInvoices] = useState(false);
-            const [showViewRevenue, setShowViewRevenue] = useState(false);
+            const [showAddInvoice, setShowAddInvoice] = useState(false);
             
             const [clients, setClients] = useState([]);
             const [jobs, setJobs] = useState([]);
@@ -123,8 +122,8 @@
             }, []);
 
             // Navigation Component
-            const Navigation = () => (
-                React.createElement('nav', { className: 'bg-blue-600 text-white shadow-lg' },
+            const Navigation = () => {
+                return React.createElement('nav', { className: 'bg-blue-600 text-white shadow-lg' },
                     React.createElement('div', { className: 'container mx-auto px-4' },
                         React.createElement('div', { className: 'flex justify-between items-center py-4' },
                             React.createElement('div', { className: 'flex items-center space-x-3' },
@@ -154,12 +153,12 @@
                             )
                         )
                     )
-                )
-            );
+                );
+            };
 
             // Dashboard Component
-            const Dashboard = () => (
-                React.createElement('div', { className: 'container mx-auto px-4 py-8' },
+            const Dashboard = () => {
+                return React.createElement('div', { className: 'container mx-auto px-4 py-8' },
                     React.createElement('div', { className: 'grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8' },
                         React.createElement('div', { className: 'bg-white p-6 rounded-lg shadow-md' },
                             React.createElement('div', { className: 'flex items-center justify-between' },
@@ -192,7 +191,7 @@
                             React.createElement('div', { className: 'flex items-center justify-between' },
                                 React.createElement('div', null,
                                     React.createElement('p', { className: 'text-gray-500 text-sm' }, 'Monthly Revenue'),
-                                    React.createElement('p', { className: 'text-2xl font-bold text-gray-800' }, `$${dashboardStats.monthlyRevenue || 0}`)
+                                    React.createElement('p', { className: 'text-2xl font-bold text-gray-800' }, '$' + (dashboardStats.monthlyRevenue || 0))
                                 ),
                                 React.createElement('i', { className: 'fas fa-chart-line text-purple-500 text-2xl' })
                             )
@@ -200,30 +199,21 @@
                     ),
                     
                     // Quick Actions
-                    React.createElement('div', { className: 'bg-white rounded-lg shadow-md p-6' },
+                    React.createElement('div', { className: 'bg-white rounded-lg shadow-md p-6 mb-6' },
                         React.createElement('h3', { className: 'text-xl font-semibold mb-4' }, 'Quick Actions'),
                         React.createElement('div', { className: 'grid md:grid-cols-3 gap-4' },
                             React.createElement('button', {
                                 onClick: () => setShowAddJob(true),
                                 className: 'btn btn-primary'
-                            }, React.createElement(React.Fragment, null,
-                                React.createElement('i', { className: 'fas fa-plus mr-2' }),
-                                'New Job'
-                            )),
+                            }, 'New Job'),
                             React.createElement('button', {
                                 onClick: () => setShowAddClient(true),
                                 className: 'btn btn-secondary'
-                            }, React.createElement(React.Fragment, null,
-                                React.createElement('i', { className: 'fas fa-user-plus mr-2' }),
-                                'Add Client'
-                            )),
+                            }, 'Add Client'),
                             React.createElement('button', {
-                                onClick: () => alert('Create Invoice feature coming soon!'),
+                                onClick: () => setShowAddInvoice(true),
                                 className: 'btn btn-secondary'
-                            }, React.createElement(React.Fragment, null,
-                                React.createElement('i', { className: 'fas fa-file-invoice-dollar mr-2' }),
-                                'Create Invoice'
-                            ))
+                            }, 'Create Invoice')
                         )
                     ),
                     
@@ -234,39 +224,27 @@
                             React.createElement('button', {
                                 onClick: () => loadClients(),
                                 className: 'bg-teal-500 hover:bg-teal-600 text-white py-3 px-4 rounded transition'
-                            }, React.createElement(React.Fragment, null,
-                                React.createElement('i', { className: 'fas fa-users mr-2' }),
-                                'View Clients'
-                            )),
+                            }, 'View Clients'),
                             React.createElement('button', {
                                 onClick: () => loadJobs(),
                                 className: 'bg-orange-500 hover:bg-orange-600 text-white py-3 px-4 rounded transition'
-                            }, React.createElement(React.Fragment, null,
-                                React.createElement('i', { className: 'fas fa-clipboard-list mr-2' }),
-                                'View Jobs'
-                            )),
+                            }, 'View Jobs'),
                             React.createElement('button', {
                                 onClick: () => loadInvoices(),
                                 className: 'bg-indigo-500 hover:bg-indigo-600 text-white py-3 px-4 rounded transition'
-                            }, React.createElement(React.Fragment, null,
-                                React.createElement('i', { className: 'fas fa-file-invoice mr-2' }),
-                                'View Invoices'
-                            )),
+                            }, 'View Invoices'),
                             React.createElement('button', {
                                 onClick: () => loadRevenue(),
                                 className: 'bg-pink-500 hover:bg-pink-600 text-white py-3 px-4 rounded transition'
-                            }, React.createElement(React.Fragment, null,
-                                React.createElement('i', { className: 'fas fa-chart-line mr-2' }),
-                                'View Revenue'
-                            ))
+                            }, 'View Revenue')
                         )
                     )
-                )
-            );
+                );
+            };
 
             // Landing Page Component
-            const LandingPage = () => (
-                React.createElement('div', { className: 'container mx-auto px-4 py-8' },
+            const LandingPage = () => {
+                return React.createElement('div', { className: 'container mx-auto px-4 py-8' },
                     React.createElement('div', { className: 'text-center mb-12' },
                         React.createElement('h1', { className: 'text-4xl font-bold text-gray-800 mb-4' }, '⚡ Spark-E'),
                         React.createElement('p', { className: 'text-xl text-gray-600 mb-8' }, 'Electrician Trade Business Manager'),
@@ -302,10 +280,10 @@
                             }, 'Register')
                         )
                     )
-                )
-            );
+                );
+            };
 
-            // Load dashboard data
+            // Load functions
             const loadDashboardData = async () => {
                 try {
                     const stats = await api.call('/dashboard/stats');
@@ -400,76 +378,47 @@
             };
 
             // Modal Components
-            const LoginModal = () => (
-                showLogin && React.createElement('div', { className: 'modal-overlay' },
+            const LoginModal = () => {
+                if (!showLogin) return null;
+                return React.createElement('div', { className: 'modal-overlay' },
                     React.createElement('div', { className: 'modal-content' },
                         React.createElement('h3', { className: 'text-2xl font-bold mb-6' }, 'Login'),
                         React.createElement('form', { onSubmit: handleLogin },
-                            React.createElement('input', {
-                                type: 'text',
-                                name: 'username',
-                                placeholder: 'Username',
-                                className: 'form-input',
-                                required: true
-                            }),
-                            React.createElement('input', {
-                                type: 'password',
-                                name: 'password',
-                                placeholder: 'Password',
-                                className: 'form-input',
-                                required: true
-                            }),
+                            React.createElement('input', { type: 'text', name: 'username', placeholder: 'Username', className: 'form-input', required: true }),
+                            React.createElement('input', { type: 'password', name: 'password', placeholder: 'Password', className: 'form-input', required: true }),
                             React.createElement('div', { className: 'flex justify-between mt-4' },
                                 React.createElement('button', { type: 'submit', className: 'btn btn-primary' }, 'Login'),
-                                React.createElement('button', {
-                                    type: 'button',
-                                    onClick: () => setShowLogin(false),
-                                    className: 'btn btn-secondary'
-                                }, 'Cancel')
+                                React.createElement('button', { type: 'button', onClick: () => setShowLogin(false), className: 'btn btn-secondary' }, 'Cancel')
                             )
                         )
                     )
-                )
-            );
+                );
+            };
 
-            const RegisterModal = () => (
-                showRegister && React.createElement('div', { className: 'modal-overlay' },
+            const RegisterModal = () => {
+                if (!showRegister) return null;
+                return React.createElement('div', { className: 'modal-overlay' },
                     React.createElement('div', { className: 'modal-content' },
                         React.createElement('h3', { className: 'text-2xl font-bold mb-6' }, 'Register'),
                         React.createElement('form', { onSubmit: handleRegister },
-                            React.createElement('input', {
-                                type: 'text',
-                                name: 'username',
-                                placeholder: 'Username',
-                                className: 'form-input',
-                                required: true
-                            }),
-                            React.createElement('input', {
-                                type: 'password',
-                                name: 'password',
-                                placeholder: 'Password',
-                                className: 'form-input',
-                                required: true
-                            }),
+                            React.createElement('input', { type: 'text', name: 'username', placeholder: 'Username', className: 'form-input', required: true }),
+                            React.createElement('input', { type: 'password', name: 'password', placeholder: 'Password', className: 'form-input', required: true }),
                             React.createElement('select', { name: 'role', className: 'form-input', required: true },
                                 React.createElement('option', { value: 'ROLE_ELECTRICIAN' }, 'Electrician'),
                                 React.createElement('option', { value: 'ROLE_ADMIN' }, 'Admin')
                             ),
                             React.createElement('div', { className: 'flex justify-between mt-4' },
                                 React.createElement('button', { type: 'submit', className: 'btn btn-primary' }, 'Register'),
-                                React.createElement('button', {
-                                    type: 'button',
-                                    onClick: () => setShowRegister(false),
-                                    className: 'btn btn-secondary'
-                                }, 'Cancel')
+                                React.createElement('button', { type: 'button', onClick: () => setShowRegister(false), className: 'btn btn-secondary' }, 'Cancel')
                             )
                         )
                     )
-                )
-            );
+                );
+            };
 
-            const AddClientModal = () => (
-                showAddClient && React.createElement('div', { className: 'modal-overlay' },
+            const AddClientModal = () => {
+                if (!showAddClient) return null;
+                return React.createElement('div', { className: 'modal-overlay' },
                     React.createElement('div', { className: 'modal-content' },
                         React.createElement('h3', { className: 'text-2xl font-bold mb-6' }, 'Add New Client'),
                         React.createElement('form', {
@@ -502,19 +451,16 @@
                             React.createElement('input', { type: 'text', name: 'address', placeholder: 'Address', className: 'form-input', required: true }),
                             React.createElement('div', { className: 'flex justify-end mt-4' },
                                 React.createElement('button', { type: 'submit', className: 'btn btn-primary' }, 'Add Client'),
-                                React.createElement('button', {
-                                    type: 'button',
-                                    onClick: () => setShowAddClient(false),
-                                    className: 'btn btn-secondary'
-                                }, 'Cancel')
+                                React.createElement('button', { type: 'button', onClick: () => setShowAddClient(false), className: 'btn btn-secondary' }, 'Cancel')
                             )
                         )
                     )
-                )
-            );
+                );
+            };
 
-            const AddJobModal = () => (
-                showAddJob && React.createElement('div', { className: 'modal-overlay' },
+            const AddJobModal = () => {
+                if (!showAddJob) return null;
+                return React.createElement('div', { className: 'modal-overlay' },
                     React.createElement('div', { className: 'modal-content' },
                         React.createElement('h3', { className: 'text-2xl font-bold mb-6' }, 'Create New Job'),
                         React.createElement('form', {
@@ -547,27 +493,79 @@
                             React.createElement('input', { type: 'number', name: 'hoursWorked', placeholder: 'Hours Worked', className: 'form-input', step: '0.5', min: '0' }),
                             React.createElement('div', { className: 'flex justify-end mt-4' },
                                 React.createElement('button', { type: 'submit', className: 'btn btn-primary' }, 'Create Job'),
-                                React.createElement('button', {
-                                    type: 'button',
-                                    onClick: () => setShowAddJob(false),
-                                    className: 'btn btn-secondary'
-                                }, 'Cancel')
+                                React.createElement('button', { type: 'button', onClick: () => setShowAddJob(false), className: 'btn btn-secondary' }, 'Cancel')
                             )
                         )
                     )
-                )
-            );
+                );
+            };
 
-            const ViewClientsModal = () => (
-                showViewClients && React.createElement('div', { className: 'modal-overlay' },
+            const AddInvoiceModal = () => {
+                if (!showAddInvoice) return null;
+                return React.createElement('div', { className: 'modal-overlay' },
+                    React.createElement('div', { className: 'modal-content' },
+                        React.createElement('h3', { className: 'text-2xl font-bold mb-6' }, 'Create New Invoice'),
+                        React.createElement('form', {
+                            onSubmit: async (e) => {
+                                e.preventDefault();
+                                const formData = new FormData(e.target);
+                                const invoiceData = {
+                                    jobId: parseInt(formData.get('jobId')),
+                                    amount: parseFloat(formData.get('amount')),
+                                    issueDate: formData.get('issueDate'),
+                                    dueDate: formData.get('dueDate'),
+                                    status: formData.get('status'),
+                                    notes: formData.get('notes')
+                                };
+                                try {
+                                    await api.call('/invoices', {
+                                        method: 'POST',
+                                        body: JSON.stringify(invoiceData)
+                                    });
+                                    setShowAddInvoice(false);
+                                    alert('Invoice created successfully!');
+                                } catch (error) {
+                                    alert('Failed to create invoice: ' + error.message);
+                                }
+                            }
+                        },
+                            React.createElement('select', { name: 'jobId', className: 'form-input', required: true },
+                                React.createElement('option', { value: '' }, 'Select Job'),
+                                ...jobs.map(job => 
+                                    React.createElement('option', { key: job.id, value: job.id }, 
+                                        job.description ? job.description.substring(0, 50) + '...' : 'Job ' + job.id
+                                    )
+                                )
+                            ),
+                            React.createElement('input', { type: 'number', name: 'amount', placeholder: 'Amount ($)', className: 'form-input', step: '0.01', min: '0', required: true }),
+                            React.createElement('input', { type: 'date', name: 'issueDate', className: 'form-input', required: true }),
+                            React.createElement('input', { type: 'date', name: 'dueDate', className: 'form-input', required: true }),
+                            React.createElement('select', { name: 'status', className: 'form-input', required: true },
+                                React.createElement('option', { value: 'PENDING' }, 'Pending'),
+                                React.createElement('option', { value: 'PAID' }, 'Paid'),
+                                React.createElement('option', { value: 'OVERDUE' }, 'Overdue')
+                            ),
+                            React.createElement('textarea', { name: 'notes', placeholder: 'Notes (optional)', className: 'form-input', rows: 3 }),
+                            React.createElement('div', { className: 'flex justify-end mt-4' },
+                                React.createElement('button', { type: 'submit', className: 'btn btn-primary' }, 'Create Invoice'),
+                                React.createElement('button', { type: 'button', onClick: () => setShowAddInvoice(false), className: 'btn btn-secondary' }, 'Cancel')
+                            )
+                        )
+                    )
+                );
+            };
+
+            const ViewClientsModal = () => {
+                if (!showViewClients) return null;
+                return React.createElement('div', { className: 'modal-overlay' },
                     React.createElement('div', { className: 'modal-content' },
                         React.createElement('h3', { className: 'text-2xl font-bold mb-6' }, 'All Clients'),
                         React.createElement('div', { className: 'space-y-4' },
                             ...clients.map(client => 
-                                React.createElement('div', { className: 'card' },
+                                React.createElement('div', { key: client.id, className: 'card' },
                                     React.createElement('div', { className: 'flex justify-between items-start' },
                                         React.createElement('div', null,
-                                            React.createElement('h4', { className: 'font-semibold text-lg' }, `${client.firstName} ${client.lastName}`),
+                                            React.createElement('h4', { className: 'font-semibold text-lg' }, client.firstName + ' ' + client.lastName),
                                             React.createElement('p', { className: 'text-gray-600 text-sm' }, client.email),
                                             React.createElement('p', { className: 'text-gray-600 text-sm' }, client.phone),
                                             React.createElement('p', { className: 'text-gray-600 text-sm' }, client.address)
@@ -581,27 +579,25 @@
                             )
                         ),
                         React.createElement('div', { className: 'flex justify-end mt-6' },
-                            React.createElement('button', {
-                                onClick: () => setShowViewClients(false),
-                                className: 'btn btn-secondary'
-                            }, 'Close')
+                            React.createElement('button', { onClick: () => setShowViewClients(false), className: 'btn btn-secondary' }, 'Close')
                         )
                     )
-                )
-            );
+                );
+            };
 
-            const ViewJobsModal = () => (
-                showViewJobs && React.createElement('div', { className: 'modal-overlay' },
+            const ViewJobsModal = () => {
+                if (!showViewJobs) return null;
+                return React.createElement('div', { className: 'modal-overlay' },
                     React.createElement('div', { className: 'modal-content' },
                         React.createElement('h3', { className: 'text-2xl font-bold mb-6' }, 'All Jobs'),
                         React.createElement('div', { className: 'space-y-4' },
                             ...jobs.map(job => 
-                                React.createElement('div', { className: 'card' },
+                                React.createElement('div', { key: job.id, className: 'card' },
                                     React.createElement('div', { className: 'flex justify-between items-start' },
                                         React.createElement('div', null,
                                             React.createElement('h4', { className: 'font-semibold text-lg' }, job.description),
-                                            React.createElement('p', { className: 'text-gray-600 text-sm' }, `Status: ${job.status}`),
-                                            React.createElement('p', { className: 'text-gray-600 text-sm' }, `Hours: ${job.hoursWorked || 0}`)
+                                            React.createElement('p', { className: 'text-gray-600 text-sm' }, 'Status: ' + job.status),
+                                            React.createElement('p', { className: 'text-gray-600 text-sm' }, 'Hours: ' + (job.hoursWorked || 0))
                                         ),
                                         React.createElement('div', { className: 'flex space-x-2' },
                                             React.createElement('button', { className: 'bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm' }, 'Edit'),
@@ -612,27 +608,25 @@
                             )
                         ),
                         React.createElement('div', { className: 'flex justify-end mt-6' },
-                            React.createElement('button', {
-                                onClick: () => setShowViewJobs(false),
-                                className: 'btn btn-secondary'
-                            }, 'Close')
+                            React.createElement('button', { onClick: () => setShowViewJobs(false), className: 'btn btn-secondary' }, 'Close')
                         )
                     )
-                )
-            );
+                );
+            };
 
-            const ViewInvoicesModal = () => (
-                showViewInvoices && React.createElement('div', { className: 'modal-overlay' },
+            const ViewInvoicesModal = () => {
+                if (!showViewInvoices) return null;
+                return React.createElement('div', { className: 'modal-overlay' },
                     React.createElement('div', { className: 'modal-content' },
                         React.createElement('h3', { className: 'text-2xl font-bold mb-6' }, 'All Invoices'),
                         React.createElement('div', { className: 'space-y-4' },
                             ...invoices.map(invoice => 
-                                React.createElement('div', { className: 'card' },
+                                React.createElement('div', { key: invoice.id, className: 'card' },
                                     React.createElement('div', { className: 'flex justify-between items-start' },
                                         React.createElement('div', null,
-                                            React.createElement('h4', { className: 'font-semibold text-lg' }, `Invoice #${invoice.id}`),
-                                            React.createElement('p', { className: 'text-gray-600 text-sm' }, `Amount: $${invoice.amount || '0.00'}`),
-                                            React.createElement('p', { className: 'text-gray-600 text-sm' }, `Status: ${invoice.status}`)
+                                            React.createElement('h4', { className: 'font-semibold text-lg' }, 'Invoice #' + invoice.id),
+                                            React.createElement('p', { className: 'text-gray-600 text-sm' }, 'Amount: $' + (invoice.amount || '0.00')),
+                                            React.createElement('p', { className: 'text-gray-600 text-sm' }, 'Status: ' + invoice.status)
                                         ),
                                         React.createElement('div', { className: 'flex space-x-2' },
                                             React.createElement('button', { className: 'bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm' }, 'Edit'),
@@ -643,23 +637,21 @@
                             )
                         ),
                         React.createElement('div', { className: 'flex justify-end mt-6' },
-                            React.createElement('button', {
-                                onClick: () => setShowViewInvoices(false),
-                                className: 'btn btn-secondary'
-                            }, 'Close')
+                            React.createElement('button', { onClick: () => setShowViewInvoices(false), className: 'btn btn-secondary' }, 'Close')
                         )
                     )
-                )
-            );
+                );
+            };
 
-            const ViewRevenueModal = () => (
-                showViewRevenue && React.createElement('div', { className: 'modal-overlay' },
+            const ViewRevenueModal = () => {
+                if (!showViewRevenue) return null;
+                return React.createElement('div', { className: 'modal-overlay' },
                     React.createElement('div', { className: 'modal-content' },
                         React.createElement('h3', { className: 'text-2xl font-bold mb-6' }, 'Revenue Summary'),
                         React.createElement('div', { className: 'grid md:grid-cols-2 gap-6' },
                             React.createElement('div', { className: 'bg-blue-50 p-6 rounded-lg' },
                                 React.createElement('h4', { className: 'font-semibold text-lg text-blue-800' }, 'Total Revenue'),
-                                React.createElement('p', { className: 'text-3xl font-bold text-blue-600' }, `$${dashboardStats.monthlyRevenue || '0.00'}`)
+                                React.createElement('p', { className: 'text-3xl font-bold text-blue-600' }, '$' + (dashboardStats.monthlyRevenue || '0.00'))
                             ),
                             React.createElement('div', { className: 'bg-green-50 p-6 rounded-lg' },
                                 React.createElement('h4', { className: 'font-semibold text-lg text-green-800' }, 'Paid Invoices'),
@@ -668,19 +660,15 @@
                         ),
                         React.createElement('div', { className: 'mt-6 bg-gray-100 p-4 rounded-lg' },
                             React.createElement('h4', { className: 'font-semibold text-lg text-gray-800' }, 'Revenue Breakdown'),
-                            React.createElement('p', { className: 'text-gray-600' }, `Active Jobs: ${dashboardStats.activeJobs || 0}`),
-                            React.createElement('p', { className: 'text-gray-600' }, `Pending Invoices: ${dashboardStats.pendingInvoices || 0}`)
-                        )
-                    ),
+                            React.createElement('p', { className: 'text-gray-600' }, 'Active Jobs: ' + (dashboardStats.activeJobs || 0)),
+                            React.createElement('p', { className: 'text-gray-600' }, 'Pending Invoices: ' + (dashboardStats.pendingInvoices || 0))
+                        ),
                         React.createElement('div', { className: 'flex justify-end mt-6' },
-                            React.createElement('button', {
-                                onClick: () => setShowViewRevenue(false),
-                                className: 'btn btn-secondary'
-                            }, 'Close')
+                            React.createElement('button', { onClick: () => setShowViewRevenue(false), className: 'btn btn-secondary' }, 'Close')
                         )
                     )
-                )
-            );
+                );
+            };
 
             console.log('About to render app...');
             
@@ -691,6 +679,7 @@
                 React.createElement(RegisterModal),
                 React.createElement(AddClientModal),
                 React.createElement(AddJobModal),
+                React.createElement(AddInvoiceModal),
                 React.createElement(ViewClientsModal),
                 React.createElement(ViewJobsModal),
                 React.createElement(ViewInvoicesModal),
@@ -701,9 +690,9 @@
         // Render the app
         console.log('Creating root element...');
         const root = ReactDOM.createRoot(document.getElementById('root'));
-        console.log('Rendering React app...');
+        console.log('Rendering Spark-E React app...');
         root.render(React.createElement(App));
-        console.log('React app rendered successfully!');
+        console.log('Spark-E React app rendered successfully!');
     </script>
 </body>
 </html>
