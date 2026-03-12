@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/invoices")
@@ -49,5 +49,16 @@ public class InvoiceController {
                 })
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    // POST to create new invoice
+    @PostMapping
+    public ResponseEntity<?> createInvoice(@RequestBody Invoice invoice) {
+        try {
+            Invoice savedInvoice = invoiceRepository.save(invoice);
+            return ResponseEntity.ok(savedInvoice);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("error", "Failed to create invoice"));
+        }
     }
 }

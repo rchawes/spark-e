@@ -84,6 +84,13 @@
 			<scope>runtime</scope>
 		</dependency>
 
+		<!-- Jakarta Bean Validation -->
+		<dependency>
+			<groupId>org.hibernate.validator</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>8.0.0.Final</version>
+		</dependency>
+
 		<!-- Testing (includes JUnit, Spring Test, etc.) -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

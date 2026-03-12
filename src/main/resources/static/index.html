@@ -1,211 +1,50 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Spark-E - Electrician Trade Manager</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="/css/style.css">
+    <meta http-equiv="refresh" content="0; url=index-react.html">
 </head>
-<body class="bg-gray-50">
-    <!-- Navigation Header -->
-    <nav class="bg-blue-600 text-white shadow-lg">
-        <div class="container mx-auto px-4">
-            <div class="flex justify-between items-center py-4">
-                <div class="flex items-center space-x-3">
-                    <i class="fas fa-bolt text-2xl"></i>
-                    <h1 class="text-xl font-bold">Spark-E</h1>
-                </div>
-                <div class="flex items-center space-x-4">
-                    <button id="loginBtn" class="bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded transition">
-                        <i class="fas fa-sign-in-alt mr-2"></i>Login
-                    </button>
-                    <button id="registerBtn" class="bg-green-500 hover:bg-green-700 px-4 py-2 rounded transition">
-                        <i class="fas fa-user-plus mr-2"></i>Register
-                    </button>
-                </div>
+<body>
+    <div style="display: flex; justify-content: center; align-items: center; height: 100vh; font-family: Arial, sans-serif;">
+        <div style="text-align: center; padding: 2rem;">
+            <h1 style="color: #3b82f6; margin-bottom: 1rem;">⚡ Spark-E</h1>
+            <h2 style="color: #4b5563; margin-bottom: 2rem;">Redirecting to Modern React Application...</h2>
+            <div style="background: #f3f4f6; border-radius: 0.5rem; padding: 1.5rem; margin-bottom: 1rem;">
+                <p style="margin-bottom: 1rem;">✨ <strong>Modern React Version</strong></p>
+                <p style="margin-bottom: 1rem;">🚀 <strong>Component-Based Architecture</strong></p>
+                <p style="margin-bottom: 1rem;">📱 <strong>Responsive Design</strong></p>
+                <p style="margin-bottom: 1rem;">⚡ <strong>Real-Time Data Updates</strong></p>
             </div>
-        </div>
-    </nav>
-
-    <!-- Main Content -->
-    <main class="container mx-auto px-4 py-8">
-        <!-- Hero Section -->
-        <section class="bg-white rounded-lg shadow-md p-8 mb-8">
-            <div class="text-center">
-                <h2 class="text-4xl font-bold text-gray-800 mb-4">Electrician Trade Business Manager</h2>
-                <p class="text-gray-600 text-lg mb-6">Manage your electrical business efficiently with Spark-E</p>
-                <div class="grid md:grid-cols-3 gap-6 mt-8">
-                    <div class="bg-blue-50 p-6 rounded-lg">
-                        <i class="fas fa-users text-blue-600 text-3xl mb-4"></i>
-                        <h3 class="font-semibold text-lg mb-2">Client Management</h3>
-                        <p class="text-gray-600">Keep track of your clients and their contact information</p>
-                    </div>
-                    <div class="bg-green-50 p-6 rounded-lg">
-                        <i class="fas fa-clipboard-list text-green-600 text-3xl mb-4"></i>
-                        <h3 class="font-semibold text-lg mb-2">Job Tracking</h3>
-                        <p class="text-gray-600">Monitor your jobs from quote to completion</p>
-                    </div>
-                    <div class="bg-purple-50 p-6 rounded-lg">
-                        <i class="fas fa-dollar-sign text-purple-600 text-3xl mb-4"></i>
-                        <h3 class="font-semibold text-lg mb-2">Invoicing</h3>
-                        <p class="text-gray-600">Create and manage invoices for your services</p>
-                    </div>
+            <div style="background: #e5e7eb; border-radius: 0.5rem; padding: 1.5rem;">
+                <p style="margin-bottom: 1rem;"><strong>🔄 Auto-redirecting in 3 seconds...</strong></p>
+                <div style="width: 100%; background: #ddd; border-radius: 0.25rem; height: 0.5rem; margin-bottom: 1rem;">
+                    <div id="progressBar" style="width: 0%; height: 100%; background: #4caf50; border-radius: 0.25rem; transition: width 3s ease-in-out;"></div>
                 </div>
+            <div style="margin-top: 2rem;">
+                <button onclick="window.location.href='index-react.html'" style="background: #3b82f6; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 0.375rem; cursor: pointer; font-size: 1rem;">
+                    Go to React App →
+                </button>
             </div>
-        </section>
-
-        <!-- Dashboard Section (Hidden by default) -->
-        <section id="dashboard" class="hidden">
-            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-gray-500 text-sm">Active Jobs</p>
-                            <p class="text-2xl font-bold text-gray-800" id="activeJobsCount">0</p>
-                        </div>
-                        <i class="fas fa-tools text-blue-500 text-2xl"></i>
-                    </div>
-                </div>
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-gray-500 text-sm">Total Clients</p>
-                            <p class="text-2xl font-bold text-gray-800" id="totalClientsCount">0</p>
-                        </div>
-                        <i class="fas fa-users text-green-500 text-2xl"></i>
-                    </div>
-                </div>
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-gray-500 text-sm">Pending Invoices</p>
-                            <p class="text-2xl font-bold text-gray-800" id="pendingInvoicesCount">0</p>
-                        </div>
-                        <i class="fas fa-file-invoice text-yellow-500 text-2xl"></i>
-                    </div>
-                </div>
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-gray-500 text-sm">Monthly Revenue</p>
-                            <p class="text-2xl font-bold text-gray-800" id="monthlyRevenue">$0</p>
-                        </div>
-                        <i class="fas fa-chart-line text-purple-500 text-2xl"></i>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Quick Actions -->
-            <div class="bg-white rounded-lg shadow-md p-6">
-                <h3 class="text-xl font-semibold mb-4">Quick Actions</h3>
-                <div class="grid md:grid-cols-3 gap-4">
-                    <button id="newJobBtn" class="bg-blue-500 hover:bg-blue-600 text-white py-3 px-4 rounded transition">
-                        <i class="fas fa-plus mr-2"></i>New Job
-                    </button>
-                    <button id="addClientBtn" class="bg-green-500 hover:bg-green-600 text-white py-3 px-4 rounded transition">
-                        <i class="fas fa-user-plus mr-2"></i>Add Client
-                    </button>
-                    <button id="createInvoiceBtn" class="bg-purple-500 hover:bg-purple-600 text-white py-3 px-4 rounded transition">
-                        <i class="fas fa-file-invoice-dollar mr-2"></i>Create Invoice
-                    </button>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <!-- Login Modal -->
-    <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
-        <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4">
-            <h3 class="text-2xl font-bold mb-6">Login</h3>
-            <form id="loginForm">
-                <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="loginUsername">
-                        Username
-                    </label>
-                    <input class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                           id="loginUsername" type="text" required>
-                </div>
-                <div class="mb-6">
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="loginPassword">
-                        Password
-                    </label>
-                    <input class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                           id="loginPassword" type="password" required>
-                </div>
-                <div class="flex justify-between">
-                    <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded transition">
-                        Login
-                    </button>
-                    <button type="button" id="closeLoginModal" class="bg-gray-300 hover:bg-gray-400 text-gray-800 py-2 px-4 rounded transition">
-                        Cancel
-                    </button>
-                </div>
-            </form>
         </div>
     </div>
 
-    <!-- Register Modal -->
-    <div id="registerModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
-        <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4">
-            <h3 class="text-2xl font-bold mb-6">Register</h3>
-            <form id="registerForm">
-                <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="registerUsername">
-                        Username
-                    </label>
-                    <input class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" 
-                           id="registerUsername" type="text" required>
-                </div>
-                <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="registerPassword">
-                        Password
-                    </label>
-                    <input class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" 
-                           id="registerPassword" type="password" required>
-                </div>
-                <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="confirmPassword">
-                        Confirm Password
-                    </label>
-                    <input class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" 
-                           id="confirmPassword" type="password" required>
-                </div>
-                <div class="mb-6">
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="userRole">
-                        Role
-                    </label>
-                    <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" 
-                            id="userRole" required>
-                        <option value="ROLE_ELECTRICIAN">Electrician</option>
-                        <option value="ROLE_ADMIN">Admin</option>
-                    </select>
-                </div>
-                <div class="flex justify-between">
-                    <button type="submit" class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded transition">
-                        Register
-                    </button>
-                    <button type="button" id="closeRegisterModal" class="bg-gray-300 hover:bg-gray-400 text-gray-800 py-2 px-4 rounded transition">
-                        Cancel
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Scripts -->
     <script>
-        console.log('HTML script loaded - testing basic functionality');
-        // Test if we can access elements
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('DOM loaded');
-            const loginBtn = document.getElementById('loginBtn');
-            const registerBtn = document.getElementById('registerBtn');
-            console.log('Direct test - Login button:', loginBtn);
-            console.log('Direct test - Register button:', registerBtn);
-        });
+        let progress = 0;
+        const progressBar = document.getElementById('progressBar');
+        
+        const updateProgress = () => {
+            progress += 33.33;
+            progressBar.style.width = progress + '%';
+            
+            if (progress >= 100) {
+                window.location.href = 'index-react.html';
+            } else {
+                setTimeout(updateProgress, 1000);
+            }
+        };
+        
+        setTimeout(updateProgress, 1000);
     </script>
-    <script src="/js/app.js"></script>
 </body>
 </html>

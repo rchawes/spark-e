@@ -29,6 +29,8 @@ class SparkEApp {
                 console.log('Login button clicked');
                 this.showLoginModal();
             });
+        } else {
+            console.error('Login button not found!');
         }
         
         if (registerBtn) {
@@ -37,6 +39,8 @@ class SparkEApp {
                 console.log('Register button clicked');
                 this.showRegisterModal();
             });
+        } else {
+            console.error('Register button not found!');
         }
         
         // Modal close buttons
@@ -97,7 +101,7 @@ class SparkEApp {
         if (newJobBtn) {
             newJobBtn.addEventListener('click', () => {
                 console.log('New Job button clicked');
-                this.showToast('New Job feature coming soon!', 'info');
+                this.showJobModal();
             });
         }
         
@@ -111,8 +115,107 @@ class SparkEApp {
         if (createInvoiceBtn) {
             createInvoiceBtn.addEventListener('click', () => {
                 console.log('Create Invoice button clicked');
-                this.showToast('Create Invoice feature coming soon!', 'info');
+                this.showCreateInvoiceModal();
             });
+        }
+        
+        // View data buttons
+        const viewClientsBtn = document.getElementById('viewClientsBtn');
+        const viewJobsBtn = document.getElementById('viewJobsBtn');
+        const viewInvoicesBtn = document.getElementById('viewInvoicesBtn');
+        const viewRevenueBtn = document.getElementById('viewRevenueBtn');
+        
+        console.log('View buttons found:', { viewClientsBtn, viewJobsBtn, viewInvoicesBtn, viewRevenueBtn });
+        
+        if (viewClientsBtn) {
+            viewClientsBtn.addEventListener('click', () => {
+                console.log('View Clients button clicked');
+                this.showClientsModal();
+            });
+        }
+        
+        if (viewJobsBtn) {
+            viewJobsBtn.addEventListener('click', () => {
+                console.log('View Jobs button clicked');
+                this.showJobsModal();
+            });
+        }
+        
+        if (viewInvoicesBtn) {
+            viewInvoicesBtn.addEventListener('click', () => {
+                console.log('View Invoices button clicked');
+                this.showInvoicesModal();
+            });
+        }
+        
+        if (viewRevenueBtn) {
+            viewRevenueBtn.addEventListener('click', () => {
+                console.log('View Revenue button clicked');
+                this.showRevenueModal();
+            });
+        }
+        
+        // Client modal close button
+        const closeClientModal = document.getElementById('closeClientModal');
+        if (closeClientModal) {
+            closeClientModal.addEventListener('click', () => this.hideClientModal());
+        }
+        
+        // Client form
+        const clientForm = document.getElementById('clientForm');
+        if (clientForm) {
+            clientForm.addEventListener('submit', (e) => this.handleAddClient(e));
+        }
+        
+        // Close client modal on backdrop click
+        const clientModal = document.getElementById('clientModal');
+        if (clientModal) {
+            clientModal.addEventListener('click', (e) => {
+                if (e.target.id === 'clientModal') {
+                    this.hideClientModal();
+                }
+            });
+        }
+        
+        // Job modal close button
+        const closeJobModal = document.getElementById('closeJobModal');
+        if (closeJobModal) {
+            closeJobModal.addEventListener('click', () => this.hideJobModal());
+        }
+        
+        // Job form
+        const jobForm = document.getElementById('jobForm');
+        if (jobForm) {
+            jobForm.addEventListener('submit', (e) => this.handleAddJob(e));
+        }
+        
+        // Close job modal on backdrop click
+        const jobModal = document.getElementById('jobModal');
+        if (jobModal) {
+            jobModal.addEventListener('click', (e) => {
+                if (e.target.id === 'jobModal') {
+                    this.hideJobModal();
+                }
+            });
+        }
+        
+        // View modal close buttons
+        const closeClientsModal = document.getElementById('closeClientsModal');
+        const closeJobsModal = document.getElementById('closeJobsModal');
+        const closeInvoicesModal = document.getElementById('closeInvoicesModal');
+        const closeRevenueModal = document.getElementById('closeRevenueModal');
+        
+        if (closeClientsModal) {
+            closeClientsModal.addEventListener('click', () => this.hideClientsModal());
+        }
+        if (closeJobsModal) {
+            closeJobsModal.addEventListener('click', () => this.hideJobsModal());
+        }
+        if (closeInvoicesModal) {
+            closeInvoicesModal.addEventListener('click', () => this.hideInvoicesModal());
+        }
+        if (closeRevenueModal) {
+            closeRevenueModal.addEventListener('click', () => this.hideRevenueModal());
         }
     }
 
@@ -220,8 +323,217 @@ class SparkEApp {
     }
 
     showAddClientModal() {
-        // Simple implementation - just show toast for now
-        this.showToast('Add Client feature - This would open a form to add new clients', 'info');
+        document.getElementById('clientModal').classList.remove('hidden');
+        document.getElementById('clientModal').classList.add('flex');
+    }
+
+    hideClientModal() {
+        document.getElementById('clientModal').classList.add('hidden');
+        document.getElementById('clientModal').classList.remove('flex');
+        document.getElementById('clientForm').reset();
+    }
+
+    showClientsModal() {
+        document.getElementById('clientsModal').classList.remove('hidden');
+        document.getElementById('clientsModal').classList.add('flex');
+        this.loadClients();
+    }
+
+    hideClientsModal() {
+        document.getElementById('clientsModal').classList.add('hidden');
+        document.getElementById('clientsModal').classList.remove('flex');
+    }
+
+    showJobsModal() {
+        document.getElementById('jobsModal').classList.remove('hidden');
+        document.getElementById('jobsModal').classList.add('flex');
+        this.loadJobs();
+    }
+
+    hideJobsModal() {
+        document.getElementById('jobsModal').classList.add('hidden');
+        document.getElementById('jobsModal').classList.remove('flex');
+    }
+
+    showInvoicesModal() {
+        document.getElementById('invoicesModal').classList.remove('hidden');
+        document.getElementById('invoicesModal').classList.add('flex');
+        this.loadInvoices();
+    }
+
+    hideInvoicesModal() {
+        document.getElementById('invoicesModal').classList.add('hidden');
+        document.getElementById('invoicesModal').classList.remove('flex');
+    }
+
+    showRevenueModal() {
+        document.getElementById('revenueModal').classList.remove('hidden');
+        document.getElementById('revenueModal').classList.add('flex');
+        this.loadRevenue();
+    }
+
+    hideRevenueModal() {
+        document.getElementById('revenueModal').classList.add('hidden');
+        document.getElementById('revenueModal').classList.remove('flex');
+    }
+
+    showCreateInvoiceModal() {
+        this.showToast('Create Invoice feature - This would open a form to create new invoices', 'info');
+    }
+
+    async loadClients() {
+        try {
+            const clients = await this.apiCall('/customers');
+            const clientsList = document.getElementById('clientsList');
+            clientsList.innerHTML = clients.map(client => `
+                <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h4 class="font-semibold text-lg">${client.firstName} ${client.lastName}</h4>
+                            <p class="text-gray-600 text-sm">${client.email}</p>
+                            <p class="text-gray-600 text-sm">${client.phone}</p>
+                            <p class="text-gray-600 text-sm">${client.address}</p>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button onclick="window.sparkEApp.editClient(${client.id})" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm">Edit</button>
+                            <button onclick="window.sparkEApp.deleteClient(${client.id})" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        } catch (error) {
+            this.showToast('Failed to load clients: ' + error.message, 'error');
+        }
+    }
+
+    async loadJobs() {
+        try {
+            const jobs = await this.apiCall('/jobs');
+            const jobsList = document.getElementById('jobsList');
+            jobsList.innerHTML = jobs.map(job => `
+                <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h4 class="font-semibold text-lg">${job.description}</h4>
+                            <p class="text-gray-600 text-sm">Status: <span class="px-2 py-1 rounded text-xs font-semibold ${job.status === 'COMPLETED' ? 'bg-green-100 text-green-800' : job.status === 'IN_PROGRESS' ? 'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800'}">${job.status}</span></p>
+                            <p class="text-gray-600 text-sm">Hours: ${job.hoursWorked || 0}</p>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button onclick="window.sparkEApp.editJob(${job.id})" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm">Edit</button>
+                            <button onclick="window.sparkEApp.deleteJob(${job.id})" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        } catch (error) {
+            this.showToast('Failed to load jobs: ' + error.message, 'error');
+        }
+    }
+
+    async loadInvoices() {
+        try {
+            const invoices = await this.apiCall('/invoices');
+            const invoicesList = document.getElementById('invoicesList');
+            invoicesList.innerHTML = invoices.map(invoice => `
+                <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h4 class="font-semibold text-lg">Invoice #${invoice.id}</h4>
+                            <p class="text-gray-600 text-sm">Amount: $${invoice.amount || '0.00'}</p>
+                            <p class="text-gray-600 text-sm">Status: <span class="px-2 py-1 rounded text-xs font-semibold ${invoice.status === 'PAID' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}">${invoice.status}</span></p>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button onclick="window.sparkEApp.editInvoice(${invoice.id})" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm">Edit</button>
+                            <button onclick="window.sparkEApp.deleteInvoice(${invoice.id})" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        } catch (error) {
+            this.showToast('Failed to load invoices: ' + error.message, 'error');
+        }
+    }
+
+    async loadRevenue() {
+        try {
+            const stats = await this.apiCall('/dashboard/stats');
+            const revenueContent = document.getElementById('revenueContent');
+            revenueContent.innerHTML = `
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="bg-blue-50 p-6 rounded-lg">
+                        <h4 class="font-semibold text-lg text-blue-800">Total Revenue</h4>
+                        <p class="text-3xl font-bold text-blue-600">$${stats.monthlyRevenue || '0.00'}</p>
+                    </div>
+                    <div class="bg-green-50 p-6 rounded-lg">
+                        <h4 class="font-semibold text-lg text-green-800">Paid Invoices</h4>
+                        <p class="text-3xl font-bold text-green-600">${stats.totalClients || 0}</p>
+                    </div>
+                </div>
+                <div class="mt-6 bg-gray-100 p-4 rounded-lg">
+                    <h4 class="font-semibold text-lg text-gray-800">Revenue Breakdown</h4>
+                    <p class="text-gray-600">Active Jobs: ${stats.activeJobs || 0}</p>
+                    <p class="text-gray-600">Pending Invoices: ${stats.pendingInvoices || 0}</p>
+                </div>
+            `;
+        } catch (error) {
+            this.showToast('Failed to load revenue data: ' + error.message, 'error');
+        }
+    }
+
+    hideJobModal() {
+        document.getElementById('jobModal').classList.add('hidden');
+        document.getElementById('jobModal').classList.remove('flex');
+        document.getElementById('jobForm').reset();
+    }
+
+    async handleAddClient(e) {
+        e.preventDefault();
+        
+        const firstName = document.getElementById('clientFirstName').value;
+        const lastName = document.getElementById('clientLastName').value;
+        const email = document.getElementById('clientEmail').value;
+        const phone = document.getElementById('clientPhone').value;
+        const address = document.getElementById('clientAddress').value;
+
+        try {
+            const response = await this.apiCall('/customers', {
+                method: 'POST',
+                body: JSON.stringify({ firstName, lastName, email, phone, address })
+            });
+
+            this.hideClientModal();
+            this.showToast('Client added successfully!', 'success');
+            
+            // Refresh dashboard stats
+            this.loadDashboardData();
+            
+        } catch (error) {
+            this.showToast('Failed to add client: ' + error.message, 'error');
+        }
+    }
+
+    async handleAddJob(e) {
+        e.preventDefault();
+        
+        const description = document.getElementById('jobDescription').value;
+        const status = document.getElementById('jobStatus').value;
+        const hoursWorked = parseFloat(document.getElementById('jobHours').value) || 0;
+
+        try {
+            const response = await this.apiCall('/jobs', {
+                method: 'POST',
+                body: JSON.stringify({ description, status, hoursWorked })
+            });
+
+            this.hideJobModal();
+            this.showToast('Job created successfully!', 'success');
+            
+            // Refresh dashboard stats
+            this.loadDashboardData();
+            
+        } catch (error) {
+            this.showToast('Failed to create job: ' + error.message, 'error');
+        }
     }
 
     showDashboard() {
