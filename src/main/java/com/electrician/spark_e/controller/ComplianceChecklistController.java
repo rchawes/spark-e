@@ -40,7 +40,10 @@ public class ComplianceChecklistController {
             Long jobTypeId = checklist.getJobType().getId();
             if (jobTypeId != null) {
                 jobTypeRepository.findById(jobTypeId)
-                        .orElseThrow(() -> new RuntimeException("Job type not found"));
+                        .ifPresentOrElse(
+                            checklist::setJobType,
+                            () -> { throw new RuntimeException("Job type not found"); }
+                        );
             }
         }
         return ResponseEntity.ok(checklistRepository.save(checklist));

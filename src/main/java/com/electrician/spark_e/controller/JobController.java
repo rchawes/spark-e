@@ -69,7 +69,7 @@ public class JobController {
                 Long customerId = job.getCustomer().getId();
                 if (customerId != null) {
                     Customer customer = customerRepository.findById(customerId).orElse(null);
-                    if (customer != null) {
+                    if (customer == null) {
                         return ResponseEntity.badRequest().body("Customer not found");
                     }
                     job.setCustomer(customer);
@@ -80,7 +80,7 @@ public class JobController {
                 Long electricianId = job.getElectrician().getId();
                 if (electricianId != null) {
                     Electrician electrician = electricianRepository.findById(electricianId).orElse(null);
-                    if (electrician != null) {
+                    if (electrician == null) {
                         return ResponseEntity.badRequest().body("Electrician not found");
                     }
                     job.setElectrician(electrician);

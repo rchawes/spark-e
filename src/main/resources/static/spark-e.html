@@ -289,14 +289,6 @@
                 try {
                     const data = await api.call('/api/electricians');
                     setElectricians(data);
-                    console.log('Loaded electricians:', data);
-                    console.log('Electrician details:', data.map(e => ({
-                        id: e.id,
-                        name: e.name,
-                        email: e.email,
-                        knowledgeLevel: e.knowledgeLevel,
-                        licenseNumber: e.licenseNumber
-                    })));
                 } catch (error) {
                     console.error('Failed to load electricians:', error);
                     setElectricians([{ 
@@ -941,7 +933,6 @@
             const EditElectricianModal = () => {
                 if (!showEditElectrician) return null;
                 return React.createElement('div', { className: 'modal-overlay' },
-                    React.createElement('div', { className: 'modal-content' },
                         React.createElement('h3', { className: 'text-2xl font-bold mb-6' }, 'Edit Electrician'),
                         React.createElement('form', {
                             onSubmit: async (e) => {
@@ -956,12 +947,10 @@
                                     licenseNumber: formData.get('licenseNumber')
                                 };
                                 try {
-                                    console.log('Sending electrician update data:', electricianData);
                                     const response = await api.call('/api/electricians/' + editingElectrician.id, {
                                         method: 'PUT',
                                         body: JSON.stringify(electricianData)
                                     });
-                                    console.log('Received response from update:', response);
                                     setShowEditElectrician(false);
                                     setEditingElectrician(null);
                                     alert('Electrician updated successfully!');
@@ -1254,9 +1243,7 @@
                                             React.createElement('p', { className: 'text-gray-600 text-sm' }, 'Phone: ' + (electrician.phone || 'Not specified')),
                                             React.createElement('p', { className: 'text-gray-600 text-sm' }, 'Hourly Rate: $' + (electrician.hourlyRate || 0)),
                                             React.createElement('p', { className: 'text-gray-600 text-sm' }, 'Knowledge Level: ' + (electrician.knowledgeLevel || 'Not set')),
-                                            React.createElement('p', { className: 'text-gray-600 text-sm' }, 'License: ' + (electrician.licenseNumber || 'Not set')),
-                                            // Debug info
-                                            React.createElement('p', { className: 'text-xs text-gray-500 mt-2' }, 'DEBUG: ID=' + electrician.id + ', Name=' + (electrician.name || 'undefined') + ', Email=' + (electrician.email || 'undefined') + ', Level=' + (electrician.knowledgeLevel || 'undefined') + ', License=' + (electrician.licenseNumber || 'undefined'))
+                                            React.createElement('p', { className: 'text-gray-600 text-sm' }, 'License: ' + (electrician.licenseNumber || 'Not set'))
                                         ),
                                         React.createElement('div', { className: 'flex space-x-2' },
                                             React.createElement('button', { 
