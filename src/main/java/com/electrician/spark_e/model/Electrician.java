@@ -12,6 +12,8 @@ public class Electrician {
     private String phone;
     private String email;
     private Double hourlyRate;
+    private String knowledgeLevel;
+    private String licenseNumber;
 
     public Electrician() {}
 
@@ -30,6 +32,12 @@ public class Electrician {
 
     public Double getHourlyRate() { return hourlyRate; }
     public void setHourlyRate(Double hourlyRate) { this.hourlyRate = hourlyRate; }
+
+    public String getKnowledgeLevel() { return knowledgeLevel; }
+    public void setKnowledgeLevel(String knowledgeLevel) { this.knowledgeLevel = knowledgeLevel; }
+
+    public String getLicenseNumber() { return licenseNumber; }
+    public void setLicenseNumber(String licenseNumber) { this.licenseNumber = licenseNumber; }
 
     @Override
     public boolean equals(Object o) {
@@ -52,6 +60,8 @@ public class Electrician {
                 ", phone='" + phone + '\'' +
                 ", email='" + email + '\'' +
                 ", hourlyRate=" + hourlyRate +
+                ", knowledgeLevel='" + knowledgeLevel + '\'' +
+                ", licenseNumber='" + licenseNumber + '\'' +
                 '}';
     }
 }

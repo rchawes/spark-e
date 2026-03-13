@@ -41,6 +41,8 @@ public class ElectricianController {
                     electrician.setEmail(electricianDetails.getEmail());
                     electrician.setPhone(electricianDetails.getPhone());
                     electrician.setHourlyRate(electricianDetails.getHourlyRate());
+                    electrician.setKnowledgeLevel(electricianDetails.getKnowledgeLevel());
+                    electrician.setLicenseNumber(electricianDetails.getLicenseNumber());
                     return ResponseEntity.ok(electricianRepository.save(electrician));
                 })
                 .orElse(ResponseEntity.notFound().build());

@@ -26,14 +26,14 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(@Nonnull HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())   // <-- this disables CSRF
-                .headers(headers -> headers.frameOptions().disable())
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers("/", "/index.html", "/index-react.html", "/spark-e.html", "/debug-react.html", "/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/dashboard/**").permitAll()
-                        .requestMatchers("/api/jobs/**").permitAll()
-                        .requestMatchers("/api/customers/**").permitAll()
-                        .requestMatchers("/api/invoices/**").permitAll()
+                        .requestMatchers("/api/jobs/**", "/jobs/**").permitAll()
+                        .requestMatchers("/api/customers/**", "/customers/**").permitAll()
+                        .requestMatchers("/api/invoices/**", "/invoices/**").permitAll()
+                        .requestMatchers("/api/electricians/**", "/electricians/**").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
                         .anyRequest().authenticated()
                 )

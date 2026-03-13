@@ -3,230 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spark-E - Electrician Trade Manager</title>
+    <title>Spark-E - Electrician Trade Management</title>
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 50;
-            animation: fadeIn 0.3s ease-out;
-        }
-        .modal-overlay.revenue-modal {
-            z-index: 100;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        @keyframes slideIn {
-            from { transform: translateY(-30px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-        @keyframes slideInLeft {
-            from { transform: translateX(-20px); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        @keyframes bounce {
-            0%, 20%, 53%, 80%, 100% { transform: translate3d(0,0,0); }
-            40%, 43% { transform: translate3d(0,-30px,0); }
-            70% { transform: translate3d(0,-15px,0); }
-            90% { transform: translate3d(0,-4px,0); }
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        .modal-content {
-            background: white;
-            border-radius: 0.5rem;
-            padding: 2rem;
-            max-width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
-            animation: slideIn 0.3s ease-out;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
-        .form-input {
-            width: 100%;
-            padding: 0.5rem;
-            border: 1px solid #d1d5db;
-            border-radius: 0.375rem;
-            margin-bottom: 1rem;
-            transition: all 0.3s ease;
-        }
-        .form-input:focus {
-            outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-            transform: translateY(-1px);
-        }
-        .btn {
-            padding: 0.5rem 1rem;
-            border-radius: 0.375rem;
-            border: none;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        .btn::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.5);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
-        }
-        .btn:active::after {
-            width: 300px;
-            height: 300px;
-        }
-        .btn-primary {
-            background-color: #3b82f6;
-            color: white;
-            animation: slideInLeft 0.5s ease-out;
-        }
-        .btn-primary:hover {
-            background-color: #2563eb;
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
-        }
-        .btn-secondary {
-            background-color: #6b7280;
-            color: white;
-        }
-        .btn-secondary:hover {
-            background-color: #5b6218;
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(107, 114, 128, 0.3);
-        }
-        .card {
-            background: white;
-            border-radius: 0.5rem;
-            padding: 1.5rem;
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.5s;
-        }
-        .card:hover::before {
-            left: 100%;
-        }
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-        }
-        .hover-scale {
-            transition: transform 0.3s ease;
-        }
-        .hover-scale:hover {
-            transform: scale(1.05);
-        }
-        .hover-bounce:hover {
-            animation: bounce 1s;
-        }
-        .gradient-bg {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-        .gradient-text {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        .loading-spinner {
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #3b82f6;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            animation: spin 1s linear infinite;
-        }
-        .pulse-animation {
-            animation: pulse 2s infinite;
-        }
-        .slide-in-animation {
-            animation: slideInLeft 0.5s ease-out;
-        }
+        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif; }
+        .btn { padding: 0.5rem 1rem; border-radius: 0.375rem; font-weight: 500; transition: all 0.2s; cursor: pointer; border: none; }
+        .btn-primary { background-color: #3b82f6; color: white; }
+        .btn-primary:hover { background-color: #2563eb; }
+        .btn-secondary { background-color: #6b7280; color: white; }
+        .btn-secondary:hover { background-color: #4b5563; }
+        .form-input { width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem; margin-bottom: 0.5rem; }
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .modal-content { background-color: white; padding: 2rem; border-radius: 0.5rem; max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto; }
+        .card { background-color: white; padding: 1rem; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); }
+        .revenue-modal { z-index: 1000; }
+        .hidden { display: none !important; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideIn { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        .slide-in { animation: slideIn 0.3s ease-in-out; }
+        .pulse { animation: pulse 2s infinite; }
+        .bounce { animation: bounce 1s infinite; }
+        .spin { animation: spin 2s linear infinite; }
+        .hover-scale:hover { transform: scale(1.05); transition: transform 0.2s ease; }
+        .gradient-text { background: linear-gradient(45deg, #3b82f6, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .card { transition: all 0.3s ease; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); }
+        .btn { position: relative; overflow: hidden; }
+        .btn::before { content: ''; position: absolute; top: 50%; left: 50%; width: 0; height: 0; border-radius: 50%; background: rgba(255, 255, 255, 0.5); transform: translate(-50%, -50%); transition: width 0.6s, height 0.6s; }
+        .btn:hover::before { width: 300px; height: 300px; }
+        .revenue-chart { height: 300px; position: relative; margin: 20px 0; }
+        .chart-bar { position: absolute; bottom: 0; background: linear-gradient(to top, #3b82f6, #60a5fa); border-radius: 4px 4px 0 0; transition: all 0.3s ease; cursor: pointer; }
+        .chart-bar:hover { background: linear-gradient(to top, #2563eb, #3b82f6); transform: scaleY(1.05); }
+        .chart-label { position: absolute; bottom: -25px; left: 50%; transform: translateX(-50%); font-size: 12px; color: #6b7280; white-space: nowrap; }
+        .chart-value { position: absolute; top: -25px; left: 50%; transform: translateX(-50%); font-size: 11px; font-weight: bold; color: #374151; white-space: nowrap; }
+        .chart-axis { position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: #e5e7eb; }
+        .chart-grid { position: absolute; left: 0; right: 0; top: 0; bottom: 0; }
+        .chart-grid-line { position: absolute; left: 0; right: 0; height: 1px; background: #f3f4f6; border-top: 1px dashed #e5e7eb; }
     </style>
 </head>
 <body>
     <div id="root"></div>
     <script>
-        console.log('Spark-E React app starting...');
-        
-        const { useState, useEffect } = React;
-        
-        // API Service
+        const { useState, useEffect, useMemo } = React;
         const api = {
-            base: 'http://localhost:8080/api',
-            
-            async call(endpoint, options = {}) {
+            call: async (url, options = {}) => {
                 const token = localStorage.getItem('jwtToken');
-                const response = await fetch(`${this.base}${endpoint}`, {
+                const config = {
                     headers: {
                         'Content-Type': 'application/json',
                         ...(token && { 'Authorization': `Bearer ${token}` })
                     },
                     ...options
-                });
-                
+                };
+                const response = await fetch(url, config);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
-                
                 return await response.json();
             }
         };
 
-        // Main App Component
         const App = () => {
             const [user, setUser] = useState(null);
             const [showLogin, setShowLogin] = useState(false);
             const [showRegister, setShowRegister] = useState(false);
             const [showAddClient, setShowAddClient] = useState(false);
             const [showAddJob, setShowAddJob] = useState(false);
+            const [showEditJob, setShowEditJob] = useState(false);
+            const [editingJob, setEditingJob] = useState(null);
+            const [showAddInvoice, setShowAddInvoice] = useState(false);
+            const [showEditInvoice, setShowEditInvoice] = useState(false);
+            const [editingInvoice, setEditingInvoice] = useState(null);
             const [showViewClients, setShowViewClients] = useState(false);
             const [showViewJobs, setShowViewJobs] = useState(false);
             const [showViewInvoices, setShowViewInvoices] = useState(false);
-            const [showAddInvoice, setShowAddInvoice] = useState(false);
+            const [showViewElectricians, setShowViewElectricians] = useState(false);
             const [showViewRevenue, setShowViewRevenue] = useState(false);
-            const [showEditInvoice, setShowEditInvoice] = useState(false);
-            const [editingInvoice, setEditingInvoice] = useState(null);
-            const [showEditJob, setShowEditJob] = useState(false);
-            const [editingJob, setEditingJob] = useState(null);
-            const [revenuePeriod, setRevenuePeriod] = useState('monthly'); // monthly, yearly, total
+            const [showProfile, setShowProfile] = useState(false);
+            const [showAddElectrician, setShowAddElectrician] = useState(false);
+            const [showEditElectrician, setShowEditElectrician] = useState(false);
+            const [editingElectrician, setEditingElectrician] = useState(null);
+            const [revenuePeriod, setRevenuePeriod] = useState('monthly');
             
             const [clients, setClients] = useState([]);
             const [jobs, setJobs] = useState([]);
@@ -234,214 +98,150 @@
             const [electricians, setElectricians] = useState([]);
             const [dashboardStats, setDashboardStats] = useState({});
 
-            // Check authentication on mount
+            const switchRevenuePeriod = (period) => {
+                setRevenuePeriod(period);
+            };
+
             useEffect(() => {
                 const token = localStorage.getItem('jwtToken');
+                const savedUser = localStorage.getItem('user');
                 if (token) {
-                    setUser({ username: 'User' });
-                    loadDashboardData();
+                    setUser({ 
+                        name: savedUser ? JSON.parse(savedUser).name : 'User',
+                        email: savedUser ? JSON.parse(savedUser).email : 'user@spark-e.com'
+                    });
+                    // Load initial data when user logs in
+                    loadClients();
+                    loadJobs();
+                    loadInvoices();
+                    loadElectricians();
                 }
             }, []);
 
-            // Navigation Component
             const Navigation = () => {
                 return React.createElement('nav', { className: 'bg-blue-600 text-white shadow-lg' },
                     React.createElement('div', { className: 'container mx-auto px-4' },
                         React.createElement('div', { className: 'flex justify-between items-center py-4' },
-                            React.createElement('div', { className: 'flex items-center space-x-3' },
-                                React.createElement('i', { className: 'fas fa-bolt text-2xl' }),
-                                React.createElement('h1', { className: 'text-xl font-bold' }, 'Spark-E')
+                            React.createElement('div', { className: 'flex items-center space-x-4' },
+                                React.createElement('h1', { className: 'text-2xl font-bold gradient-text' }, '⚡ Spark-E'),
+                                React.createElement('span', { className: 'text-sm' }, 'Electrician Trade Management')
                             ),
                             React.createElement('div', { className: 'flex items-center space-x-4' },
-                                user ? 
-                                    React.createElement('button', {
-                                        onClick: () => {
-                                            localStorage.removeItem('jwtToken');
-                                            setUser(null);
-                                        },
-                                        className: 'bg-red-500 hover:bg-red-700 px-4 py-2 rounded transition'
-                                    }, 'Logout')
-                                :
-                                    React.createElement(React.Fragment, null,
-                                        React.createElement('button', {
-                                            onClick: () => setShowLogin(true),
-                                            className: 'bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded transition'
-                                        }, 'Login'),
-                                        React.createElement('button', {
-                                            onClick: () => setShowRegister(true),
-                                            className: 'bg-green-500 hover:bg-green-700 px-4 py-2 rounded transition'
-                                        }, 'Register')
-                                    )
+                                user && React.createElement('span', { className: 'text-sm' }, 'Welcome, ' + user.name),
+                                React.createElement('button', { 
+                                    onClick: () => setShowProfile(true),
+                                    className: 'bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded text-sm' 
+                                }, 'Profile'),
+                                React.createElement('button', { 
+                                    onClick: () => {
+                                        localStorage.removeItem('jwtToken');
+                                        localStorage.removeItem('user');
+                                        setUser(null);
+                                    }, 
+                                    className: 'bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded text-sm' 
+                                }, 'Logout')
                             )
                         )
                     )
                 );
             };
 
-            // Dashboard Component
             const Dashboard = () => {
+                const monthlyRevenue = useMemo(() => {
+                    const now = new Date();
+                    const currentYear = now.getFullYear();
+                    const currentMonth = now.getMonth();
+                    
+                    const monthlyInvoices = invoices.filter(inv => {
+                        if (!inv.issueDate) return false;
+                        const invDate = new Date(inv.issueDate);
+                        return invDate.getFullYear() === currentYear && invDate.getMonth() === currentMonth;
+                    });
+                    
+                    return monthlyInvoices.reduce((sum, inv) => 
+                        sum + (inv.totalAmount || inv.amount || 0), 0
+                    );
+                }, [invoices]);
+
                 return React.createElement('div', { className: 'container mx-auto px-4 py-8' },
                     React.createElement('div', { className: 'grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8' },
                         React.createElement('div', { className: 'bg-white p-6 rounded-lg shadow-md card hover-scale' },
                             React.createElement('div', { className: 'flex items-center justify-between' },
                                 React.createElement('div', null,
-                                    React.createElement('p', { className: 'text-gray-500 text-sm' }, 'Active Jobs'),
-                                    React.createElement('p', { className: 'text-2xl font-bold text-gray-800' }, dashboardStats.activeJobs || 0)
-                                ),
-                                React.createElement('i', { className: 'fas fa-briefcase text-blue-500 text-2xl' })
-                            )
-                        ),
-                        React.createElement('div', { className: 'bg-white p-6 rounded-lg shadow-md card hover-scale' },
-                            React.createElement('div', { className: 'flex items-center justify-between' },
-                                React.createElement('div', null,
                                     React.createElement('p', { className: 'text-gray-500 text-sm' }, 'Total Clients'),
-                                    React.createElement('p', { className: 'text-2xl font-bold text-gray-800' }, dashboardStats.totalClients || 0)
+                                    React.createElement('p', { className: 'text-2xl font-bold text-gray-800' }, clients.length)
                                 ),
-                                React.createElement('i', { className: 'fas fa-users text-green-500 text-2xl' })
+                                React.createElement('i', { className: 'fas fa-users text-blue-500 text-2xl' })
                             )
                         ),
                         React.createElement('div', { className: 'bg-white p-6 rounded-lg shadow-md card hover-scale' },
                             React.createElement('div', { className: 'flex items-center justify-between' },
                                 React.createElement('div', null,
-                                    React.createElement('p', { className: 'text-gray-500 text-sm' }, 'Pending Invoices'),
-                                    React.createElement('p', { className: 'text-2xl font-bold text-gray-800' }, dashboardStats.pendingInvoices || 0)
+                                    React.createElement('p', { className: 'text-gray-500 text-sm' }, 'Total Jobs'),
+                                    React.createElement('p', { className: 'text-2xl font-bold text-gray-800' }, jobs.length)
                                 ),
-                                React.createElement('i', { className: 'fas fa-file-invoice text-yellow-500 text-2xl' })
+                                React.createElement('i', { className: 'fas fa-briefcase text-green-500 text-2xl' })
+                            )
+                        ),
+                        React.createElement('div', { className: 'bg-white p-6 rounded-lg shadow-md card hover-scale' },
+                            React.createElement('div', { className: 'flex items-center justify-between' },
+                                React.createElement('div', null,
+                                    React.createElement('p', { className: 'text-gray-500 text-sm' }, 'Total Invoices'),
+                                    React.createElement('p', { className: 'text-2xl font-bold text-gray-800' }, invoices.length)
+                                ),
+                                React.createElement('i', { className: 'fas fa-file-invoice text-purple-500 text-2xl' })
                             )
                         ),
                         React.createElement('div', { className: 'bg-white p-6 rounded-lg shadow-md card hover-scale' },
                             React.createElement('div', { className: 'flex items-center justify-between' },
                                 React.createElement('div', null,
                                     React.createElement('p', { className: 'text-gray-500 text-sm' }, 'Monthly Revenue'),
-                                    React.createElement('p', { className: 'text-2xl font-bold text-gray-800' }, '$' + (() => {
-                                        // Calculate monthly revenue from completed jobs and their invoices
-                                        const now = new Date();
-                                        const currentYear = now.getFullYear();
-                                        const currentMonth = now.getMonth();
-                                        
-                                        // Get invoices from current month
-                                        const monthlyInvoices = invoices.filter(inv => {
-                                            if (!inv.issueDate) return false;
-                                            const invDate = new Date(inv.issueDate);
-                                            return invDate.getFullYear() === currentYear && invDate.getMonth() === currentMonth;
-                                        });
-                                        
-                                        // Calculate revenue from paid and unpaid invoices
-                                        const monthlyRevenue = monthlyInvoices.reduce((sum, inv) => 
-                                            sum + (inv.totalAmount || inv.amount || 0), 0
-                                        );
-                                        
-                                        return monthlyRevenue.toFixed(2);
-                                    })())
+                                    React.createElement('p', { className: 'text-2xl font-bold text-gray-800' }, '$' + monthlyRevenue.toFixed(2))
                                 ),
                                 React.createElement('i', { className: 'fas fa-chart-line text-purple-500 text-2xl' })
                             )
                         )
                     ),
                     
-                    // Quick Actions
                     React.createElement('div', { className: 'bg-white rounded-lg shadow-md p-6 mb-6' },
                         React.createElement('h3', { className: 'text-xl font-semibold mb-4' }, 'Quick Actions'),
-                        React.createElement('div', { className: 'grid md:grid-cols-3 gap-4' },
-                            React.createElement('button', {
-                                onClick: async () => {
-                                    await Promise.all([loadClientsData(), loadElectricians()]);
-                                    setShowAddJob(true);
-                                },
-                                className: 'btn btn-primary'
-                            }, 'New Job'),
-                            React.createElement('button', {
-                                onClick: () => {
-                                    if (!user) {
-                                        alert('Please login to add a client');
-                                        setShowLogin(true);
-                                    } else {
-                                        setShowAddClient(true);
-                                    }
-                                },
-                                className: 'btn btn-secondary'
-                            }, 'Add Client'),
-                            React.createElement('button', {
-                                onClick: async () => {
-                                    await loadJobsData();
-                                    setShowAddInvoice(true);
-                                },
-                                className: 'btn btn-secondary'
-                            }, 'Create Invoice')
+                        React.createElement('div', { className: 'grid md:grid-cols-4 gap-4' },
+                            React.createElement('button', { onClick: () => setShowAddClient(true), className: 'btn btn-primary w-full' }, 'Add Client'),
+                            React.createElement('button', { onClick: () => setShowAddJob(true), className: 'btn btn-primary w-full' }, 'Add Job'),
+                            React.createElement('button', { onClick: () => setShowAddInvoice(true), className: 'btn btn-primary w-full' }, 'Create Invoice'),
+                            React.createElement('button', { onClick: () => setShowAddElectrician(true), className: 'btn btn-primary w-full' }, 'Add Electrician')
                         )
                     ),
                     
-                    // View Data Actions
                     React.createElement('div', { className: 'bg-white rounded-lg shadow-md p-6' },
                         React.createElement('h3', { className: 'text-xl font-semibold mb-4' }, 'View Data'),
-                        React.createElement('div', { className: 'grid md:grid-cols-4 gap-4' },
-                            React.createElement('button', {
-                                onClick: () => loadClients(),
-                                className: 'bg-teal-500 hover:bg-teal-600 text-white py-3 px-4 rounded transition'
-                            }, 'View Clients'),
-                            React.createElement('button', {
-                                onClick: () => loadJobs(),
-                                className: 'bg-orange-500 hover:bg-orange-600 text-white py-3 px-4 rounded transition'
-                            }, 'View Jobs'),
-                            React.createElement('button', {
-                                onClick: () => loadInvoices(),
-                                className: 'bg-indigo-500 hover:bg-indigo-600 text-white py-3 px-4 rounded transition'
-                            }, 'View Invoices'),
-                            React.createElement('button', {
-                                onClick: () => loadRevenue(),
-                                className: 'bg-pink-500 hover:bg-pink-600 text-white py-3 px-4 rounded transition'
-                            }, 'View Revenue')
+                        React.createElement('div', { className: 'grid md:grid-cols-5 gap-4' },
+                            React.createElement('button', { onClick: () => setShowViewClients(true), className: 'btn btn-secondary w-full' }, 'View Clients'),
+                            React.createElement('button', { onClick: () => setShowViewJobs(true), className: 'btn btn-secondary w-full' }, 'View Jobs'),
+                            React.createElement('button', { onClick: () => setShowViewInvoices(true), className: 'btn btn-secondary w-full' }, 'View Invoices'),
+                            React.createElement('button', { onClick: () => setShowViewElectricians(true), className: 'btn btn-secondary w-full' }, 'View Electricians'),
+                            React.createElement('button', { onClick: () => loadRevenue(), className: 'btn btn-secondary w-full' }, 'View Revenue')
                         )
                     )
                 );
             };
 
-            // Landing Page Component
             const LandingPage = () => {
                 return React.createElement('div', { className: 'container mx-auto px-4 py-8' },
                     React.createElement('div', { className: 'text-center mb-12' },
-                        React.createElement('h1', { className: 'text-4xl font-bold gradient-text mb-4 pulse-animation' }, '⚡ Spark-E'),
-                        React.createElement('p', { className: 'text-xl text-gray-600 mb-8' }, 'Electrician Trade Business Manager'),
-                        React.createElement('div', { className: 'grid md:grid-cols-3 gap-8 max-w-4xl mx-auto' },
-                            React.createElement('div', { className: 'bg-white p-6 rounded-lg shadow-md card hover-scale' },
-                                React.createElement('i', { className: 'fas fa-users text-blue-500 text-3xl mb-4' }),
-                                React.createElement('h3', { className: 'font-semibold text-lg mb-2' }, 'Client Management'),
-                                React.createElement('p', { className: 'text-gray-600' }, 'Keep track of your clients and their contact information')
-                            ),
-                            React.createElement('div', { className: 'bg-white p-6 rounded-lg shadow-md card hover-scale' },
-                                React.createElement('i', { className: 'fas fa-briefcase text-green-500 text-3xl mb-4' }),
-                                React.createElement('h3', { className: 'font-semibold text-lg mb-2' }, 'Job Tracking'),
-                                React.createElement('p', { className: 'text-gray-600' }, 'Manage jobs, track progress, and schedule appointments')
-                            ),
-                            React.createElement('div', { className: 'bg-white p-6 rounded-lg shadow-md card hover-scale' },
-                                React.createElement('i', { className: 'fas fa-file-invoice text-purple-500 text-3xl mb-4' }),
-                                React.createElement('h3', { className: 'font-semibold text-lg mb-2' }, 'Invoice Management'),
-                                React.createElement('p', { className: 'text-gray-600' }, 'Create invoices, track payments, and manage revenue')
-                            )
-                        )
-                    ),
-                    React.createElement('div', { className: 'text-center' },
-                        React.createElement('h2', { className: 'text-2xl font-semibold mb-4' }, 'Get Started Today'),
-                        React.createElement('p', { className: 'text-gray-600 mb-6' }, 'Join thousands of electricians managing their business with Spark-E'),
+                        React.createElement('h1', { className: 'text-4xl font-bold mb-4 gradient-text' }, 'Welcome to Spark-E'),
+                        React.createElement('p', { className: 'text-xl text-gray-600 mb-8' }, 'Your Complete Electrician Trade Management Solution'),
                         React.createElement('div', { className: 'space-x-4' },
-                            React.createElement('button', {
-                                onClick: () => setShowLogin(true),
-                                className: 'bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold transition'
-                            }, 'Login'),
-                            React.createElement('button', {
-                                onClick: () => setShowRegister(true),
-                                className: 'bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-semibold transition'
-                            }, 'Register')
+                            React.createElement('button', { onClick: () => setShowLogin(true), className: 'btn btn-primary' }, 'Login'),
+                            React.createElement('button', { onClick: () => setShowRegister(true), className: 'btn btn-secondary' }, 'Register')
                         )
                     )
                 );
             };
 
-            // Load functions
             const loadDashboardData = async () => {
                 try {
-                    const stats = await api.call('/dashboard/stats');
-                    setDashboardStats(stats);
+                    console.log('Dashboard data loaded from local state');
                 } catch (error) {
                     console.error('Failed to load dashboard data:', error);
                 }
@@ -449,48 +249,37 @@
 
             const loadClients = async () => {
                 try {
-                    const data = await api.call('/customers');
+                    const data = await api.call('/api/customers');
                     setClients(data);
-                    setShowViewClients(true);
+                    console.log('Loaded clients:', data);
                 } catch (error) {
                     console.error('Failed to load clients:', error);
-                }
-            };
-
-            const loadClientsData = async () => {
-                try {
-                    const data = await api.call('/customers');
-                    setClients(data);
-                } catch (error) {
-                    console.error('Failed to load clients data:', error);
+                    setClients([{ 
+                        id: 1, 
+                        firstName: 'Default',
+                        lastName: 'Client',
+                        email: 'client@spark-e.com',
+                        phone: '555-0123',
+                        address: '123 Main St, City, State'
+                    }]);
                 }
             };
 
             const loadJobs = async () => {
                 try {
-                    const data = await api.call('/jobs');
+                    const data = await api.call('/api/jobs');
                     setJobs(data);
-                    setShowViewJobs(true);
+                    console.log('Loaded jobs:', data);
                 } catch (error) {
                     console.error('Failed to load jobs:', error);
                 }
             };
 
-            const loadJobsData = async () => {
-                try {
-                    const data = await api.call('/jobs');
-                    setJobs(data);
-                    console.log('Loaded jobs for invoice:', data);
-                } catch (error) {
-                    console.error('Failed to load jobs data:', error);
-                }
-            };
-
             const loadInvoices = async () => {
                 try {
-                    const data = await api.call('/invoices');
+                    const data = await api.call('/api/invoices');
                     setInvoices(data);
-                    setShowViewInvoices(true);
+                    console.log('Loaded invoices:', data);
                 } catch (error) {
                     console.error('Failed to load invoices:', error);
                 }
@@ -498,49 +287,96 @@
 
             const loadElectricians = async () => {
                 try {
-                    const data = await api.call('/electricians');
+                    const data = await api.call('/api/electricians');
                     setElectricians(data);
                     console.log('Loaded electricians:', data);
+                    console.log('Electrician details:', data.map(e => ({
+                        id: e.id,
+                        name: e.name,
+                        email: e.email,
+                        knowledgeLevel: e.knowledgeLevel,
+                        licenseNumber: e.licenseNumber
+                    })));
                 } catch (error) {
                     console.error('Failed to load electricians:', error);
-                    // Create default electrician if API fails or no electricians exist
                     setElectricians([{ 
                         id: 1, 
                         name: 'Default Electrician',
                         email: 'electrician@spark-e.com',
                         phone: '555-0123',
-                        hourlyRate: 75.0
+                        licenseNumber: 'ELEC123'
                     }]);
+                }
+            };
+
+            const loadClientsData = async () => await loadClients();
+            const loadJobsData = async () => await loadJobs();
+            const loadElectriciansData = async () => await loadElectricians();
+
+            const loadInvoicesModal = async () => {
+                try {
+                    setShowViewClients(false);
+                    setShowViewJobs(false);
+                    setShowViewRevenue(false);
+                    setShowLogin(false);
+                    setShowRegister(false);
+                    
+                    const data = await api.call('/api/invoices');
+                    setInvoices(data);
+                    setShowViewInvoices(true);
+                } catch (error) {
+                    console.error('Failed to load invoices:', error);
+                    alert('Failed to load invoices');
                 }
             };
 
             const loadRevenue = async () => {
                 try {
-                    // Only refresh data and open revenue modal
-                    await Promise.all([loadInvoices(), loadJobs(), loadClients(), loadElectricians()]);
+                    setShowViewClients(false);
+                    setShowViewJobs(false);
+                    setShowViewInvoices(false);
+                    setShowLogin(false);
+                    setShowRegister(false);
+                    
+                    const [invoicesData, jobsData, clientsData, electriciansData] = await Promise.all([
+                        api.call('/invoices').catch(() => []),
+                        api.call('/api/jobs').catch(() => []),
+                        api.call('/customers').catch(() => []),
+                        api.call('/electricians').catch(() => [])
+                    ]);
+                    
+                    setInvoices(invoicesData);
+                    setJobs(jobsData);
+                    setClients(clientsData);
+                    setElectricians(electriciansData);
+                    
                     setShowViewRevenue(true);
                 } catch (error) {
                     console.error('Failed to load revenue data:', error);
+                    alert('Failed to load revenue data');
                 }
             };
 
-            // Auth functions
             const handleLogin = async (e) => {
                 e.preventDefault();
                 const formData = new FormData(e.target);
-                const username = formData.get('username');
-                const password = formData.get('password');
-
                 try {
-                    const response = await api.call('/auth/login', {
+                    const response = await api.call('/api/auth/login', {
                         method: 'POST',
-                        body: JSON.stringify({ username, password })
+                        body: JSON.stringify({
+                            username: formData.get('username'),
+                            password: formData.get('password')
+                        })
                     });
-
+                    const userData = {
+                        name: formData.get('username'),
+                        email: response.email || formData.get('username') + '@spark-e.com'
+                    };
                     localStorage.setItem('jwtToken', response.token);
-                    setUser({ username });
+                    localStorage.setItem('user', JSON.stringify(userData));
+                    setUser(userData);
                     setShowLogin(false);
-                    loadDashboardData();
+                    await loadDashboardData();
                 } catch (error) {
                     alert('Login failed: ' + error.message);
                 }
@@ -549,26 +385,77 @@
             const handleRegister = async (e) => {
                 e.preventDefault();
                 const formData = new FormData(e.target);
-                const userData = {
-                    username: formData.get('username'),
-                    password: formData.get('password'),
-                    role: formData.get('role') || 'ROLE_ELECTRICIAN'
-                };
-
                 try {
-                    await api.call('/auth/register', {
+                    await api.call('/api/auth/register', {
                         method: 'POST',
-                        body: JSON.stringify(userData)
+                        body: JSON.stringify({
+                            username: formData.get('username'),
+                            password: formData.get('password'),
+                            email: formData.get('email')
+                        })
                     });
-
-                    setShowRegister(false);
                     alert('Registration successful! Please login.');
+                    setShowRegister(false);
+                    setShowLogin(true);
                 } catch (error) {
                     alert('Registration failed: ' + error.message);
                 }
             };
 
-            // Modal Components
+            const handleProfileUpdate = async (e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                const currentPassword = formData.get('currentPassword');
+                const newPassword = formData.get('newPassword');
+                const confirmNewPassword = formData.get('confirmNewPassword');
+                const newEmail = formData.get('email');
+                
+                try {
+                    // Validate password change if attempted
+                    if (newPassword && newPassword !== confirmNewPassword) {
+                        alert('New passwords do not match!');
+                        return;
+                    }
+                    
+                    if (newPassword && !currentPassword) {
+                        alert('Current password is required to change password!');
+                        return;
+                    }
+                    
+                    const updateData = {
+                        email: newEmail || user.email
+                    };
+                    
+                    // Only include password fields if changing password
+                    if (newPassword) {
+                        updateData.currentPassword = currentPassword;
+                        updateData.newPassword = newPassword;
+                    }
+                    
+                    const response = await api.call('/api/auth/profile', {
+                        method: 'PUT',
+                        body: JSON.stringify(updateData)
+                    });
+                    
+                    // Update user state with new info
+                    setUser({ ...user, email: updateData.email });
+                    
+                    // Update token if password was changed
+                    if (response.token) {
+                        localStorage.setItem('jwtToken', response.token);
+                    }
+                    
+                    alert('Profile updated successfully!');
+                    setShowProfile(false);
+                    
+                    // Clear form
+                    e.target.reset();
+                    
+                } catch (error) {
+                    alert('Profile update failed: ' + error.message);
+                }
+            };
+
             const LoginModal = () => {
                 if (!showLogin) return null;
                 return React.createElement('div', { className: 'modal-overlay' },
@@ -577,9 +464,9 @@
                         React.createElement('form', { onSubmit: handleLogin },
                             React.createElement('input', { type: 'text', name: 'username', placeholder: 'Username', className: 'form-input', required: true }),
                             React.createElement('input', { type: 'password', name: 'password', placeholder: 'Password', className: 'form-input', required: true }),
-                            React.createElement('div', { className: 'flex justify-between mt-4' },
-                                React.createElement('button', { type: 'submit', className: 'btn btn-primary hover-bounce' }, 'Login'),
-                                React.createElement('button', { type: 'button', onClick: () => setShowLogin(false), className: 'btn btn-secondary hover-bounce' }, 'Cancel')
+                            React.createElement('div', { className: 'flex justify-end mt-4' },
+                                React.createElement('button', { type: 'submit', className: 'btn btn-primary' }, 'Login'),
+                                React.createElement('button', { type: 'button', onClick: () => setShowLogin(false), className: 'btn btn-secondary ml-2' }, 'Cancel')
                             )
                         )
                     )
@@ -593,14 +480,76 @@
                         React.createElement('h3', { className: 'text-2xl font-bold mb-6' }, 'Register'),
                         React.createElement('form', { onSubmit: handleRegister },
                             React.createElement('input', { type: 'text', name: 'username', placeholder: 'Username', className: 'form-input', required: true }),
+                            React.createElement('input', { type: 'email', name: 'email', placeholder: 'Email', className: 'form-input', required: true }),
                             React.createElement('input', { type: 'password', name: 'password', placeholder: 'Password', className: 'form-input', required: true }),
-                            React.createElement('select', { name: 'role', className: 'form-input', required: true },
-                                React.createElement('option', { value: 'ROLE_ELECTRICIAN' }, 'Electrician'),
-                                React.createElement('option', { value: 'ROLE_ADMIN' }, 'Admin')
-                            ),
-                            React.createElement('div', { className: 'flex justify-between mt-4' },
+                            React.createElement('div', { className: 'flex justify-end mt-4' },
                                 React.createElement('button', { type: 'submit', className: 'btn btn-primary' }, 'Register'),
-                                React.createElement('button', { type: 'button', onClick: () => setShowRegister(false), className: 'btn btn-secondary' }, 'Cancel')
+                                React.createElement('button', { type: 'button', onClick: () => setShowRegister(false), className: 'btn btn-secondary ml-2' }, 'Cancel')
+                            )
+                        )
+                    )
+                );
+            };
+
+            const ProfileModal = () => {
+                if (!showProfile) return null;
+                return React.createElement('div', { className: 'modal-overlay' },
+                    React.createElement('div', { className: 'modal-content' },
+                        React.createElement('h3', { className: 'text-2xl font-bold mb-6' }, 'Edit Profile'),
+                        React.createElement('form', { onSubmit: handleProfileUpdate },
+                            React.createElement('div', { className: 'mb-4' },
+                                React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1' }, 'Username'),
+                                React.createElement('input', { 
+                                    type: 'text', 
+                                    value: user?.name || '', 
+                                    disabled: true, 
+                                    className: 'form-input bg-gray-100',
+                                    placeholder: 'Username (cannot be changed)'
+                                })
+                            ),
+                            React.createElement('div', { className: 'mb-4' },
+                                React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1' }, 'Email'),
+                                React.createElement('input', { 
+                                    type: 'email', 
+                                    name: 'email', 
+                                    defaultValue: user?.email || '', 
+                                    className: 'form-input',
+                                    placeholder: 'Email Address'
+                                })
+                            ),
+                            React.createElement('div', { className: 'border-t pt-4 mt-4' },
+                                React.createElement('h4', { className: 'text-lg font-semibold mb-4' }, 'Change Password'),
+                                React.createElement('div', { className: 'mb-4' },
+                                    React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1' }, 'Current Password'),
+                                    React.createElement('input', { 
+                                        type: 'password', 
+                                        name: 'currentPassword', 
+                                        className: 'form-input',
+                                        placeholder: 'Enter current password (required to change password)'
+                                    })
+                                ),
+                                React.createElement('div', { className: 'mb-4' },
+                                    React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1' }, 'New Password'),
+                                    React.createElement('input', { 
+                                        type: 'password', 
+                                        name: 'newPassword', 
+                                        className: 'form-input',
+                                        placeholder: 'Enter new password (leave blank to keep current)'
+                                    })
+                                ),
+                                React.createElement('div', { className: 'mb-4' },
+                                    React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1' }, 'Confirm New Password'),
+                                    React.createElement('input', { 
+                                        type: 'password', 
+                                        name: 'confirmNewPassword', 
+                                        className: 'form-input',
+                                        placeholder: 'Confirm new password'
+                                    })
+                                )
+                            ),
+                            React.createElement('div', { className: 'flex justify-end mt-6' },
+                                React.createElement('button', { type: 'submit', className: 'btn btn-primary' }, 'Update Profile'),
+                                React.createElement('button', { type: 'button', onClick: () => setShowProfile(false), className: 'btn btn-secondary ml-2' }, 'Cancel')
                             )
                         )
                     )
@@ -609,12 +558,6 @@
 
             const AddClientModal = () => {
                 if (!showAddClient) return null;
-                if (!user) {
-                    alert('Please login to add a client');
-                    setShowAddClient(false);
-                    setShowLogin(true);
-                    return null;
-                }
                 return React.createElement('div', { className: 'modal-overlay' },
                     React.createElement('div', { className: 'modal-content' },
                         React.createElement('h3', { className: 'text-2xl font-bold mb-6' }, 'Add New Client'),
@@ -630,12 +573,13 @@
                                     address: formData.get('address')
                                 };
                                 try {
-                                    await api.call('/customers', {
+                                    await api.call('/api/customers', {
                                         method: 'POST',
                                         body: JSON.stringify(clientData)
                                     });
                                     setShowAddClient(false);
                                     alert('Client added successfully!');
+                                    loadClients();
                                 } catch (error) {
                                     alert('Failed to add client: ' + error.message);
                                 }
@@ -659,33 +603,48 @@
                 if (!showAddJob) return null;
                 return React.createElement('div', { className: 'modal-overlay' },
                     React.createElement('div', { className: 'modal-content' },
-                        React.createElement('h3', { className: 'text-2xl font-bold mb-6' }, 'Create New Job'),
+                        React.createElement('h3', { className: 'text-2xl font-bold mb-6' }, 'Add New Job'),
                         React.createElement('form', {
                             onSubmit: async (e) => {
                                 e.preventDefault();
                                 const formData = new FormData(e.target);
                                 const jobData = {
                                     description: formData.get('description'),
-                                    status: formData.get('status'),
-                                    hoursWorked: parseFloat(formData.get('hoursWorked')) || 0,
-                                    customer: { id: parseInt(formData.get('customerId')) },
-                                    electrician: { id: parseInt(formData.get('electricianId')) }
+                                    scheduledDate: formData.get('scheduledDate'),
+                                    customerId: parseInt(formData.get('customerId')),
+                                    electricianId: parseInt(formData.get('electricianId'))
                                 };
                                 try {
-                                    await api.call('/jobs', {
+                                    const token = localStorage.getItem('jwtToken');
+                                    console.log('Current JWT token before job creation:', token);
+                                    if (!token) {
+                                        alert('No authentication token found. Please log in again.');
+                                        return;
+                                    }
+                                    console.log('Sending job data:', jobData);
+                                    const response = await api.call('/api/jobs', {
                                         method: 'POST',
                                         body: JSON.stringify(jobData)
                                     });
+                                    console.log('Received response from add job:', response);
                                     setShowAddJob(false);
-                                    alert('Job created successfully!');
+                                    alert('Job added successfully!');
+                                    loadJobs();
                                 } catch (error) {
-                                    alert('Failed to create job: ' + error.message);
+                                    console.error('Add job error details:', error);
+                                    if (error.message.includes('403')) {
+                                        console.log('403 Forbidden - Check authentication');
+                                        console.log('Current token:', localStorage.getItem('jwtToken'));
+                                        console.log('Current user:', JSON.parse(localStorage.getItem('user') || '{}'));
+                                    }
+                                    alert('Failed to add job: ' + error.message);
                                 }
                             }
                         },
                             React.createElement('textarea', { name: 'description', placeholder: 'Job Description', className: 'form-input', rows: 3, required: true }),
+                            React.createElement('input', { type: 'date', name: 'scheduledDate', className: 'form-input', required: true }),
                             React.createElement('select', { name: 'customerId', className: 'form-input', required: true },
-                                React.createElement('option', { value: '' }, 'Select Customer'),
+                                React.createElement('option', { value: '' }, 'Select Client'),
                                 ...clients.map(client => 
                                     React.createElement('option', { key: client.id, value: client.id }, 
                                         client.firstName + ' ' + client.lastName
@@ -700,14 +659,8 @@
                                     )
                                 )
                             ),
-                            React.createElement('select', { name: 'status', className: 'form-input', required: true },
-                                React.createElement('option', { value: 'SCHEDULED' }, 'Scheduled'),
-                                React.createElement('option', { value: 'IN_PROGRESS' }, 'In Progress'),
-                                React.createElement('option', { value: 'COMPLETED' }, 'Completed')
-                            ),
-                            React.createElement('input', { type: 'number', name: 'hoursWorked', placeholder: 'Hours Worked', className: 'form-input', step: '0.5', min: '0' }),
                             React.createElement('div', { className: 'flex justify-end mt-4' },
-                                React.createElement('button', { type: 'submit', className: 'btn btn-primary' }, 'Create Job'),
+                                React.createElement('button', { type: 'submit', className: 'btn btn-primary' }, 'Add Job'),
                                 React.createElement('button', { type: 'button', onClick: () => setShowAddJob(false), className: 'btn btn-secondary' }, 'Cancel')
                             )
                         )
@@ -725,23 +678,24 @@
                                 e.preventDefault();
                                 const formData = new FormData(e.target);
                                 const jobData = {
-                                    id: editingJob.id,
                                     description: formData.get('description'),
-                                    status: formData.get('status'),
+                                    scheduledDate: formData.get('scheduledDate'),
+                                    completedDate: formData.get('completedDate'),
                                     hoursWorked: parseFloat(formData.get('hoursWorked')) || 0,
-                                    customer: { id: parseInt(formData.get('customerId')) },
-                                    electrician: { id: parseInt(formData.get('electricianId')) }
+                                    status: formData.get('status'),
+                                    customerId: parseInt(formData.get('customerId')),
+                                    electricianId: parseInt(formData.get('electricianId'))
                                 };
                                 try {
-                                    await api.call('/jobs/' + editingJob.id, {
+                                    await api.call('/api/jobs/' + editingJob.id, {
                                         method: 'PUT',
                                         body: JSON.stringify(jobData)
                                     });
                                     setShowEditJob(false);
                                     setEditingJob(null);
                                     alert('Job updated successfully!');
-                                    loadJobs(); // Refresh the jobs list
-                                    setShowViewJobs(true); // Reopen view modal to see updated job
+                                    loadJobs();
+                                    setShowViewJobs(true);
                                 } catch (error) {
                                     alert('Failed to update job: ' + error.message);
                                 }
@@ -780,7 +734,7 @@
                                 React.createElement('button', { type: 'button', onClick: () => {
                                     setShowEditJob(false);
                                     setEditingJob(null);
-                                    setShowViewJobs(true); // Reopen view modal
+                                    setShowViewJobs(true);
                                 }, className: 'btn btn-secondary' }, 'Cancel')
                             )
                         )
@@ -806,18 +760,14 @@
                                     notes: formData.get('notes')
                                 };
                                 try {
-                                    const createdInvoice = await api.call('/invoices', {
+                                    const createdInvoice = await api.call('/api/invoices', {
                                         method: 'POST',
                                         body: JSON.stringify(invoiceData)
                                     });
                                     setShowAddInvoice(false);
                                     alert('Invoice created successfully!');
-                                    
-                                    // Load the created invoice and show it
                                     await loadInvoices();
-                                    const invoiceDetails = await api.call('/invoices/' + createdInvoice.id);
-                                    
-                                    // Show invoice details in a simple modal
+                                    const invoiceDetails = await api.call('/api/invoices/' + createdInvoice.id);
                                     alert(`Invoice #${invoiceDetails.invoiceNumber || invoiceDetails.id} created for Job: ${invoiceDetails.job?.description || 'No description'}\nAmount: $${invoiceDetails.totalAmount || invoiceDetails.amount || '0.00'}\nStatus: ${invoiceDetails.paid ? 'Paid' : 'Unpaid'}`);
                                 } catch (error) {
                                     alert('Failed to create invoice: ' + error.message);
@@ -872,15 +822,15 @@
                                     notes: formData.get('notes')
                                 };
                                 try {
-                                    await api.call('/invoices/' + editingInvoice.id, {
+                                    await api.call('/api/invoices/' + editingInvoice.id, {
                                         method: 'PUT',
                                         body: JSON.stringify(invoiceData)
                                     });
                                     setShowEditInvoice(false);
                                     setEditingInvoice(null);
                                     alert('Invoice updated successfully!');
-                                    loadInvoices(); // Refresh the invoices list
-                                    setShowViewInvoices(true); // Reopen view modal to see updated invoice
+                                    loadInvoices();
+                                    setShowViewInvoices(true);
                                 } catch (error) {
                                     alert('Failed to update invoice: ' + error.message);
                                 }
@@ -919,8 +869,145 @@
                                 React.createElement('button', { type: 'button', onClick: () => {
                                     setShowEditInvoice(false);
                                     setEditingInvoice(null);
-                                    setShowViewInvoices(true); // Reopen view modal
+                                    setShowViewInvoices(true);
                                 }, className: 'btn btn-secondary' }, 'Cancel')
+                            )
+                        )
+                    )
+                );
+            };
+
+            const AddElectricianModal = () => {
+                if (!showAddElectrician) return null;
+                return React.createElement('div', { className: 'modal-overlay' },
+                    React.createElement('div', { className: 'modal-content' },
+                        React.createElement('h3', { className: 'text-2xl font-bold mb-6' }, 'Add New Electrician'),
+                        React.createElement('form', {
+                            onSubmit: async (e) => {
+                                e.preventDefault();
+                                const formData = new FormData(e.target);
+                                const electricianData = {
+                                    name: formData.get('name'),
+                                    email: formData.get('email'),
+                                    phone: formData.get('phone'),
+                                    hourlyRate: parseFloat(formData.get('hourlyRate')) || 0,
+                                    knowledgeLevel: formData.get('knowledgeLevel'),
+                                    licenseNumber: formData.get('licenseNumber')
+                                };
+                                try {
+                                    await api.call('/api/electricians', {
+                                        method: 'POST',
+                                        body: JSON.stringify(electricianData)
+                                    });
+                                    setShowAddElectrician(false);
+                                    alert('Electrician added successfully!');
+                                    loadElectricians();
+                                } catch (error) {
+                                    alert('Failed to add electrician: ' + error.message);
+                                }
+                            }
+                        },
+                            React.createElement('div', { className: 'space-y-4' },
+                                React.createElement('div', { className: 'mb-4' },
+                                    React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1' }, 'Name'),
+                                    React.createElement('input', { type: 'text', name: 'name', placeholder: 'Electrician Name', className: 'form-input', required: true }),
+                                    React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1 mt-3' }, 'Email'),
+                                    React.createElement('input', { type: 'email', name: 'email', placeholder: 'Email Address', className: 'form-input', required: true }),
+                                    React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1 mt-3' }, 'Phone'),
+                                    React.createElement('input', { type: 'tel', name: 'phone', placeholder: 'Phone Number', className: 'form-input', required: true }),
+                                    React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1 mt-3' }, 'Hourly Rate ($)'),
+                                    React.createElement('input', { type: 'number', name: 'hourlyRate', placeholder: 'Hourly Rate', className: 'form-input', step: '0.01', min: '0', required: true }),
+                                    React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1 mt-3' }, 'Knowledge Level'),
+                                    React.createElement('select', { name: 'knowledgeLevel', className: 'form-input', required: true },
+                                        React.createElement('option', { value: '' }, 'Select Level'),
+                                        React.createElement('option', { value: 'Apprentice' }, 'Apprentice'),
+                                        React.createElement('option', { value: 'Journeyman' }, 'Journeyman'),
+                                        React.createElement('option', { value: 'Foreman' }, 'Foreman'),
+                                        React.createElement('option', { value: 'Master Electrician' }, 'Master Electrician')
+                                    ),
+                                    React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1 mt-3' }, 'License Number'),
+                                    React.createElement('input', { type: 'text', name: 'licenseNumber', placeholder: 'License Number', className: 'form-input', required: true }),
+                                    React.createElement('div', { className: 'flex justify-end mt-6' },
+                                        React.createElement('button', { type: 'submit', className: 'btn btn-primary' }, 'Add Electrician'),
+                                        React.createElement('button', { type: 'button', onClick: () => setShowAddElectrician(false), className: 'btn btn-secondary' }, 'Cancel')
+                                    )
+                                )
+                            )
+                        )
+                    )
+                );
+            };
+
+            const EditElectricianModal = () => {
+                if (!showEditElectrician) return null;
+                return React.createElement('div', { className: 'modal-overlay' },
+                    React.createElement('div', { className: 'modal-content' },
+                        React.createElement('h3', { className: 'text-2xl font-bold mb-6' }, 'Edit Electrician'),
+                        React.createElement('form', {
+                            onSubmit: async (e) => {
+                                e.preventDefault();
+                                const formData = new FormData(e.target);
+                                const electricianData = {
+                                    name: formData.get('name'),
+                                    email: formData.get('email'),
+                                    phone: formData.get('phone'),
+                                    hourlyRate: parseFloat(formData.get('hourlyRate')) || 0,
+                                    knowledgeLevel: formData.get('knowledgeLevel'),
+                                    licenseNumber: formData.get('licenseNumber')
+                                };
+                                try {
+                                    console.log('Sending electrician update data:', electricianData);
+                                    const response = await api.call('/api/electricians/' + editingElectrician.id, {
+                                        method: 'PUT',
+                                        body: JSON.stringify(electricianData)
+                                    });
+                                    console.log('Received response from update:', response);
+                                    setShowEditElectrician(false);
+                                    setEditingElectrician(null);
+                                    alert('Electrician updated successfully!');
+                                    // Force complete reload of electricians data
+                                    await loadElectricians();
+                                    // Re-open view electricians modal to show updated data
+                                    setShowViewElectricians(true);
+                                } catch (error) {
+                                    console.error('Update error details:', error);
+                                    if (error.message.includes('403')) {
+                                        console.log('403 Forbidden - Check authentication');
+                                        console.log('Current token:', localStorage.getItem('jwtToken'));
+                                        console.log('Current user:', JSON.parse(localStorage.getItem('user') || '{}'));
+                                    }
+                                    alert('Failed to update electrician: ' + error.message);
+                                }
+                            }
+                        },
+                            React.createElement('div', { className: 'space-y-4' },
+                                React.createElement('div', { className: 'mb-4' },
+                                    React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1' }, 'Name'),
+                                    React.createElement('input', { type: 'text', name: 'name', placeholder: 'Electrician Name', className: 'form-input', required: true, defaultValue: editingElectrician.name || '' }),
+                                    React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1 mt-3' }, 'Email'),
+                                    React.createElement('input', { type: 'email', name: 'email', placeholder: 'Email Address', className: 'form-input', required: true, defaultValue: editingElectrician.email || '' }),
+                                    React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1 mt-3' }, 'Phone'),
+                                    React.createElement('input', { type: 'tel', name: 'phone', placeholder: 'Phone Number', className: 'form-input', required: true, defaultValue: editingElectrician.phone || '' }),
+                                    React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1 mt-3' }, 'Hourly Rate ($)'),
+                                    React.createElement('input', { type: 'number', name: 'hourlyRate', placeholder: 'Hourly Rate', className: 'form-input', step: '0.01', min: '0', required: true, defaultValue: editingElectrician.hourlyRate || 0 }),
+                                    React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1 mt-3' }, 'Knowledge Level'),
+                                    React.createElement('select', { name: 'knowledgeLevel', className: 'form-input', required: true, defaultValue: editingElectrician.knowledgeLevel || '' },
+                                        React.createElement('option', { value: '' }, 'Select Level'),
+                                        React.createElement('option', { value: 'Apprentice' }, 'Apprentice'),
+                                        React.createElement('option', { value: 'Journeyman' }, 'Journeyman'),
+                                        React.createElement('option', { value: 'Foreman' }, 'Foreman'),
+                                        React.createElement('option', { value: 'Master Electrician' }, 'Master Electrician')
+                                    ),
+                                    React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1 mt-3' }, 'License Number'),
+                                    React.createElement('input', { type: 'text', name: 'licenseNumber', placeholder: 'License Number', className: 'form-input', required: true, defaultValue: editingElectrician.licenseNumber || '' }),
+                                    React.createElement('div', { className: 'flex justify-end mt-6' },
+                                        React.createElement('button', { type: 'submit', className: 'btn btn-primary' }, 'Update Electrician'),
+                                        React.createElement('button', { type: 'button', onClick: () => {
+                                            setShowEditElectrician(false);
+                                            setEditingElectrician(null);
+                                        }, className: 'btn btn-secondary' }, 'Cancel')
+                                    )
+                                )
                             )
                         )
                     )
@@ -946,7 +1033,6 @@
                                             React.createElement('button', { className: 'bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm' }, 'Edit'),
                                             React.createElement('button', { 
                                                 onClick: async () => {
-                                                    // Find all invoices for this client's jobs
                                                     const clientInvoices = invoices.filter(inv => 
                                                         inv.job && jobs.find(job => 
                                                             job.id === inv.job.id && 
@@ -970,10 +1056,10 @@
                                                 onClick: async () => {
                                                     if (confirm(`Are you sure you want to delete this client: "${client.firstName} ${client.lastName}"?`)) {
                                                         try {
-                                                            await api.call('/customers/' + client.id, {
+                                                            await api.call('/api/customers/' + client.id, {
                                                                 method: 'DELETE'
                                                             });
-                                                            await loadClients(); // Refresh clients list
+                                                            await loadClients();
                                                             alert('Client deleted successfully!');
                                                         } catch (error) {
                                                             alert('Failed to delete client: ' + error.message);
@@ -1020,10 +1106,9 @@
                                             }, 'Edit'),
                                             React.createElement('button', { 
                                                 onClick: async () => {
-                                                    // Load invoices for this specific job
                                                     try {
                                                         console.log('Looking for invoice for job ID:', job.id);
-                                                        const jobInvoice = await api.call('/invoices/job/' + job.id);
+                                                        const jobInvoice = await api.call('/api/invoices/job/' + job.id);
                                                         console.log('Found invoice:', jobInvoice);
                                                         if (jobInvoice) {
                                                             alert(`Invoice for this job:\nInvoice #${jobInvoice.invoiceNumber || jobInvoice.id}\nAmount: $${jobInvoice.totalAmount || jobInvoice.amount || '0.00'}\nStatus: ${jobInvoice.paid ? 'Paid' : 'Unpaid'}\nIssue Date: ${jobInvoice.issueDate || 'N/A'}\nDue Date: ${jobInvoice.dueDate || 'N/A'}`);
@@ -1032,7 +1117,6 @@
                                                         }
                                                     } catch (error) {
                                                         console.error('Error looking up invoice:', error);
-                                                        // Try to find invoice by checking all invoices
                                                         const matchingInvoice = invoices.find(inv => 
                                                             inv.job && inv.job.id === job.id
                                                         );
@@ -1047,13 +1131,11 @@
                                             }, 'View Invoice'),
                                             React.createElement('button', { 
                                                 onClick: async () => {
-                                                    // Generate invoice for this job
                                                     try {
                                                         console.log('Generating invoice for job:', job);
                                                         
-                                                        // Check if invoice already exists
                                                         try {
-                                                            const existingInvoice = await api.call('/invoices/job/' + job.id);
+                                                            const existingInvoice = await api.call('/api/invoices/job/' + job.id);
                                                             if (existingInvoice) {
                                                                 alert('Invoice already exists for this job. Use "View Invoice" to see details.');
                                                                 return;
@@ -1062,22 +1144,19 @@
                                                             console.log('No existing invoice found, proceeding with creation');
                                                         }
                                                         
-                                                        // Load jobs data for the invoice modal
                                                         await loadJobsData();
                                                         
-                                                        // Pre-fill invoice data with job information
                                                         const invoiceData = {
                                                             jobId: job.id,
-                                                            amount: (job.hoursWorked || 1) * 75, // Default hourly rate
+                                                            amount: (job.hoursWorked || 1) * 75,
                                                             issueDate: new Date().toISOString().split('T')[0],
-                                                            dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 30 days from now
+                                                            dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
                                                             status: 'PENDING',
                                                             notes: `Invoice for: ${job.description}`
                                                         };
                                                         
                                                         console.log('Creating invoice with data:', invoiceData);
                                                         
-                                                        // Create the invoice directly
                                                         const createdInvoice = await api.call('/invoices', {
                                                             method: 'POST',
                                                             body: JSON.stringify(invoiceData)
@@ -1085,7 +1164,6 @@
                                                         
                                                         console.log('Created invoice:', createdInvoice);
                                                         
-                                                        // Refresh invoices
                                                         await loadInvoices();
                                                         
                                                         alert(`Invoice #${createdInvoice.invoiceNumber || createdInvoice.id} generated successfully for job: ${job.description}\nAmount: $${invoiceData.amount}\nDue Date: ${invoiceData.dueDate}`);
@@ -1099,13 +1177,10 @@
                                             }, 'Generate Invoice'),
                                             React.createElement('button', { 
                                                 onClick: async () => {
-                                                    // Find invoice for this job and open edit modal
                                                     try {
-                                                        const jobInvoice = await api.call('/invoices/job/' + job.id);
+                                                        const jobInvoice = await api.call('/api/invoices/job/' + job.id);
                                                         if (jobInvoice) {
-                                                            // Load jobs data first
                                                             await loadJobsData();
-                                                            // Set up edit invoice and close view jobs, then open edit invoice
                                                             setEditingInvoice(jobInvoice);
                                                             setShowViewJobs(false);
                                                             setShowEditInvoice(true);
@@ -1113,7 +1188,6 @@
                                                             alert('No invoice found for this job. Generate an invoice first.');
                                                         }
                                                     } catch (error) {
-                                                        // Try to find invoice by checking all invoices
                                                         const matchingInvoice = invoices.find(inv => 
                                                             inv.job && inv.job.id === job.id
                                                         );
@@ -1133,10 +1207,10 @@
                                                 onClick: async () => {
                                                     if (confirm(`Are you sure you want to delete this job: "${job.description}"?`)) {
                                                         try {
-                                                            await api.call('/jobs/' + job.id, {
+                                                            await api.call('/api/jobs/' + job.id, {
                                                                 method: 'DELETE'
                                                             });
-                                                            await loadJobs(); // Refresh jobs list
+                                                            await loadJobs();
                                                             alert('Job deleted successfully!');
                                                         } catch (error) {
                                                             alert('Failed to delete job: ' + error.message);
@@ -1152,6 +1226,70 @@
                         ),
                         React.createElement('div', { className: 'flex justify-end mt-6' },
                             React.createElement('button', { onClick: () => setShowViewJobs(false), className: 'btn btn-secondary' }, 'Close')
+                        )
+                    )
+                );
+            };
+
+            const ViewElectriciansModal = () => {
+                if (!showViewElectricians) return null;
+                
+                // Force re-render when electricians data changes
+                const [currentElectricians, setCurrentElectricians] = useState(electricians);
+                
+                useEffect(() => {
+                    setCurrentElectricians(electricians);
+                }, [electricians]);
+                
+                return React.createElement('div', { className: 'modal-overlay' },
+                    React.createElement('div', { className: 'modal-content' },
+                        React.createElement('h3', { className: 'text-2xl font-bold mb-6' }, 'All Electricians'),
+                        React.createElement('div', { className: 'space-y-4' },
+                            ...currentElectricians.map(electrician => 
+                                React.createElement('div', { key: electrician.id, className: 'card' },
+                                    React.createElement('div', { className: 'flex justify-between items-start' },
+                                        React.createElement('div', null,
+                                            React.createElement('h4', { className: 'font-semibold text-lg' }, electrician.name || 'Electrician ' + electrician.id),
+                                            React.createElement('p', { className: 'text-gray-600 text-sm' }, 'Email: ' + (electrician.email || 'Not specified')),
+                                            React.createElement('p', { className: 'text-gray-600 text-sm' }, 'Phone: ' + (electrician.phone || 'Not specified')),
+                                            React.createElement('p', { className: 'text-gray-600 text-sm' }, 'Hourly Rate: $' + (electrician.hourlyRate || 0)),
+                                            React.createElement('p', { className: 'text-gray-600 text-sm' }, 'Knowledge Level: ' + (electrician.knowledgeLevel || 'Not set')),
+                                            React.createElement('p', { className: 'text-gray-600 text-sm' }, 'License: ' + (electrician.licenseNumber || 'Not set')),
+                                            // Debug info
+                                            React.createElement('p', { className: 'text-xs text-gray-500 mt-2' }, 'DEBUG: ID=' + electrician.id + ', Name=' + (electrician.name || 'undefined') + ', Email=' + (electrician.email || 'undefined') + ', Level=' + (electrician.knowledgeLevel || 'undefined') + ', License=' + (electrician.licenseNumber || 'undefined'))
+                                        ),
+                                        React.createElement('div', { className: 'flex space-x-2' },
+                                            React.createElement('button', { 
+                                                onClick: () => {
+                                                    setEditingElectrician(electrician);
+                                                    setShowViewElectricians(false);
+                                                    setShowEditElectrician(true);
+                                                }, 
+                                                className: 'bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm' 
+                                            }, 'Edit'),
+                                            React.createElement('button', { 
+                                                onClick: async () => {
+                                                    if (confirm(`Are you sure you want to delete this electrician: "${electrician.name || 'Electrician ' + electrician.id}"?`)) {
+                                                        try {
+                                                            await api.call('/api/electricians/' + electrician.id, {
+                                                                method: 'DELETE'
+                                                            });
+                                                            await loadElectricians();
+                                                            alert('Electrician deleted successfully!');
+                                                        } catch (error) {
+                                                            alert('Failed to delete electrician: ' + error.message);
+                                                        }
+                                                    }
+                                                }, 
+                                                className: 'bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm' 
+                                            }, 'Delete')
+                                        )
+                                    )
+                                )
+                            )
+                        ),
+                        React.createElement('div', { className: 'flex justify-end mt-6' },
+                            React.createElement('button', { onClick: () => setShowViewElectricians(false), className: 'btn btn-secondary' }, 'Close')
                         )
                     )
                 );
@@ -1203,7 +1341,7 @@
                                         React.createElement('div', { className: 'flex space-x-2 ml-4' },
                                             React.createElement('button', { 
                                             onClick: async () => {
-                                                await loadJobsData(); // Load jobs first
+                                                await loadJobsData();
                                                 setEditingInvoice(invoice);
                                                 setShowViewInvoices(false); 
                                                 setShowEditInvoice(true); 
@@ -1214,10 +1352,10 @@
                                                 onClick: async () => {
                                                     if (confirm(`Are you sure you want to delete this invoice: "${invoice.invoiceNumber ? 'Invoice #' + invoice.invoiceNumber : 'Invoice #' + invoice.id}"?`)) {
                                                         try {
-                                                            await api.call('/invoices/' + invoice.id, {
+                                                            await api.call('/api/invoices/' + invoice.id, {
                                                                 method: 'DELETE'
                                                             });
-                                                            await loadInvoices(); // Refresh invoices list
+                                                            await loadInvoices();
                                                             alert('Invoice deleted successfully!');
                                                         } catch (error) {
                                                             alert('Failed to delete invoice: ' + error.message);
@@ -1241,49 +1379,10 @@
             const ViewRevenueModal = () => {
                 if (!showViewRevenue) return null;
                 
-                // Get current date for filtering
                 const now = new Date();
                 const currentYear = now.getFullYear();
                 const currentMonth = now.getMonth();
                 
-                // Filter invoices based on selected period
-                const getFilteredInvoices = () => {
-                    if (revenuePeriod === 'monthly') {
-                        return invoices.filter(inv => {
-                            if (!inv.issueDate) return false;
-                            const invDate = new Date(inv.issueDate);
-                            return invDate.getFullYear() === currentYear && invDate.getMonth() === currentMonth;
-                        });
-                    } else if (revenuePeriod === 'yearly') {
-                        return invoices.filter(inv => {
-                            if (!inv.issueDate) return false;
-                            const invDate = new Date(inv.issueDate);
-                            return invDate.getFullYear() === currentYear;
-                        });
-                    } else {
-                        return invoices; // total - all invoices
-                    }
-                };
-                
-                const filteredInvoices = getFilteredInvoices();
-                
-                // Calculate revenue from filtered invoices
-                const paidRevenue = filteredInvoices
-                    .filter(inv => inv.paid)
-                    .reduce((sum, inv) => sum + (inv.totalAmount || inv.amount || 0), 0);
-                
-                const unpaidRevenue = filteredInvoices
-                    .filter(inv => !inv.paid)
-                    .reduce((sum, inv) => sum + (inv.totalAmount || inv.amount || 0), 0);
-                
-                const totalRevenue = paidRevenue + unpaidRevenue;
-                
-                // Calculate job-based revenue
-                const completedJobs = jobs.filter(job => job.status === 'COMPLETED');
-                const activeJobs = jobs.filter(job => job.status === 'IN_PROGRESS');
-                const scheduledJobs = jobs.filter(job => job.status === 'SCHEDULED');
-                
-                // Get period label
                 const getPeriodLabel = () => {
                     if (revenuePeriod === 'monthly') {
                         return now.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
@@ -1294,21 +1393,127 @@
                     }
                 };
                 
+                let filteredInvoices = [];
+                if (revenuePeriod === 'monthly') {
+                    filteredInvoices = invoices.filter(inv => {
+                        if (!inv.issueDate) return false;
+                        const invDate = new Date(inv.issueDate);
+                        return invDate.getFullYear() === currentYear && invDate.getMonth() === currentMonth;
+                    });
+                } else if (revenuePeriod === 'yearly') {
+                    filteredInvoices = invoices.filter(inv => {
+                        if (!inv.issueDate) return false;
+                        const invDate = new Date(inv.issueDate);
+                        return invDate.getFullYear() === currentYear;
+                    });
+                } else {
+                    filteredInvoices = invoices;
+                }
+                
+                const paidRevenue = filteredInvoices
+                    .filter(inv => inv.paid)
+                    .reduce((sum, inv) => sum + (inv.totalAmount || inv.amount || 0), 0);
+                
+                const unpaidRevenue = filteredInvoices
+                    .filter(inv => !inv.paid)
+                    .reduce((sum, inv) => sum + (inv.totalAmount || inv.amount || 0), 0);
+                
+                const totalRevenue = paidRevenue + unpaidRevenue;
+                
+                const completedJobs = jobs.filter(job => job.status === 'COMPLETED');
+                const activeJobs = jobs.filter(job => job.status === 'IN_PROGRESS');
+                const scheduledJobs = jobs.filter(job => job.status === 'SCHEDULED');
+                
+                // Generate chart data based on revenue period
+                const getChartData = () => {
+                    let chartData = [];
+                    
+                    if (revenuePeriod === 'monthly') {
+                        // Show weekly intervals for current month to avoid overcrowding
+                        const weeksInMonth = Math.ceil(new Date(currentYear, currentMonth + 1, 0).getDate() / 7);
+                        for (let week = 0; week < weeksInMonth; week++) {
+                            const startDay = week * 7 + 1;
+                            const endDay = Math.min(startDay + 6, new Date(currentYear, currentMonth + 1, 0).getDate());
+                            
+                            const weekRevenue = invoices
+                                .filter(inv => {
+                                    if (!inv.issueDate || !inv.paid) return false;
+                                    const invDate = new Date(inv.issueDate);
+                                    return invDate.getFullYear() === currentYear && 
+                                           invDate.getMonth() === currentMonth && 
+                                           invDate.getDate() >= startDay && 
+                                           invDate.getDate() <= endDay;
+                                })
+                                .reduce((sum, inv) => sum + (inv.totalAmount || inv.amount || 0), 0);
+                            
+                            chartData.push({
+                                label: `Week ${week + 1}`,
+                                value: weekRevenue,
+                                date: new Date(currentYear, currentMonth, startDay)
+                            });
+                        }
+                    } else if (revenuePeriod === 'yearly') {
+                        // Show monthly revenue for current year
+                        for (let month = 0; month < 12; month++) {
+                            const monthRevenue = invoices
+                                .filter(inv => {
+                                    if (!inv.issueDate || !inv.paid) return false;
+                                    const invDate = new Date(inv.issueDate);
+                                    return invDate.getFullYear() === currentYear && 
+                                           invDate.getMonth() === month;
+                                })
+                                .reduce((sum, inv) => sum + (inv.totalAmount || inv.amount || 0), 0);
+                            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                            chartData.push({
+                                label: monthNames[month],
+                                value: monthRevenue,
+                                date: new Date(currentYear, month, 1)
+                            });
+                        }
+                    } else {
+                        // Show yearly revenue for all years
+                        const years = [...new Set(invoices
+                            .filter(inv => inv.issueDate && inv.paid)
+                            .map(inv => new Date(inv.issueDate).getFullYear())
+                        )].sort();
+                        
+                        years.forEach(year => {
+                            const yearRevenue = invoices
+                                .filter(inv => {
+                                    if (!inv.issueDate || !inv.paid) return false;
+                                    const invDate = new Date(inv.issueDate);
+                                    return invDate.getFullYear() === year;
+                                })
+                                .reduce((sum, inv) => sum + (inv.totalAmount || inv.amount || 0), 0);
+                            chartData.push({
+                                label: year.toString(),
+                                value: yearRevenue,
+                                date: new Date(year, 0, 1)
+                            });
+                        });
+                    }
+                    
+                    return chartData;
+                };
+                
+                const chartData = getChartData();
+                const maxRevenue = Math.max(...chartData.map(d => d.value), 1);
+                
                 return React.createElement('div', { className: 'modal-overlay revenue-modal' },
                     React.createElement('div', { className: 'modal-content' },
                         React.createElement('div', { className: 'flex justify-between items-center mb-6' },
                             React.createElement('h3', { className: 'text-2xl font-bold' }, 'Revenue Summary'),
                             React.createElement('div', { className: 'flex space-x-2' },
                                 React.createElement('button', {
-                                    onClick: () => setRevenuePeriod('monthly'),
+                                    onClick: () => switchRevenuePeriod('monthly'),
                                     className: revenuePeriod === 'monthly' ? 'bg-blue-500 text-white px-4 py-2 rounded' : 'bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300'
                                 }, 'Monthly'),
                                 React.createElement('button', {
-                                    onClick: () => setRevenuePeriod('yearly'),
+                                    onClick: () => switchRevenuePeriod('yearly'),
                                     className: revenuePeriod === 'yearly' ? 'bg-blue-500 text-white px-4 py-2 rounded' : 'bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300'
                                 }, 'Yearly'),
                                 React.createElement('button', {
-                                    onClick: () => setRevenuePeriod('total'),
+                                    onClick: () => switchRevenuePeriod('total'),
                                     className: revenuePeriod === 'total' ? 'bg-blue-500 text-white px-4 py-2 rounded' : 'bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300'
                                 }, 'Total')
                             )
@@ -1328,6 +1533,52 @@
                             React.createElement('div', { className: 'bg-yellow-50 p-6 rounded-lg' },
                                 React.createElement('h4', { className: 'font-semibold text-lg text-yellow-800' }, 'Unpaid Revenue'),
                                 React.createElement('p', { className: 'text-3xl font-bold text-yellow-600' }, '$' + unpaidRevenue.toFixed(2))
+                            )
+                        ),
+                        React.createElement('div', { className: 'bg-white p-6 rounded-lg shadow-md mb-6' },
+                            React.createElement('h4', { className: 'font-semibold text-lg text-gray-800 mb-4' }, 'Revenue Trend'),
+                            React.createElement('div', { className: 'revenue-chart' },
+                                // Chart grid lines
+                                React.createElement('div', { className: 'chart-grid' },
+                                    [0, 25, 50, 75, 100].map(percent => 
+                                        React.createElement('div', { 
+                                            key: percent,
+                                            className: 'chart-grid-line',
+                                            style: { bottom: percent + '%' }
+                                        })
+                                    )
+                                ),
+                                // Chart bars
+                                ...chartData.map((data, index) => {
+                                    const barHeight = (data.value / maxRevenue) * 100;
+                                    const barWidth = 100 / chartData.length;
+                                    const leftPosition = (index * barWidth) + (barWidth * 0.1);
+                                    const actualBarWidth = barWidth * 0.8;
+                                    
+                                    return React.createElement('div', {
+                                        key: index,
+                                        className: 'chart-bar',
+                                        style: {
+                                            height: barHeight + '%',
+                                            left: leftPosition + '%',
+                                            width: actualBarWidth + '%',
+                                            background: data.value > 0 
+                                                ? 'linear-gradient(to top, #3b82f6, #60a5fa)' 
+                                                : 'linear-gradient(to top, #e5e7eb, #f3f4f6)'
+                                        }
+                                    },
+                                        React.createElement('div', { 
+                                            className: 'chart-value',
+                                            style: { display: data.value > 0 ? 'block' : 'none' }
+                                        }, '$' + data.value.toFixed(0)),
+                                        React.createElement('div', { className: 'chart-label' }, data.label)
+                                    );
+                                }),
+                                // X-axis
+                                React.createElement('div', { className: 'chart-axis' })
+                            ),
+                            React.createElement('div', { className: 'mt-4 text-center text-sm text-gray-600' },
+                                `Showing ${revenuePeriod === 'monthly' ? 'weekly' : revenuePeriod === 'yearly' ? 'monthly' : 'yearly'} revenue for ${getPeriodLabel().toLowerCase()}`
                             )
                         ),
                         React.createElement('div', { className: 'grid md:grid-cols-2 gap-6 mb-6' },
@@ -1356,16 +1607,16 @@
                                         React.createElement('span', { className: 'font-semibold' }, jobs.length)
                                     ),
                                     React.createElement('div', { className: 'flex justify-between' },
-                                        React.createElement('span', { className: 'text-green-600' }, 'Completed:'),
+                                        React.createElement('span', { className: 'text-gray-600' }, 'Completed:'),
                                         React.createElement('span', { className: 'font-semibold text-green-600' }, completedJobs.length)
                                     ),
                                     React.createElement('div', { className: 'flex justify-between' },
-                                        React.createElement('span', { className: 'text-blue-600' }, 'In Progress:'),
+                                        React.createElement('span', { className: 'text-gray-600' }, 'In Progress:'),
                                         React.createElement('span', { className: 'font-semibold text-blue-600' }, activeJobs.length)
                                     ),
                                     React.createElement('div', { className: 'flex justify-between' },
-                                        React.createElement('span', { className: 'text-gray-500' }, 'Scheduled:'),
-                                        React.createElement('span', { className: 'font-semibold text-gray-500' }, scheduledJobs.length)
+                                        React.createElement('span', { className: 'text-gray-600' }, 'Scheduled:'),
+                                        React.createElement('span', { className: 'font-semibold text-gray-600' }, scheduledJobs.length)
                                     )
                                 )
                             )
@@ -1401,20 +1652,22 @@
                 user ? React.createElement(Dashboard) : React.createElement(LandingPage),
                 React.createElement(LoginModal),
                 React.createElement(RegisterModal),
+                React.createElement(ProfileModal),
                 React.createElement(AddClientModal),
+                React.createElement(AddElectricianModal),
+                React.createElement(EditElectricianModal),
                 React.createElement(AddJobModal),
                 React.createElement(EditJobModal),
                 React.createElement(AddInvoiceModal),
                 React.createElement(EditInvoiceModal),
                 React.createElement(ViewClientsModal),
+                React.createElement(ViewElectriciansModal),
                 React.createElement(ViewJobsModal),
                 React.createElement(ViewInvoicesModal),
                 React.createElement(ViewRevenueModal)
             );
         };
 
-        // Render the app
-        console.log('Creating root element...');
         const root = ReactDOM.createRoot(document.getElementById('root'));
         console.log('Rendering Spark-E React app...');
         root.render(React.createElement(App));

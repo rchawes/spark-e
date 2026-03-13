@@ -87,9 +87,12 @@ public class InvoiceController {
         try {
             // If invoice has jobId but no job object, fetch the job
             if (invoice.getJob() == null && invoice.getJobId() != null) {
-                Job job = jobRepository.findById(invoice.getJobId())
-                        .orElseThrow(() -> new RuntimeException("Job not found with ID: " + invoice.getJobId()));
-                invoice.setJob(job);
+                Long jobId = invoice.getJobId();
+                if (jobId != null) {
+                    Job job = jobRepository.findById(jobId)
+                            .orElseThrow(() -> new RuntimeException("Job not found with ID: " + jobId));
+                    invoice.setJob(job);
+                }
             }
             
             Invoice savedInvoice = invoiceRepository.save(invoice);

@@ -63,37 +63,40 @@ public class JobController {
 
     @PostMapping
     public ResponseEntity<?> createJob(@RequestBody Job job) {
-        // Validate that customer and electrician exist
-        if (job.getCustomer() == null || job.getCustomer().getId() == null) {
-            return ResponseEntity.badRequest().body("Customer ID is required");
+        try {
+            // Handle customer and electrician relationships
+            if (job.getCustomer() != null && job.getCustomer().getId() != null) {
+                Long customerId = job.getCustomer().getId();
+                if (customerId != null) {
+                    Customer customer = customerRepository.findById(customerId).orElse(null);
+                    if (customer != null) {
+                        return ResponseEntity.badRequest().body("Customer not found");
+                    }
+                    job.setCustomer(customer);
+                }
+            }
+            
+            if (job.getElectrician() != null && job.getElectrician().getId() != null) {
+                Long electricianId = job.getElectrician().getId();
+                if (electricianId != null) {
+                    Electrician electrician = electricianRepository.findById(electricianId).orElse(null);
+                    if (electrician != null) {
+                        return ResponseEntity.badRequest().body("Electrician not found");
+                    }
+                    job.setElectrician(electrician);
+                }
+            }
+            
+            // Set default status
+            if (job.getStatus() == null) {
+                job.setStatus(JobStatus.SCHEDULED);
+            }
+            
+            Job savedJob = jobRepository.save(job);
+            return ResponseEntity.ok(savedJob);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error creating job: " + e.getMessage());
         }
-        if (job.getElectrician() == null || job.getElectrician().getId() == null) {
-            return ResponseEntity.badRequest().body("Electrician ID is required");
-        }
-
-        // Fetch full entities from database
-        Customer customer = customerRepository.findById(job.getCustomer().getId())
-                .orElse(null);
-        Electrician electrician = electricianRepository.findById(job.getElectrician().getId())
-                .orElse(null);
-
-        if (customer == null) {
-            return ResponseEntity.badRequest().body("Customer not found");
-        }
-        if (electrician == null) {
-            return ResponseEntity.badRequest().body("Electrician not found");
-        }
-
-        job.setCustomer(customer);
-        job.setElectrician(electrician);
-
-        // Set default status
-        if (job.getStatus() == null) {
-            job.setStatus(JobStatus.SCHEDULED);
-        }
-
-        Job savedJob = jobRepository.save(job);
-        return ResponseEntity.ok(savedJob);
     }
 
     @PutMapping("/{id}")
@@ -106,15 +109,21 @@ public class JobController {
                     job.setCompletedDate(jobDetails.getCompletedDate());
                     job.setHoursWorked(jobDetails.getHoursWorked());
                     job.setStatus(jobDetails.getStatus());
-
-                    // Update relationships
+                    
+                    // Update relationships safely
                     if (jobDetails.getCustomer() != null && jobDetails.getCustomer().getId() != null) {
-                        Customer customer = customerRepository.findById(jobDetails.getCustomer().getId()).orElse(null);
-                        if (customer != null) job.setCustomer(customer);
+                        Long customerId = jobDetails.getCustomer().getId();
+                        if (customerId != null) {
+                            Customer customer = customerRepository.findById(customerId).orElse(null);
+                            if (customer != null) job.setCustomer(customer);
+                        }
                     }
                     if (jobDetails.getElectrician() != null && jobDetails.getElectrician().getId() != null) {
-                        Electrician electrician = electricianRepository.findById(jobDetails.getElectrician().getId()).orElse(null);
-                        if (electrician != null) job.setElectrician(electrician);
+                        Long electricianId = jobDetails.getElectrician().getId();
+                        if (electricianId != null) {
+                            Electrician electrician = electricianRepository.findById(electricianId).orElse(null);
+                            if (electrician != null) job.setElectrician(electrician);
+                        }
                     }
 
                     Job updatedJob = jobRepository.save(job);

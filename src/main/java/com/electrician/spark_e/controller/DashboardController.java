@@ -5,8 +5,6 @@ import com.electrician.spark_e.repository.JobRepository;
 import com.electrician.spark_e.repository.InvoiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -27,10 +25,6 @@ public class DashboardController {
     @GetMapping("/stats")
     public ResponseEntity<?> getDashboardStats() {
         try {
-            // Get current authenticated user
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String username = authentication.getName();
-
             // Calculate statistics from real database
             long totalJobs = jobRepository.count();
             long totalClients = customerRepository.count();

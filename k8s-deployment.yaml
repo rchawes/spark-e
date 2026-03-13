@@ -1,0 +1,388 @@
+# Spark-E Kubernetes Deployment Configuration
+# Production-ready deployment for cloud scalability
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spark-e-app
+  labels:
+    app: spark-e
+    version: v1
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: spark-e
+  template:
+    metadata:
+      labels:
+        app: spark-e
+    spec:
+      containers:
+      - name: spark-e-app
+        image: spark-e:latest
+        ports:
+        - containerPort: 8080
+          name: http
+        env:
+        # Database Configuration
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: spark-e-secrets
+              key: database-url
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              name: spark-e-secrets
+              key: database-user
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: spark-e-secrets
+              key: database-password
+              
+        # Redis Configuration
+        - name: REDIS_HOST
+          value: "spark-e-redis-service"
+        - name: REDIS_PORT
+          value: "6379"
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: spark-e-secrets
+              key: redis-password
+              
+        # Application Configuration
+        - name: SPRING_PROFILES_ACTIVE
+          value: "prod"
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: spark-e-secrets
+              key: jwt-secret
+              
+        # AWS Configuration
+        - name: AWS_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: spark-e-secrets
+              key: aws-access-key
+        - name: AWS_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: spark-e-secrets
+              key: aws-secret-key
+        - name: AWS_S3_BUCKET
+          value: "spark-e-app-storage"
+          
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "2Gi"
+            cpu: "1000m"
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          timeoutSeconds: 10
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        volumeMounts:
+        - name: logs
+          mountPath: /app/logs
+      volumes:
+      - name: logs
+        emptyDir: {}
+      imagePullSecrets:
+      - name: docker-registry-secret
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: spark-e-service
+  labels:
+    app: spark-e
+spec:
+  selector:
+    app: spark-e
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8080
+    protocol: TCP
+  type: LoadBalancer
+  sessionAffinity: None
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: spark-e-redis-service
+  labels:
+    app: spark-e-redis
+spec:
+  selector:
+    app: spark-e-redis
+  ports:
+  - name: redis
+    port: 6379
+    targetPort: 6379
+    protocol: TCP
+  type: ClusterIP
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spark-e-redis
+  labels:
+    app: spark-e-redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spark-e-redis
+  template:
+    metadata:
+      labels:
+        app: spark-e-redis
+    spec:
+      containers:
+      - name: redis
+        image: redis:7-alpine
+        ports:
+        - containerPort: 6379
+        env:
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: spark-e-secrets
+              key: redis-password
+        command:
+        - redis-server
+        - --requirepass
+        - $(REDIS_PASSWORD)
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          exec:
+            command:
+            - redis-cli
+            - --raw
+            - incr
+            - ping
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        volumeMounts:
+        - name: redis-data
+          mountPath: /data
+      volumes:
+      - name: redis-data
+        persistentVolumeClaim:
+          claimName: redis-pvc
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: redis-pvc
+  labels:
+    app: spark-e-redis
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: gp2
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: spark-e-secrets
+  labels:
+    app: spark-e
+type: Opaque
+data:
+  # Base64 encoded values
+  database-url: amRiY3Bvb3N0cmFsOi8vL3NwYXJrLWJkcy5cMy5jZWFzdF91cy13LmFtYXpvbmF3cy5jb20=
+  database-user: c3BhcmtfZV9hcHA=
+  database-password: c2VjdXJlQXBwUGFzc3dvcmQxMjMh
+  redis-password: cmVkaXNQYXNzd29yZDEyMyE=
+  jwt-secret: eW91ci0yNTYtYml0LXNlY3JldC1rZXktaGVyZS11c3QtdmVyeS1sb25nLWFuZC1zZWN1cmUtZm9yLXByb2R1Y3Rpb24tdXNl
+  aws-access-key: QVtJQUlPU0ZPRE5ON0VYQU1Q=
+  aws-secret-key: d0phbHJYU3RJTkVYQU1BLRVhBTVBMRVUFLRVk=
+
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: spark-e-hpa
+  labels:
+    app: spark-e
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: spark-e-app
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      policies:
+      - type: Percent
+        value: 10
+        periodSeconds: 60
+    scaleUp:
+      stabilizationWindowSeconds: 60
+      policies:
+      - type: Percent
+        value: 50
+        periodSeconds: 60
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: spark-e-ingress
+  labels:
+    app: spark-e
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  tls:
+  - hosts:
+    - app.spark-e.com
+    - www.spark-e.com
+    secretName: spark-e-tls
+  rules:
+  - host: app.spark-e.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: spark-e-service
+            port:
+              number: 80
+  - host: www.spark-e.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: spark-e-service
+            port:
+              number: 80
+
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: spark-e-pdb
+  labels:
+    app: spark-e
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: spark-e
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: spark-e-config
+  labels:
+    app: spark-e
+data:
+  application.yml: |
+    server:
+      port: 8080
+      servlet:
+        context-path: /
+    spring:
+      profiles:
+        active: prod
+      datasource:
+        url: ${DATABASE_URL}
+        username: ${DATABASE_USER}
+        password: ${DATABASE_PASSWORD}
+        driver-class-name: org.postgresql.Driver
+        hikari:
+          connection-timeout: 20000
+          maximum-pool-size: 20
+          minimum-idle: 5
+      jpa:
+        database-platform: org.hibernate.dialect.PostgreSQLDialect
+        hibernate:
+          ddl-auto: update
+          show-sql: false
+        properties:
+          hibernate:
+            jdbc:
+              batch_size: 20
+              order_inserts: true
+              order_updates: true
+      cache:
+        type: redis
+        redis:
+          host: ${REDIS_HOST}
+          port: ${REDIS_PORT}
+          password: ${REDIS_PASSWORD}
+          timeout: 2000ms
+    management:
+      endpoints:
+        web:
+          exposure:
+            include: health,info,metrics
+      endpoint:
+        health:
+          show-details: when-authorized
+    logging:
+      level:
+        org.springframework.web: INFO
+        org.hibernate: INFO
+        com.electrician.spark_e: INFO
