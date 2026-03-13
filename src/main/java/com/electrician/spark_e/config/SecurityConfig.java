@@ -27,7 +27,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())   // <-- this disables CSRF
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/", "/index.html", "/index-react.html", "/spark-e.html", "/debug-react.html", "/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
+                        .requestMatchers("/", "/index.html", "/index-react.html", "/spark-e.html", "/spark-e-simple.html", "/debug-react.html", "/test.html", "/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/dashboard/**").permitAll()
                         .requestMatchers("/api/jobs/**", "/jobs/**").permitAll()
