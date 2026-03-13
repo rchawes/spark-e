@@ -636,7 +636,7 @@
                             React.createElement('textarea', { name: 'description', placeholder: 'Job Description', className: 'form-input', rows: 3, required: true }),
                             React.createElement('input', { type: 'date', name: 'scheduledDate', className: 'form-input', required: true }),
                             React.createElement('select', { name: 'customerId', className: 'form-input', required: true },
-                                React.createElement('option', { value: '' }, 'Select Client')
+                                [React.createElement('option', { value: '' }, 'Select Client')]
                                 .concat(
                                     clients.map(client => 
                                         React.createElement('option', { key: client.id, value: client.id }, 
@@ -644,9 +644,9 @@
                                         )
                                     )
                                 )
-                            )
+                            ),
                             React.createElement('select', { name: 'electricianId', className: 'form-input', required: true },
-                                React.createElement('option', { value: '' }, 'Select Electrician')
+                                [React.createElement('option', { value: '' }, 'Select Electrician')]
                                 .concat(
                                     electricians.map(electrician => 
                                         React.createElement('option', { key: electrician.id, value: electrician.id }, 
@@ -701,7 +701,7 @@
                             React.createElement('textarea', { name: 'description', placeholder: 'Job Description', className: 'form-input', rows: 3, required: true, defaultValue: editingJob.description }),
                             React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1 mt-3' }, 'Customer'),
                             React.createElement('select', { name: 'customerId', className: 'form-input', required: true, defaultValue: editingJob.customer?.id },
-                                React.createElement('option', { value: '' }, 'Select Customer')
+                                [React.createElement('option', { value: '' }, 'Select Customer')]
                                 .concat(
                                     clients.map(client => 
                                         React.createElement('option', { key: client.id, value: client.id }, 
@@ -712,7 +712,7 @@
                             ),
                             React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1 mt-3' }, 'Electrician'),
                             React.createElement('select', { name: 'electricianId', className: 'form-input', required: true, defaultValue: editingJob.electrician?.id },
-                                React.createElement('option', { value: '' }, 'Select Electrician')
+                                [React.createElement('option', { value: '' }, 'Select Electrician')]
                                 .concat(
                                     electricians.map(electrician => 
                                         React.createElement('option', { key: electrician.id, value: electrician.id }, 
@@ -838,7 +838,7 @@
                         },
                             React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1' }, 'Job'),
                             React.createElement('select', { name: 'jobId', className: 'form-input', required: true, defaultValue: editingInvoice.job?.id },
-                                React.createElement('option', { value: '' }, 'Select Job')
+                                [React.createElement('option', { value: '' }, 'Select Job')]
                                 .concat(
                                     jobs.map(job => 
                                         React.createElement('option', { key: job.id, value: job.id }, 
@@ -943,6 +943,7 @@
             const EditElectricianModal = () => {
                 if (!showEditElectrician) return null;
                 return React.createElement('div', { className: 'modal-overlay' },
+                    React.createElement('div', { className: 'modal-content' },
                         React.createElement('h3', { className: 'text-2xl font-bold mb-6' }, 'Edit Electrician'),
                         React.createElement('form', {
                             onSubmit: async (e) => {
@@ -1010,7 +1011,7 @@
                             )
                         )
                     )
-                );
+                )
             };
 
             const ViewClientsModal = () => {
@@ -1066,7 +1067,8 @@
                             React.createElement('button', { onClick: () => setShowViewClients(false), className: 'btn btn-secondary' }, 'Close')
                         )
                     )
-                );
+                )
+            );
             };
 
             const ViewJobsModal = () => {
