@@ -636,18 +636,22 @@
                             React.createElement('textarea', { name: 'description', placeholder: 'Job Description', className: 'form-input', rows: 3, required: true }),
                             React.createElement('input', { type: 'date', name: 'scheduledDate', className: 'form-input', required: true }),
                             React.createElement('select', { name: 'customerId', className: 'form-input', required: true },
-                                React.createElement('option', { value: '' }, 'Select Client'),
-                                ...clients.map(client => 
-                                    React.createElement('option', { key: client.id, value: client.id }, 
-                                        client.firstName + ' ' + client.lastName
+                                React.createElement('option', { value: '' }, 'Select Client')
+                                .concat(
+                                    clients.map(client => 
+                                        React.createElement('option', { key: client.id, value: client.id }, 
+                                            client.firstName + ' ' + client.lastName
+                                        )
                                     )
                                 )
-                            ),
+                            )
                             React.createElement('select', { name: 'electricianId', className: 'form-input', required: true },
-                                React.createElement('option', { value: '' }, 'Select Electrician'),
-                                ...electricians.map(electrician => 
-                                    React.createElement('option', { key: electrician.id, value: electrician.id }, 
-                                        electrician.name || 'Electrician ' + electrician.id
+                                React.createElement('option', { value: '' }, 'Select Electrician')
+                                .concat(
+                                    electricians.map(electrician => 
+                                        React.createElement('option', { key: electrician.id, value: electrician.id }, 
+                                            electrician.name || 'Electrician ' + electrician.id
+                                        )
                                     )
                                 )
                             ),
@@ -697,19 +701,23 @@
                             React.createElement('textarea', { name: 'description', placeholder: 'Job Description', className: 'form-input', rows: 3, required: true, defaultValue: editingJob.description }),
                             React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1 mt-3' }, 'Customer'),
                             React.createElement('select', { name: 'customerId', className: 'form-input', required: true, defaultValue: editingJob.customer?.id },
-                                React.createElement('option', { value: '' }, 'Select Customer'),
-                                ...clients.map(client => 
-                                    React.createElement('option', { key: client.id, value: client.id }, 
-                                        client.firstName + ' ' + client.lastName
+                                React.createElement('option', { value: '' }, 'Select Customer')
+                                .concat(
+                                    clients.map(client => 
+                                        React.createElement('option', { key: client.id, value: client.id }, 
+                                            client.firstName + ' ' + client.lastName
+                                        )
                                     )
                                 )
                             ),
                             React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1 mt-3' }, 'Electrician'),
                             React.createElement('select', { name: 'electricianId', className: 'form-input', required: true, defaultValue: editingJob.electrician?.id },
-                                React.createElement('option', { value: '' }, 'Select Electrician'),
-                                ...electricians.map(electrician => 
-                                    React.createElement('option', { key: electrician.id, value: electrician.id }, 
-                                        electrician.name || 'Electrician ' + electrician.id
+                                React.createElement('option', { value: '' }, 'Select Electrician')
+                                .concat(
+                                    electricians.map(electrician => 
+                                        React.createElement('option', { key: electrician.id, value: electrician.id }, 
+                                            electrician.name || 'Electrician ' + electrician.id
+                                        )
                                     )
                                 )
                             ),
@@ -830,10 +838,12 @@
                         },
                             React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1' }, 'Job'),
                             React.createElement('select', { name: 'jobId', className: 'form-input', required: true, defaultValue: editingInvoice.job?.id },
-                                React.createElement('option', { value: '' }, 'Select Job'),
-                                ...jobs.map(job => 
-                                    React.createElement('option', { key: job.id, value: job.id }, 
-                                        job.description ? job.description.substring(0, 50) + '...' : 'Job ' + job.id
+                                React.createElement('option', { value: '' }, 'Select Job')
+                                .concat(
+                                    jobs.map(job => 
+                                        React.createElement('option', { key: job.id, value: job.id }, 
+                                            job.description ? job.description.substring(0, 50) + '...' : 'Job ' + job.id
+                                        )
                                     )
                                 )
                             ),
@@ -1065,7 +1075,7 @@
                     React.createElement('div', { className: 'modal-content' },
                         React.createElement('h3', { className: 'text-2xl font-bold mb-6' }, 'All Jobs'),
                         React.createElement('div', { className: 'space-y-4' },
-                            ...jobs.map(job => 
+                            jobs.map(job => 
                                 React.createElement('div', { key: job.id, className: 'card' },
                                     React.createElement('div', { className: 'flex justify-between items-start' },
                                         React.createElement('div', null,
@@ -1224,7 +1234,7 @@
                     React.createElement('div', { className: 'modal-content' },
                         React.createElement('h3', { className: 'text-2xl font-bold mb-6' }, 'All Electricians'),
                         React.createElement('div', { className: 'space-y-4' },
-                            ...currentElectricians.map(electrician => 
+                            currentElectricians.map(electrician => 
                                 React.createElement('div', { key: electrician.id, className: 'card' },
                                     React.createElement('div', { className: 'flex justify-between items-start' },
                                         React.createElement('div', null,
@@ -1278,7 +1288,7 @@
                     React.createElement('div', { className: 'modal-content' },
                         React.createElement('h3', { className: 'text-2xl font-bold mb-6' }, 'All Invoices'),
                         React.createElement('div', { className: 'space-y-4' },
-                            ...invoices.map(invoice => 
+                            invoices.map(invoice => 
                                 React.createElement('div', { key: invoice.id, className: 'card' },
                                     React.createElement('div', { className: 'flex justify-between items-start' },
                                         React.createElement('div', { className: 'flex-1' },
@@ -1449,10 +1459,10 @@
                         }
                     } else {
                         // Show yearly revenue for all years
-                        const years = [...new Set(invoices
+                        const years = Array.from(new Set(invoices
                             .filter(inv => inv.issueDate && inv.paid)
                             .map(inv => new Date(inv.issueDate).getFullYear())
-                        )].sort();
+                        )).sort();
                         
                         years.forEach(year => {
                             const yearRevenue = invoices
@@ -1526,31 +1536,33 @@
                                     )
                                 ),
                                 // Chart bars
-                                ...chartData.map((data, index) => {
-                                    const barHeight = (data.value / maxRevenue) * 100;
-                                    const barWidth = 100 / chartData.length;
-                                    const leftPosition = (index * barWidth) + (barWidth * 0.1);
-                                    const actualBarWidth = barWidth * 0.8;
-                                    
-                                    return React.createElement('div', {
-                                        key: index,
-                                        className: 'chart-bar',
-                                        style: {
-                                            height: barHeight + '%',
-                                            left: leftPosition + '%',
-                                            width: actualBarWidth + '%',
-                                            background: data.value > 0 
-                                                ? 'linear-gradient(to top, #3b82f6, #60a5fa)' 
-                                                : 'linear-gradient(to top, #e5e7eb, #f3f4f6)'
-                                        }
-                                    },
-                                        React.createElement('div', { 
-                                            className: 'chart-value',
-                                            style: { display: data.value > 0 ? 'block' : 'none' }
-                                        }, '$' + data.value.toFixed(0)),
-                                        React.createElement('div', { className: 'chart-label' }, data.label)
-                                    );
-                                }),
+                                React.createElement('div', null, 
+                                    chartData.map((data, index) => {
+                                        const barHeight = (data.value / maxRevenue) * 100;
+                                        const barWidth = 100 / chartData.length;
+                                        const leftPosition = (index * barWidth) + (barWidth * 0.1);
+                                        const actualBarWidth = barWidth * 0.8;
+                                        
+                                        return React.createElement('div', {
+                                            key: index,
+                                            className: 'chart-bar',
+                                            style: {
+                                                height: barHeight + '%',
+                                                left: leftPosition + '%',
+                                                width: actualBarWidth + '%',
+                                                background: data.value > 0 
+                                                    ? 'linear-gradient(to top, #3b82f6, #60a5fa)' 
+                                                    : 'linear-gradient(to top, #e5e7eb, #f3f4f6)'
+                                            }
+                                        },
+                                            React.createElement('div', { 
+                                                className: 'chart-value',
+                                                style: { display: data.value > 0 ? 'block' : 'none' }
+                                            }, '$' + data.value.toFixed(0)),
+                                            React.createElement('div', { className: 'chart-label' }, data.label)
+                                        );
+                                    })
+                                ),
                                 // X-axis
                                 React.createElement('div', { className: 'chart-axis' })
                             ),
