@@ -1009,7 +1009,7 @@
                     React.createElement('div', { className: 'modal-content' },
                         React.createElement('h3', { className: 'text-2xl font-bold mb-6' }, 'All Clients'),
                         React.createElement('div', { className: 'space-y-4' },
-                            ...clients.map(client => 
+                            clients.map(client => 
                                 React.createElement('div', { key: client.id, className: 'card' },
                                     React.createElement('div', { className: 'flex justify-between items-start' },
                                         React.createElement('div', null,
@@ -1029,17 +1029,9 @@
                                                             job.customer.id === client.id
                                                         )
                                                     );
-                                                    
-                                                    if (clientInvoices.length > 0) {
-                                                        const invoiceList = clientInvoices.map(inv => 
-                                                            `Invoice #${inv.invoiceNumber || inv.id}: $${inv.totalAmount || inv.amount || '0.00'} - ${inv.paid ? 'Paid' : 'Unpaid'}`
-                                                        ).join('\n');
-                                                        alert(`Invoices for ${client.firstName} ${client.lastName}:\n\n${invoiceList}`);
-                                                    } else {
-                                                        alert(`No invoices found for ${client.firstName} ${client.lastName}. Create jobs and invoices first.`);
-                                                    }
-                                                }, 
-                                                className: 'bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm' 
+                                                    alert(`Client has ${clientInvoices.length} invoices`);
+                                                },
+                                                className: 'bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm'
                                             }, 'View Invoices'),
                                             React.createElement('button', { 
                                                 onClick: async () => {
@@ -1048,18 +1040,16 @@
                                                             await api.call('/api/customers/' + client.id, {
                                                                 method: 'DELETE'
                                                             });
-                                                            await loadClients();
-                                                            alert('Client deleted successfully!');
+                                                            loadClients();
                                                         } catch (error) {
-                                                            alert('Failed to delete client: ' + error.message);
+                                                            alert('Error deleting client: ' + error.message);
                                                         }
                                                     }
-                                                }, 
-                                                className: 'bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm' 
+                                                },
+                                                className: 'bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm'
                                             }, 'Delete')
                                         )
                                     )
-                                )
                             )
                         ),
                         React.createElement('div', { className: 'flex justify-end mt-6' },
