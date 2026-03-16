@@ -455,8 +455,8 @@
                     React.createElement('div', { className: 'modal-content' },
                         React.createElement('h3', { className: 'text-2xl font-bold mb-6' }, 'Login'),
                         React.createElement('form', { onSubmit: handleLogin },
-                            React.createElement('input', { type: 'text', name: 'username', placeholder: 'Username', className: 'form-input', required: true }),
-                            React.createElement('input', { type: 'password', name: 'password', placeholder: 'Password', className: 'form-input', required: true }),
+                            React.createElement('input', { type: 'text', name: 'username', placeholder: 'Username', className: 'form-input', required: true, autoComplete: 'username' }),
+                            React.createElement('input', { type: 'password', name: 'password', placeholder: 'Password', className: 'form-input', required: true, autoComplete: 'current-password' }),
                             React.createElement('div', { className: 'flex justify-end mt-4' },
                                 React.createElement('button', { type: 'submit', className: 'btn btn-primary' }, 'Login'),
                                 React.createElement('button', { type: 'button', onClick: () => setShowLogin(false), className: 'btn btn-secondary ml-2' }, 'Cancel')
@@ -472,9 +472,9 @@
                     React.createElement('div', { className: 'modal-content' },
                         React.createElement('h3', { className: 'text-2xl font-bold mb-6' }, 'Register'),
                         React.createElement('form', { onSubmit: handleRegister },
-                            React.createElement('input', { type: 'text', name: 'username', placeholder: 'Username', className: 'form-input', required: true }),
-                            React.createElement('input', { type: 'email', name: 'email', placeholder: 'Email', className: 'form-input', required: true }),
-                            React.createElement('input', { type: 'password', name: 'password', placeholder: 'Password', className: 'form-input', required: true }),
+                            React.createElement('input', { type: 'text', name: 'username', placeholder: 'Username', className: 'form-input', required: true, autoComplete: 'username' }),
+                            React.createElement('input', { type: 'email', name: 'email', placeholder: 'Email', className: 'form-input', required: true, autoComplete: 'email' }),
+                            React.createElement('input', { type: 'password', name: 'password', placeholder: 'Password', className: 'form-input', required: true, autoComplete: 'new-password' }),
                             React.createElement('div', { className: 'flex justify-end mt-4' },
                                 React.createElement('button', { type: 'submit', className: 'btn btn-primary' }, 'Register'),
                                 React.createElement('button', { type: 'button', onClick: () => setShowRegister(false), className: 'btn btn-secondary ml-2' }, 'Cancel')
@@ -578,11 +578,11 @@
                                 }
                             }
                         },
-                            React.createElement('input', { type: 'text', name: 'firstName', placeholder: 'First Name', className: 'form-input', required: true }),
-                            React.createElement('input', { type: 'text', name: 'lastName', placeholder: 'Last Name', className: 'form-input', required: true }),
-                            React.createElement('input', { type: 'email', name: 'email', placeholder: 'Email', className: 'form-input', required: true }),
-                            React.createElement('input', { type: 'tel', name: 'phone', placeholder: 'Phone', className: 'form-input', required: true }),
-                            React.createElement('input', { type: 'text', name: 'address', placeholder: 'Address', className: 'form-input', required: true }),
+                            React.createElement('input', { type: 'text', name: 'firstName', placeholder: 'First Name', className: 'form-input', required: true, autoComplete: 'given-name' }),
+                            React.createElement('input', { type: 'text', name: 'lastName', placeholder: 'Last Name', className: 'form-input', required: true, autoComplete: 'family-name' }),
+                            React.createElement('input', { type: 'email', name: 'email', placeholder: 'Email', className: 'form-input', required: true, autoComplete: 'email' }),
+                            React.createElement('input', { type: 'tel', name: 'phone', placeholder: 'Phone', className: 'form-input', required: true, autoComplete: 'tel' }),
+                            React.createElement('input', { type: 'text', name: 'address', placeholder: 'Address', className: 'form-input', required: true, autoComplete: 'street-address' }),
                             React.createElement('div', { className: 'flex justify-end mt-4' },
                                 React.createElement('button', { type: 'submit', className: 'btn btn-primary' }, 'Add Client'),
                                 React.createElement('button', { type: 'button', onClick: () => setShowAddClient(false), className: 'btn btn-secondary' }, 'Cancel')
@@ -634,8 +634,8 @@
                                 }
                             }
                         },
-                            React.createElement('textarea', { name: 'description', placeholder: 'Job Description', className: 'form-input', rows: 3, required: true }),
-                            React.createElement('input', { type: 'date', name: 'scheduledDate', className: 'form-input', required: true }),
+                            React.createElement('textarea', { name: 'description', placeholder: 'Job Description', className: 'form-input', rows: 3, required: true, autoComplete: 'off' }),
+                            React.createElement('input', { type: 'date', name: 'scheduledDate', className: 'form-input', required: true, autoComplete: 'off' }),
                             React.createElement('select', { name: 'customerId', className: 'form-input', required: true },
                                 [React.createElement('option', { value: '' }, 'Select Client')]
                                 .concat(
@@ -729,7 +729,7 @@
                                 React.createElement('option', { value: 'COMPLETED' }, 'Completed')
                             ),
                             React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1 mt-3' }, 'Hours Worked'),
-                            React.createElement('input', { type: 'number', name: 'hoursWorked', placeholder: 'Hours Worked', className: 'form-input', step: '0.5', min: '0', defaultValue: editingJob.hoursWorked || 0 }),
+                            React.createElement('input', { type: 'number', name: 'hoursWorked', placeholder: 'Hours Worked', className: 'form-input', step: '0.5', min: '0', defaultValue: editingJob.hoursWorked || 0, autoComplete: 'off' }),
                             React.createElement('div', { className: 'flex justify-end mt-6' },
                                 React.createElement('button', { type: 'submit', className: 'btn btn-primary' }, 'Update Job'),
                                 React.createElement('button', { type: 'button', onClick: () => {
@@ -783,15 +783,15 @@
                                     )
                                 )
                             ),
-                            React.createElement('input', { type: 'number', name: 'amount', placeholder: 'Amount ($)', className: 'form-input', step: '0.01', min: '0', required: true }),
-                            React.createElement('input', { type: 'date', name: 'issueDate', className: 'form-input', required: true }),
-                            React.createElement('input', { type: 'date', name: 'dueDate', className: 'form-input', required: true }),
+                            React.createElement('input', { type: 'number', name: 'amount', placeholder: 'Amount ($)', className: 'form-input', step: '0.01', min: '0', required: true, autoComplete: 'off' }),
+                            React.createElement('input', { type: 'date', name: 'issueDate', className: 'form-input', required: true, autoComplete: 'off' }),
+                            React.createElement('input', { type: 'date', name: 'dueDate', className: 'form-input', required: true, autoComplete: 'off' }),
                             React.createElement('select', { name: 'status', className: 'form-input', required: true },
                                 React.createElement('option', { value: 'PENDING' }, 'Pending'),
                                 React.createElement('option', { value: 'PAID' }, 'Paid'),
                                 React.createElement('option', { value: 'OVERDUE' }, 'Overdue')
                             ),
-                            React.createElement('textarea', { name: 'notes', placeholder: 'Notes (optional)', className: 'form-input', rows: 3 }),
+                            React.createElement('textarea', { name: 'notes', placeholder: 'Notes (optional)', className: 'form-input', rows: 3, autoComplete: 'off' }),
                             React.createElement('div', { className: 'flex justify-end mt-4' },
                                 React.createElement('button', { type: 'submit', className: 'btn btn-primary' }, 'Create Invoice'),
                                 React.createElement('button', { type: 'button', onClick: () => setShowAddInvoice(false), className: 'btn btn-secondary' }, 'Cancel')
@@ -849,24 +849,24 @@
                                 )
                             ),
                             React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1 mt-3' }, 'Labor Cost ($)'),
-                            React.createElement('input', { type: 'number', name: 'laborCost', placeholder: 'Labor Cost ($)', className: 'form-input', step: '0.01', min: '0', defaultValue: editingInvoice.laborCost || 0 }),
+                            React.createElement('input', { type: 'number', name: 'laborCost', placeholder: 'Labor Cost ($)', className: 'form-input', step: '0.01', min: '0', defaultValue: editingInvoice.laborCost || 0, autoComplete: 'off' }),
                             React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1 mt-3' }, 'Materials Cost ($)'),
-                            React.createElement('input', { type: 'number', name: 'materialsCost', placeholder: 'Materials Cost ($)', className: 'form-input', step: '0.01', min: '0', defaultValue: editingInvoice.materialsCost || 0 }),
+                            React.createElement('input', { type: 'number', name: 'materialsCost', placeholder: 'Materials Cost ($)', className: 'form-input', step: '0.01', min: '0', defaultValue: editingInvoice.materialsCost || 0, autoComplete: 'off' }),
                             React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1 mt-3' }, 'Tax ($)'),
-                            React.createElement('input', { type: 'number', name: 'tax', placeholder: 'Tax ($)', className: 'form-input', step: '0.01', min: '0', defaultValue: editingInvoice.tax || 0 }),
+                            React.createElement('input', { type: 'number', name: 'tax', placeholder: 'Tax ($)', className: 'form-input', step: '0.01', min: '0', defaultValue: editingInvoice.tax || 0, autoComplete: 'off' }),
                             React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1 mt-3' }, 'Total Amount ($)'),
-                            React.createElement('input', { type: 'number', name: 'totalAmount', placeholder: 'Total Amount ($)', className: 'form-input', step: '0.01', min: '0', defaultValue: editingInvoice.totalAmount || editingInvoice.amount || 0 }),
+                            React.createElement('input', { type: 'number', name: 'totalAmount', placeholder: 'Total Amount ($)', className: 'form-input', step: '0.01', min: '0', defaultValue: editingInvoice.totalAmount || editingInvoice.amount || 0, autoComplete: 'off' }),
                             React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1 mt-3' }, 'Issue Date'),
-                            React.createElement('input', { type: 'date', name: 'issueDate', className: 'form-input', defaultValue: editingInvoice.issueDate }),
+                            React.createElement('input', { type: 'date', name: 'issueDate', className: 'form-input', defaultValue: editingInvoice.issueDate, autoComplete: 'off' }),
                             React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1 mt-3' }, 'Due Date'),
-                            React.createElement('input', { type: 'date', name: 'dueDate', className: 'form-input', defaultValue: editingInvoice.dueDate }),
+                            React.createElement('input', { type: 'date', name: 'dueDate', className: 'form-input', defaultValue: editingInvoice.dueDate, autoComplete: 'off' }),
                             React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1 mt-3' }, 'Payment Status'),
                             React.createElement('select', { name: 'paid', className: 'form-input', defaultValue: editingInvoice.paid ? 'true' : 'false' },
                                 React.createElement('option', { value: 'false' }, 'Unpaid'),
                                 React.createElement('option', { value: 'true' }, 'Paid')
                             ),
                             React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1 mt-3' }, 'Notes'),
-                            React.createElement('textarea', { name: 'notes', placeholder: 'Notes (optional)', className: 'form-input', rows: 3, defaultValue: editingInvoice.notes }),
+                            React.createElement('textarea', { name: 'notes', placeholder: 'Notes (optional)', className: 'form-input', rows: 3, defaultValue: editingInvoice.notes, autoComplete: 'off' }),
                             React.createElement('div', { className: 'flex justify-end mt-6' },
                                 React.createElement('button', { type: 'submit', className: 'btn btn-primary' }, 'Update Invoice'),
                                 React.createElement('button', { type: 'button', onClick: () => {
