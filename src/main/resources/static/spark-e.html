@@ -637,7 +637,7 @@
                             React.createElement('textarea', { name: 'description', placeholder: 'Job Description', className: 'form-input', rows: 3, required: true, autoComplete: 'off' }),
                             React.createElement('input', { type: 'date', name: 'scheduledDate', className: 'form-input', required: true, autoComplete: 'off' }),
                             React.createElement('select', { name: 'customerId', className: 'form-input', required: true },
-                                [React.createElement('option', { value: '' }, 'Select Client')]
+                                [React.createElement('option', { key: 'empty', value: '' }, 'Select Client')]
                                 .concat(
                                     clients.map(client => 
                                         React.createElement('option', { key: client.id, value: client.id }, 
@@ -647,7 +647,7 @@
                                 )
                             ),
                             React.createElement('select', { name: 'electricianId', className: 'form-input', required: true },
-                                [React.createElement('option', { value: '' }, 'Select Electrician')]
+                                [React.createElement('option', { key: 'empty-electrician', value: '' }, 'Select Electrician')]
                                 .concat(
                                     electricians.map(electrician => 
                                         React.createElement('option', { key: electrician.id, value: electrician.id }, 
@@ -702,7 +702,7 @@
                             React.createElement('textarea', { name: 'description', placeholder: 'Job Description', className: 'form-input', rows: 3, required: true, defaultValue: editingJob.description }),
                             React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1 mt-3' }, 'Customer'),
                             React.createElement('select', { name: 'customerId', className: 'form-input', required: true, defaultValue: editingJob.customer?.id },
-                                [React.createElement('option', { value: '' }, 'Select Customer')]
+                                [React.createElement('option', { key: 'empty-edit-customer', value: '' }, 'Select Customer')]
                                 .concat(
                                     clients.map(client => 
                                         React.createElement('option', { key: client.id, value: client.id }, 
@@ -713,7 +713,7 @@
                             ),
                             React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1 mt-3' }, 'Electrician'),
                             React.createElement('select', { name: 'electricianId', className: 'form-input', required: true, defaultValue: editingJob.electrician?.id },
-                                [React.createElement('option', { value: '' }, 'Select Electrician')]
+                                [React.createElement('option', { key: 'empty-edit-electrician', value: '' }, 'Select Electrician')]
                                 .concat(
                                     electricians.map(electrician => 
                                         React.createElement('option', { key: electrician.id, value: electrician.id }, 
@@ -776,7 +776,7 @@
                             }
                         },
                             React.createElement('select', { name: 'jobId', className: 'form-input', required: true },
-                                React.createElement('option', { value: '' }, 'Select Job'),
+                                React.createElement('option', { key: 'empty-invoice-job', value: '' }, 'Select Job'),
                                 ...jobs.map(job => 
                                     React.createElement('option', { key: job.id, value: job.id }, 
                                         job.description ? job.description.substring(0, 50) + '...' : 'Job ' + job.id
@@ -839,7 +839,7 @@
                         },
                             React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1' }, 'Job'),
                             React.createElement('select', { name: 'jobId', className: 'form-input', required: true, defaultValue: editingInvoice.job?.id },
-                                [React.createElement('option', { value: '' }, 'Select Job')]
+                                React.createElement('option', { key: 'empty-edit-invoice-job', value: '' }, 'Select Job')
                                 .concat(
                                     jobs.map(job => 
                                         React.createElement('option', { key: job.id, value: job.id }, 
@@ -922,11 +922,11 @@
                                     React.createElement('input', { type: 'number', name: 'hourlyRate', placeholder: 'Hourly Rate', className: 'form-input', step: '0.01', min: '0', required: true }),
                                     React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1 mt-3' }, 'Knowledge Level'),
                                     React.createElement('select', { name: 'knowledgeLevel', className: 'form-input', required: true },
-                                        React.createElement('option', { value: '' }, 'Select Level'),
-                                        React.createElement('option', { value: 'Apprentice' }, 'Apprentice'),
-                                        React.createElement('option', { value: 'Journeyman' }, 'Journeyman'),
-                                        React.createElement('option', { value: 'Foreman' }, 'Foreman'),
-                                        React.createElement('option', { value: 'Master Electrician' }, 'Master Electrician')
+                                        React.createElement('option', { key: 'empty-level', value: '' }, 'Select Level'),
+                                        React.createElement('option', { key: 'apprentice', value: 'Apprentice' }, 'Apprentice'),
+                                        React.createElement('option', { key: 'journeyman', value: 'Journeyman' }, 'Journeyman'),
+                                        React.createElement('option', { key: 'foreman', value: 'Foreman' }, 'Foreman'),
+                                        React.createElement('option', { key: 'master-electrician', value: 'Master Electrician' }, 'Master Electrician')
                                     ),
                                     React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1 mt-3' }, 'License Number'),
                                     React.createElement('input', { type: 'text', name: 'licenseNumber', placeholder: 'License Number', className: 'form-input', required: true }),
@@ -993,11 +993,11 @@
                                     React.createElement('input', { type: 'number', name: 'hourlyRate', placeholder: 'Hourly Rate', className: 'form-input', step: '0.01', min: '0', required: true, defaultValue: editingElectrician.hourlyRate || 0 }),
                                     React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1 mt-3' }, 'Knowledge Level'),
                                     React.createElement('select', { name: 'knowledgeLevel', className: 'form-input', required: true, defaultValue: editingElectrician.knowledgeLevel || '' },
-                                        React.createElement('option', { value: '' }, 'Select Level'),
-                                        React.createElement('option', { value: 'Apprentice' }, 'Apprentice'),
-                                        React.createElement('option', { value: 'Journeyman' }, 'Journeyman'),
-                                        React.createElement('option', { value: 'Foreman' }, 'Foreman'),
-                                        React.createElement('option', { value: 'Master Electrician' }, 'Master Electrician')
+                                        React.createElement('option', { key: 'empty-edit-level', value: '' }, 'Select Level'),
+                                        React.createElement('option', { key: 'edit-apprentice', value: 'Apprentice' }, 'Apprentice'),
+                                        React.createElement('option', { key: 'edit-journeyman', value: 'Journeyman' }, 'Journeyman'),
+                                        React.createElement('option', { key: 'edit-foreman', value: 'Foreman' }, 'Foreman'),
+                                        React.createElement('option', { key: 'edit-master-electrician', value: 'Master Electrician' }, 'Master Electrician')
                                     ),
                                     React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1 mt-3' }, 'License Number'),
                                     React.createElement('input', { type: 'text', name: 'licenseNumber', placeholder: 'License Number', className: 'form-input', required: true, defaultValue: editingElectrician.licenseNumber || '' }),
