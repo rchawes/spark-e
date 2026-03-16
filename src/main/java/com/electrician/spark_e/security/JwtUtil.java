@@ -2,7 +2,7 @@ package com.electrician.spark_e.security;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -20,15 +20,10 @@ public class JwtUtil {
     private final Long expiration;
     private Key signingKey;
 
-    public JwtUtil(@Value("${jwt.secret}") String secret, @Value("${jwt.expiration:86400000}") String expiration) {
-        this.secret = secret;
-        Long parsedExpiration;
-        try {
-            parsedExpiration = Long.parseLong(expiration);
-        } catch (NumberFormatException e) {
-            parsedExpiration = 86400000L; // default 24 hours
-        }
-        this.expiration = parsedExpiration;
+    @Autowired
+    public JwtUtil(com.electrician.spark_e.config.JwtProperties jwtProperties) {
+        this.secret = jwtProperties.getSecret();
+        this.expiration = jwtProperties.getExpiration();
     }
 
     @PostConstruct
