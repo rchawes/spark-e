@@ -35,6 +35,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/invoices/**").permitAll()
                         .requestMatchers("/api/electricians/**").permitAll()
                         .requestMatchers("/api/test/**").permitAll()
+                        .requestMatchers("/api/auth-test/**").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
                         .anyRequest().authenticated()
                 )
