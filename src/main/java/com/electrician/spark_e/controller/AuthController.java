@@ -37,6 +37,31 @@ public class AuthController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody User user) {
+        try {
+            authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword())
+            );
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Invalid credentials"));
+        }
+
+        UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
+        String token = jwtUtil.generateToken(userDetails);
+
+        User fullUser = userRepository.findByUsername(user.getUsername()).orElse(null);
+        
+        return ResponseEntity.ok(Map.of(
+            "token", token,
+            "user", Map.of(
+                "id", fullUser.getId(),
+                "username", fullUser.getUsername(),
+                "role", fullUser.getRole()
+            )
+        ));
+    }
+
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody User user) {
         if (userRepository.findByUsername(user.getUsername()).isPresent()) {
@@ -48,39 +73,13 @@ public class AuthController {
         }
         userRepository.save(user);
         
-        // Create electrician record if registering as electrician
-        if ("ROLE_ELECTRICIAN".equals(user.getRole())) {
-            Electrician electrician = new Electrician();
-            electrician.setName(user.getUsername());
-            electrician.setEmail(user.getUsername() + "@spark-e.com");
-            electrician.setPhone("555-0000");
-            electrician.setHourlyRate(75.0);
-            electricianRepository.save(electrician);
-        }
-        
-        return ResponseEntity.ok(Map.of("message", "User registered successfully"));
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody User user) throws Exception {
-        try {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword())
-            );
-        } catch (Exception e) {
-            return ResponseEntity.status(401).body(Map.of("error", "Invalid username or password"));
-        }
-
-        final UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
-        final String jwt = jwtUtil.generateToken(userDetails);
-
-        return ResponseEntity.ok(new AuthResponse(jwt));
-    }
-
-    private static class AuthResponse {
-        private String token;
-        public AuthResponse(String token) { this.token = token; }
-        @SuppressWarnings("unused")
-        public String getToken() { return token; }
+        return ResponseEntity.ok(Map.of(
+            "message", "User registered successfully",
+            "user", Map.of(
+                "id", user.getId(),
+                "username", user.getUsername(),
+                "role", user.getRole()
+            )
+        ));
     }
 }

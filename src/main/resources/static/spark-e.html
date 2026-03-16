@@ -362,7 +362,8 @@
                     });
                     const userData = {
                         name: formData.get('username'),
-                        email: response.email || formData.get('username') + '@spark-e.com'
+                        email: response.user?.email || formData.get('username') + '@spark-e.com',
+                        role: response.user?.role || 'ROLE_ELECTRICIAN'
                     };
                     localStorage.setItem('jwtToken', response.token);
                     localStorage.setItem('user', JSON.stringify(userData));
