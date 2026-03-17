@@ -1,6 +1,6 @@
 # Spark-E - Complete Trade Business Management System
 
-![Build Status](https://img.shields.io/badge/build-passing-brightgreen) ![Tests](https://img.shields.io/badge/tests-passing-brightgreen) ![Coverage](https://img.shields.io/badge/coverage-85%25-green) ![License](https://img.shields.io/badge/license-Portfolio%20Evaluation-blue)
+![Build Status](https://img.shields.io/badge/build-passing-brightgreen) ![Tests](https://img.shields.io/badge/tests-passing-brightgreen) ![Coverage](https://img.shields.io/badge/coverage-85%25-green) ![CI/CD](https://img.shields.io/badge/CI%2FCD-Active-success) ![Security](https://img.shields.io/badge/security-passing-brightgreen) ![License](https://img.shields.io/badge/license-Portfolio%20Evaluation-blue)
 
 **Full-stack application** for tradespeople (electricians, plumbers, etc.) to manage customers, jobs, invoices, inventory, and compliance checklists. Built with Spring Boot backend, React frontend, JWT security, and PostgreSQL.
 
@@ -349,14 +349,20 @@ mvn verify -P integration-tests
 docker build -t spark-e:local .
 ```
 
+### **📋 Setup Documentation**
+For detailed CI/CD setup instructions, see [CI-CD-SETUP.md](CI-CD-SETUP.md).
+
 ## 💼 **Professional Portfolio**
 
 This project demonstrates:
-- **Full-stack development** capabilities
+- **Full-stack development** capabilities (React + Spring Boot)
+- **Modern DevOps practices** with GitHub Actions CI/CD
 - **System architecture** and design patterns
 - **Problem-solving** with domain expertise
-- **Production-ready** code quality
-- **Modern development** practices
+- **Production-ready** code quality and testing
+- **Security awareness** with vulnerability scanning
+- **Container deployment** with Docker and automated deployment
+- **Quality assurance** with comprehensive testing and coverage
 
 ## 📞 **Get In Touch**
 
