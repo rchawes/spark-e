@@ -78,6 +78,9 @@ mvn clean test jacoco:report
 
 ## Deployment
 
+### Render Deployment
+For detailed Render setup instructions, see [RENDER-SETUP.md](RENDER-SETUP.md).
+
 ### Docker Deployment
 ```bash
 # Build image
@@ -91,10 +94,11 @@ docker run -p 8082:8082 \
   spark-e:latest
 ```
 
-### Render Deployment
-1. Connect GitHub repository to Render
-2. Set environment variables in Render dashboard
-3. Deploy automatically on push to main
+### Production Configuration
+- **Environment**: Production profile activated
+- **Database**: PostgreSQL with connection pooling
+- **Security**: JWT tokens and HTTPS enforced
+- **Monitoring**: Health checks and logging enabled
 
 ### Monitoring
 - Health checks: `/api/health` and `/api/ready`

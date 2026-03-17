@@ -149,25 +149,115 @@ jobs:
 
     - name: Deploy to Render
       run: |
-        curl -X POST "https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID }}/restart" \
+        echo "🚀 Deploying to Render..."
+        
+        # Trigger Render deployment
+        RESPONSE=$(curl -s -w "%{http_code}" -X POST "https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID }}/restart" \
           -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
-          -H "Content-Type: application/json"
-
-    - name: Wait for deployment
-      run: |
-        echo "Waiting for Render deployment to complete..."
-        sleep 60
-
-    - name: Verify deployment
-      run: |
-        curl -f "https://spark-e.onrender.com/api/health" || exit 1
-
-    - name: Notify deployment status
-      if: always()
-      run: |
-        if [ $? -eq 0 ]; then
-          echo "✅ Deployment successful!"
-        else
-          echo "❌ Deployment failed!"
+          -H "Content-Type: application/json")
+        
+        HTTP_CODE="${RESPONSE: -3}"
+        RESPONSE_BODY="${RESPONSE%???}"
+        
+        echo "Render API Response: $RESPONSE_BODY"
+        echo "HTTP Status Code: $HTTP_CODE"
+        
+        if [ "$HTTP_CODE" != "200" ] && [ "$HTTP_CODE" != "202" ]; then
+          echo "❌ Failed to trigger Render deployment"
+          echo "Response: $RESPONSE_BODY"
           exit 1
         fi
+        
+        echo "✅ Render deployment triggered successfully"
+
+    - name: Wait for deployment completion
+      run: |
+        echo "⏳ Waiting for Render deployment to complete..."
+        
+        # Poll deployment status
+        for i in {1..30}; do
+          echo "Checking deployment status... (Attempt $i/30)"
+          
+          # Check if the application is responding
+          if curl -f -s "https://spark-e.onrender.com/api/health" > /dev/null; then
+            echo "✅ Deployment completed successfully!"
+            break
+          fi
+          
+          if [ $i -eq 30 ]; then
+            echo "❌ Deployment timeout after 5 minutes"
+            exit 1
+          fi
+          
+          sleep 10
+        done
+
+    - name: Verify deployment health
+      run: |
+        echo "🔍 Verifying deployment health..."
+        
+        # Check health endpoint
+        HEALTH_RESPONSE=$(curl -s "https://spark-e.onrender.com/api/health")
+        echo "Health check response: $HEALTH_RESPONSE"
+        
+        # Check readiness endpoint
+        READY_RESPONSE=$(curl -s "https://spark-e.onrender.com/api/ready")
+        echo "Readiness check response: $READY_RESPONSE"
+        
+        # Verify application is responding correctly
+        if echo "$HEALTH_RESPONSE" | grep -q '"status":"UP"'; then
+          echo "✅ Health check passed"
+        else
+          echo "❌ Health check failed"
+          exit 1
+        fi
+        
+        if echo "$READY_RESPONSE" | grep -q '"status":"READY"'; then
+          echo "✅ Readiness check passed"
+        else
+          echo "❌ Readiness check failed"
+          exit 1
+        fi
+
+    - name: Post-deployment verification
+      run: |
+        echo "🔍 Running post-deployment verification..."
+        
+        # Test API endpoints
+        echo "Testing API endpoints..."
+        
+        # Test authentication endpoint (should be accessible)
+        if curl -f -s "https://spark-e.onrender.com/api/health" > /dev/null; then
+          echo "✅ Health endpoint accessible"
+        else
+          echo "❌ Health endpoint not accessible"
+          exit 1
+        fi
+        
+        # Test that the application is serving content
+        CONTENT_CHECK=$(curl -s "https://spark-e.onrender.com/spark-e.html")
+        if echo "$CONTENT_CHECK" | grep -q "Spark-E"; then
+          echo "✅ Frontend serving correctly"
+        else
+          echo "❌ Frontend not serving correctly"
+          exit 1
+        fi
+
+    - name: Deployment success notification
+      run: |
+        echo "🎉 Deployment completed successfully!"
+        echo "📊 Deployment Summary:"
+        echo "  ✅ Health checks passed"
+        echo "  ✅ API endpoints responding"
+        echo "  ✅ Frontend serving correctly"
+        echo "  🌐 Live at: https://spark-e.onrender.com"
+
+    - name: Deployment failure notification
+      if: failure()
+      run: |
+        echo "❌ Deployment failed!"
+        echo "🔍 Troubleshooting steps:"
+        echo "  1. Check Render dashboard for deployment logs"
+        echo "  2. Verify environment variables are set correctly"
+        echo "  3. Check database connectivity"
+        echo "  4. Review application logs for errors"
