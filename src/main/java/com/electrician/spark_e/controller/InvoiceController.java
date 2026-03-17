@@ -4,11 +4,12 @@ import com.electrician.spark_e.model.Invoice;
 import com.electrician.spark_e.model.Job;
 import com.electrician.spark_e.repository.InvoiceRepository;
 import com.electrician.spark_e.repository.JobRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.Map;
 
@@ -16,6 +17,7 @@ import java.util.Map;
 @RequestMapping("/api/invoices")
 public class InvoiceController {
 
+    private static final Logger logger = LoggerFactory.getLogger(InvoiceController.class);
     @Autowired
     private InvoiceRepository invoiceRepository;
     
@@ -85,19 +87,31 @@ public class InvoiceController {
     @PostMapping
     public ResponseEntity<?> createInvoice(@RequestBody Invoice invoice) {
         try {
+            logger.info("=== INVOICE CREATION DEBUG ===");
+            logger.info("Received invoice: " + invoice);
+            logger.info("Job ID: " + invoice.getJobId());
+            logger.info("Job object: " + invoice.getJob());
+            
             // If invoice has jobId but no job object, fetch the job
             if (invoice.getJob() == null && invoice.getJobId() != null) {
                 Long jobId = invoice.getJobId();
+                logger.info("Fetching job with ID: " + jobId);
                 if (jobId != null) {
                     Job job = jobRepository.findById(jobId)
                             .orElseThrow(() -> new RuntimeException("Job not found with ID: " + jobId));
                     invoice.setJob(job);
+                    // Clear the transient jobId after setting the job
+                    invoice.setJobId(null);
+                    logger.info("Job found and set: " + job);
                 }
             }
             
+            logger.info("Saving invoice: " + invoice);
             Invoice savedInvoice = invoiceRepository.save(invoice);
+            logger.info("Invoice saved successfully: " + savedInvoice);
             return ResponseEntity.ok(savedInvoice);
         } catch (Exception e) {
+            logger.error("ERROR creating invoice: " + e.getMessage());
             return ResponseEntity.status(500).body(Map.of("error", "Failed to create invoice: " + e.getMessage()));
         }
     }

@@ -98,6 +98,14 @@
 			<version>8.0.0.Final</version>
 		</dependency>
 
+		<!-- Lombok for cleaner code -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.18.30</version>
+			<scope>provided</scope>
+		</dependency>
+
 		<!-- Testing (includes JUnit, Spring Test, etc.) -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
