@@ -1,90 +1,209 @@
-# Spark_e
+# Spark-E - Complete Trade Business Management System
 
-Backend API for tradespeople (electricians, plumbers, etc.) to manage customers, jobs, invoices, inventory, and compliance checklists. Built with Spring Boot, Spring Security (JWT), JPA, and PostgreSQL.
+**Full-stack application** for tradespeople (electricians, plumbers, etc.) to manage customers, jobs, invoices, inventory, and compliance checklists. Built with Spring Boot backend, React frontend, JWT security, and PostgreSQL.
 
-## About Me
+## 🎯 **Project Overview**
 
-I spent 14 years as an electrician and recently switched careers into software engineering. This project combines my old trade with my new skills. It's a backend API for managing the day-to-day chaos of running a trade business - customers, job scheduling, parts inventory, invoicing, and safety paperwork. No more spreadsheets and sticky notes.
+I spent 14 years as an electrician and recently switched careers into software engineering. This project combines my old trade with my new skills - a complete business management system that eliminates spreadsheets and sticky notes for trade professionals.
 
-## Why I Built This
+## ✨ **Key Features**
 
-I wanted to solve a real problem I actually understood. Electricians juggle a lot of moving parts. I've lived it. So I built Spark_e to scratch my own itch and to prove I can build useful software.
+### 🎨 **Modern React Frontend**
+- **React 18** with functional components and hooks
+- **Advanced animations** and micro-interactions
+- **Responsive design** with mobile-friendly interface
+- **Real-time dashboard** with live statistics
+- **Modal management** system with proper state handling
+- **Professional UI/UX** with Material Design principles
 
-## What's Inside
+### 🔧 **Complete Backend API**
+- **Spring Boot 3.2.4** with Java 17
+- **JWT Authentication** with secure token management
+- **RESTful API** with comprehensive CRUD operations
+- **Global Exception Handling** with structured error responses
+- **File Upload System** for project pictures and documentation
+- **Invoice Generation** with automated calculations
+- **Job Management** with scheduling and status tracking
 
-![Preview](https://github.com/rchawes/spark-e/blob/main/Spark-E-ss1.png)
+### 📊 **Business Intelligence**
+- **Real-time Revenue Tracking** with period-based filtering
+- **Customer Management** with full contact history
+- **Job Performance Metrics** and analytics
+- **Inventory Management** with low-stock alerts
+- **Compliance Checklists** tied to job types
+- **Financial Reporting** and profit analysis
 
-Customer management with full CRUD operations and contact history tracking. Job scheduling with create, assign, and status tracking. Parts inventory with stock levels and low-stock alerts. Invoice automation that triggers when a job is marked complete - it calculates labor based on hours worked times hourly rate plus materials used times price. Compliance checklists tied to job types, so a consumer unit replacement has specific safety items that must be checked off. Reporting for electrician performance metrics, inventory status, and customer profitability. JWT security protecting all endpoints. Swagger UI for interactive API documentation.
+### 🛠️ **Production Ready**
+- **Docker Containerization** with multi-stage builds
+- **Database Schema** optimized for production
+- **Error Handling** with comprehensive logging
+- **Security Configuration** with CORS and CSRF protection
+- **API Documentation** with Swagger UI
+- **Testing Suite** with unit, integration, and repository tests
 
-## What I Learned
+## 🏗️ **Architecture**
 
-JPA relationships took time to get right. I drew a lot of diagrams to figure out OneToMany and ManyToOne mappings. I forgot the mappedBy attribute more than once. Spring Security and JWT took three attempts before I understood filter chains, authentication managers, and why CSRF gets disabled for stateless APIs. I tried using Lombok but kept hitting cryptic TypeTag.UNKNOWN errors, so I wrote all my getters and setters manually. Honestly that helped me understand my entities better. Spring Data query methods are great until they aren't - I learned when to fall back to explicit Query annotations. Debugging was painful at first. I spent hours staring at stack traces. But every error taught me something.
+See [ARCHITECTURE.md](ARCHITECTURE.md) for detailed system architecture, data flow diagrams, and technical specifications.
 
-## Tech Stack
+## 🚀 **Tech Stack**
 
-Java 17, Spring Boot 3.2.4, Spring Data JPA, Spring Security with JWT, PostgreSQL for production and H2 for development, Maven, and Swagger via springdoc-openapi.
+### **Backend**
+- **Java 17** with Spring Boot 3.2.4
+- **Spring Data JPA** with PostgreSQL
+- **Spring Security** with JWT authentication
+- **Maven** for dependency management
+- **Swagger/OpenAPI** for API documentation
 
-## How to Run It
+### **Frontend**
+- **React 18** with functional components
+- **CSS3 Animations** and transitions
+- **Fetch API** for backend communication
+- **Responsive Design** with mobile support
 
-### Local Development with H2
+### **Infrastructure**
+- **PostgreSQL** for production database
+- **H2** for development database
+- **Docker** for containerization
+- **Render** for production deployment
 
-Clone the repository:
+## 📦 **Installation & Setup**
 
-    git clone https://github.com/rchawes/spark-e.git
-    cd spark-e
+### **Prerequisites**
+- Java 17+
+- Maven 3.6+
+- PostgreSQL (for production)
+- Node.js (optional, for frontend development)
 
-Copy the example configuration:
+### **Local Development**
 
-    cp src/main/resources/application-example.properties src/main/resources/application.properties
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/rchawes/spark-e.git
+   cd spark-e
+   ```
 
-Run the application:
+2. **Configure database:**
+   ```bash
+   cp src/main/resources/application-example.properties src/main/resources/application.properties
+   ```
 
-    mvn spring-boot:run
+3. **Run the application:**
+   ```bash
+   mvn spring-boot:run
+   ```
 
-Open Swagger UI at http://localhost:8080/swagger-ui.html
+4. **Access the application:**
+   - **Frontend**: http://localhost:8082/spark-e.html
+   - **API**: http://localhost:8082/api
+   - **Swagger UI**: http://localhost:8082/swagger-ui.html
 
-### Production on Render
+### **Docker Deployment**
 
-Create a PostgreSQL database on Render. Deploy with these environment variables:
+```bash
+# Build and run with Docker
+docker build -t spark-e .
+docker run -p 8082:8082 spark-e
+```
 
-DATABASE_URL - your PostgreSQL connection string
-DATABASE_USERNAME - database user
-DATABASE_PASSWORD - database password
-JWT_SECRET - generate a long random string with openssl rand -base64 64
-SPRING_PROFILES_ACTIVE - set to prod
+## 🔐 **Authentication**
 
-## API Overview
+### **Register New User**
+```bash
+curl -X POST http://localhost:8082/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"username": "jane", "password": "securepass123", "role": "ROLE_ELECTRICIAN"}'
+```
 
-Authentication endpoints for registration and login at /api/auth/register and /api/auth/login. Business endpoints for customers, jobs, parts, and invoices under /api. Reporting endpoints for performance metrics. All business endpoints require a valid JWT token.
+### **Login for JWT Token**
+```bash
+curl -X POST http://localhost:8082/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"username": "jane", "password": "securepass123"}'
+```
 
-Example registration:
+## 📚 **API Documentation**
 
-    curl -X POST http://localhost:8080/api/auth/register \
-      -H "Content-Type: application/json" \
-      -d '{"username": "jane", "password": "securepass123", "role": "ROLE_ELECTRICIAN"}'
+### **Core Endpoints**
+- **Authentication**: `/api/auth/*` - Registration and login
+- **Customers**: `/api/customers/*` - Customer management
+- **Jobs**: `/api/jobs/*` - Job scheduling and management
+- **Invoices**: `/api/invoices/*` - Invoice creation and tracking
+- **Electricians**: `/api/electricians/*` - Staff management
+- **Project Pictures**: `/api/project-pictures/*` - File uploads
 
-Example login which returns your JWT token:
+### **Interactive Documentation**
+Visit http://localhost:8082/swagger-ui.html for interactive API testing.
 
-    curl -X POST http://localhost:8080/api/auth/login \
-      -H "Content-Type: application/json" \
-      -d '{"username": "jane", "password": "securepass123"}'
+## 🧪 **Testing**
 
-## Testing
+### **Run Tests**
+```bash
+# Run all tests
+mvn test
 
-Run unit tests with mvn test. Generate coverage reports with mvn jacoco:report. For manual testing, use the Swagger UI at /swagger-ui.html.
+# Run specific test classes
+mvn test -Dtest=InvoiceServiceTest
+mvn test -Dtest=JobControllerIntegrationTest
+mvn test -Dtest=CustomerRepositoryTest
+```
 
-## What's Next
+### **Test Coverage**
+- **Unit Tests**: Service layer business logic
+- **Integration Tests**: Controller endpoints with MockMvc
+- **Repository Tests**: JPA entity operations
+- **Error Handling**: Global exception handler testing
 
-I need to add proper unit and integration tests. I know I should have done this earlier but I was focused on getting features working. I'm considering building a simple React frontend to make this a full-stack demonstration. Docker containerization is on the list too. Eventually I'd like to set up CI/CD with GitHub Actions.
+## 🎯 **Recent Major Updates**
 
-## Get In Touch
+### ✅ **Invoice Generation Fix** (Latest)
+- Resolved 404 error when generating invoices from jobs
+- Enhanced error handling with detailed logging
+- Fixed JSON deserialization for job-invoice relationships
+- Improved database state management
 
-I'm actively looking for my first software engineering role. If you have feedback, opportunities, or just want to chat about the project:
+### ✅ **React Frontend Implementation**
+- Complete modern React application with animations
+- Real-time dashboard with live statistics
+- Professional modal management system
+- Mobile-responsive design
 
-LinkedIn: https://www.linkedin.com/in/richard-hawes-a4533399/
-GitHub: https://github.com/rchawes
+### ✅ **File Upload System**
+- Project picture management with storage
+- File validation and security measures
+- Multi-format support (images, documents)
 
-## License
+### ✅ **Production Enhancements**
+- Docker containerization ready
+- Global exception handling
+- Comprehensive testing suite
+- Architecture documentation
+
+## 🚀 **What's Next**
+
+- **CI/CD Pipeline** with GitHub Actions
+- **Advanced Analytics** and reporting features
+- **Mobile App** development
+- **Multi-tenant Support** for trade companies
+- **Integration** with accounting software
+
+## 💼 **Professional Portfolio**
+
+This project demonstrates:
+- **Full-stack development** capabilities
+- **System architecture** and design patterns
+- **Problem-solving** with domain expertise
+- **Production-ready** code quality
+- **Modern development** practices
+
+## 📞 **Get In Touch**
+
+I'm actively looking for software engineering opportunities. If you have feedback, questions, or opportunities:
+
+**LinkedIn**: https://www.linkedin.com/in/richard-hawes-a4533399/  
+**GitHub**: https://github.com/rchawes  
+**Email**: rchawes@gmail.com
+
+## 📄 **License**
 
 © 2026 Richard Hawes. All rights reserved.
 
@@ -94,8 +213,9 @@ derivative works from this software without explicit written permission.
 
 For licensing inquiries: rchawes@gmail.com
 
+---
 
-Thank you!
-=======
-Thanks for checking out my project.
+**Thank you for checking out Spark-E!** 🎉
+
+*A complete trade business management system built with passion and professional expertise.*
 
