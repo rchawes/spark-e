@@ -70,6 +70,7 @@ public class AuthController {
             return ResponseEntity.badRequest().body(Map.of("error", "Username already exists"));
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setElectrician(null); // Explicitly set electrician to null to avoid constraint issues
         if (user.getRole() == null) {
             user.setRole("ROLE_ELECTRICIAN");
         }

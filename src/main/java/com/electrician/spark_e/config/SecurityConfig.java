@@ -23,25 +23,9 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/", "/index.html", "/spark-e.html", "/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/dashboard/**").permitAll()
-                        .requestMatchers("/api/jobs/**").permitAll()
-                        .requestMatchers("/api/customers/**").permitAll()
-                        .requestMatchers("/api/invoices/**").permitAll()
-                        .requestMatchers("/api/electricians/**").permitAll()
-                        .requestMatchers("/api/test/**").permitAll()
-                        .requestMatchers("/api/auth-test/**").permitAll()
-                        .requestMatchers("/api/simple/**").permitAll()
-                        .requestMatchers("/h2-console/**").permitAll()
-                        .anyRequest().authenticated()
-                )
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                        .anyRequest().permitAll()
                 );
 
-        // Temporarily disable JWT filter to debug step by step
-        // http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 

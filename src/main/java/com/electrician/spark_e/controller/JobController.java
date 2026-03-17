@@ -9,14 +9,18 @@ import com.electrician.spark_e.repository.JobRepository;
 import com.electrician.spark_e.repository.CustomerRepository;
 import com.electrician.spark_e.repository.ElectricianRepository;
 import com.electrician.spark_e.service.InvoiceService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -62,7 +66,16 @@ public class JobController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createJob(@RequestBody Job job) {
+    public ResponseEntity<?> createJob(@Valid @RequestBody Job job, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            // This will show exactly what's wrong
+            Map<String, String> errors = new HashMap<>();
+            bindingResult.getFieldErrors().forEach(error -> 
+                errors.put(error.getField(), error.getDefaultMessage())
+            );
+            System.out.println("Validation errors: " + errors);
+            return ResponseEntity.badRequest().body(errors);
+        }
         try {
             // Handle customer and electrician relationships
             if (job.getCustomer() != null && job.getCustomer().getId() != null) {

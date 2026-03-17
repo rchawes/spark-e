@@ -11,7 +11,7 @@ public class Invoice {
     private Long id;
 
     @OneToOne
-    @JoinColumn(name = "job_id", unique = true)
+    @JoinColumn(name = "job_id")
     private Job job;
     
     // Transient field for JSON deserialization

@@ -58,16 +58,46 @@
                 const config = {
                     headers: {
                         'Content-Type': 'application/json',
-                        ...(token && { 'Authorization': `Bearer ${token}` })
+                        ...(token && { 'Authorization': `Bearer ${token}` }),
+                        ...options.headers,
                     },
-                    ...options
+                    ...options,
                 };
+                
                 // Use absolute URL to point to backend on port 8082
                 const fullUrl = url.startsWith('http') ? url : `http://localhost:8082${url}`;
-                const response = await fetch(fullUrl, config);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                
+                // DEBUG LOGGING
+                console.group(`🌐 API Call: ${options.method || 'GET'} ${url}`);
+                console.log("Full URL:", fullUrl);
+                console.log("Config:", config);
+                if (config.body) {
+                    console.log("Request Body:", config.body);
+                    try {
+                        console.log("Parsed Body:", JSON.parse(config.body));
+                    } catch(e) {
+                        console.log("Body (not JSON):", config.body);
+                    }
                 }
+                console.groupEnd();
+                
+                const response = await fetch(fullUrl, config);
+                
+                // DEBUG ERROR RESPONSE
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.group(`❌ Error ${response.status}`);
+                    console.log("Status:", response.status, response.statusText);
+                    console.log("Response Headers:", [...response.headers.entries()]);
+                    console.log("Response Body:", errorText);
+                    try {
+                        console.log("Parsed Error:", JSON.parse(errorText));
+                    } catch(e) {}
+                    console.groupEnd();
+                    
+                    throw new Error(`HTTP error! status: ${response.status}\nDetails: ${errorText}`);
+                }
+                
                 return await response.json();
             }
         };
@@ -332,22 +362,48 @@
                     setShowLogin(false);
                     setShowRegister(false);
                     
+                    // Load data with retry logic and better error handling
+                    const loadDataWithRetry = async (url, retries = 2) => {
+                        for (let i = 0; i < retries; i++) {
+                            try {
+                                const result = await api.call(url);
+                                return result;
+                            } catch (error) {
+                                console.warn(`Attempt ${i + 1} failed for ${url}:`, error);
+                                if (i === retries - 1) {
+                                    console.error(`All ${retries} attempts failed for ${url}:`, error);
+                                    return null; // Return null to preserve existing data
+                                }
+                                // Wait before retry
+                                await new Promise(resolve => setTimeout(resolve, 1000));
+                            }
+                        }
+                    };
+
                     const [invoicesData, jobsData, clientsData, electriciansData] = await Promise.all([
-                        api.call('/invoices').catch(() => []),
-                        api.call('/api/jobs').catch(() => []),
-                        api.call('/customers').catch(() => []),
-                        api.call('/electricians').catch(() => [])
+                        loadDataWithRetry('/invoices'),
+                        loadDataWithRetry('/api/jobs'),
+                        loadDataWithRetry('/customers'),
+                        loadDataWithRetry('/electricians')
                     ]);
                     
-                    setInvoices(invoicesData);
-                    setJobs(jobsData);
-                    setClients(clientsData);
-                    setElectricians(electriciansData);
+                    // Only update state if we actually got new data (not null), but never clear existing data
+                    if (invoicesData) setInvoices(invoicesData);
+                    if (jobsData) setJobs(jobsData);
+                    if (clientsData) setClients(clientsData);
+                    if (electriciansData) setElectricians(electriciansData);
+                    
+                    // Show warning if any data failed to load
+                    if (!invoicesData || !jobsData || !clientsData || !electriciansData) {
+                        console.warn('Warning: Some data failed to load. Existing data preserved.');
+                    }
                     
                     setShowViewRevenue(true);
                 } catch (error) {
                     console.error('Failed to load revenue data:', error);
-                    alert('Failed to load revenue data');
+                    // More user-friendly error message
+                    const errorMessage = error?.message || 'Unknown error occurred';
+                    alert(`Failed to load revenue data: ${errorMessage}\n\nExisting data has been preserved.\nPlease try again or refresh the page.`);
                 }
             };
 
@@ -603,11 +659,42 @@
                             onSubmit: async (e) => {
                                 e.preventDefault();
                                 const formData = new FormData(e.target);
+                                const customerId = formData.get('customerId');
+                                const electricianId = formData.get('electricianId');
+                                const description = formData.get('description');
+                                const scheduledDate = formData.get('scheduledDate');
+                                
+                                // Comprehensive validation
+                                if (!description || description.trim() === '') {
+                                    alert('Please enter a job description.');
+                                    return;
+                                }
+                                
+                                if (!scheduledDate || scheduledDate.trim() === '') {
+                                    alert('Please select a scheduled date.');
+                                    return;
+                                }
+                                
+                                if (!customerId || customerId === '' || !electricianId || electricianId === '') {
+                                    alert('Please select both a customer and an electrician for the job.');
+                                    return;
+                                }
+                                
+                                // Validate IDs are numbers
+                                const customerIdNum = parseInt(customerId);
+                                const electricianIdNum = parseInt(electricianId);
+                                
+                                if (isNaN(customerIdNum) || isNaN(electricianIdNum)) {
+                                    alert('Invalid customer or electrician selection.');
+                                    return;
+                                }
+                                
                                 const jobData = {
-                                    description: formData.get('description'),
-                                    scheduledDate: formData.get('scheduledDate'),
-                                    customerId: parseInt(formData.get('customerId')),
-                                    electricianId: parseInt(formData.get('electricianId'))
+                                    description: description.trim(),
+                                    // Critical: Date must be ISO format
+                                    scheduledDate: scheduledDate ? new Date(scheduledDate).toISOString() : null,
+                                    customer: { id: customerIdNum },
+                                    electrician: { id: electricianIdNum }
                                 };
                                 try {
                                     const token = localStorage.getItem('jwtToken');
@@ -616,11 +703,12 @@
                                         alert('No authentication token found. Please log in again.');
                                         return;
                                     }
-                                    console.log('Sending job data:', jobData);
+                                    console.log("📦 Job Payload:", jobData);
                                     const response = await api.call('/api/jobs', {
                                         method: 'POST',
                                         body: JSON.stringify(jobData)
                                     });
+                                    console.log("✅ Success:", response);
                                     console.log('Received response from add job:', response);
                                     setShowAddJob(false);
                                     alert('Job added successfully!');
@@ -639,24 +727,24 @@
                             React.createElement('textarea', { name: 'description', placeholder: 'Job Description', className: 'form-input', rows: 3, required: true, autoComplete: 'off' }),
                             React.createElement('input', { type: 'date', name: 'scheduledDate', className: 'form-input', required: true, autoComplete: 'off' }),
                             React.createElement('select', { name: 'customerId', className: 'form-input', required: true },
-                                [React.createElement('option', { key: 'empty', value: '' }, 'Select Client')]
-                                .concat(
-                                    clients.map(client => 
+                                [
+                                    React.createElement('option', { key: 'empty', value: '' }, 'Select Client'),
+                                    ...clients.map(client => 
                                         React.createElement('option', { key: client.id, value: client.id }, 
                                             client.firstName + ' ' + client.lastName
                                         )
                                     )
-                                )
+                                ]
                             ),
                             React.createElement('select', { name: 'electricianId', className: 'form-input', required: true },
-                                [React.createElement('option', { key: 'empty-electrician', value: '' }, 'Select Electrician')]
-                                .concat(
-                                    electricians.map(electrician => 
+                                [
+                                    React.createElement('option', { key: 'empty-electrician', value: '' }, 'Select Electrician'),
+                                    ...electricians.map(electrician => 
                                         React.createElement('option', { key: electrician.id, value: electrician.id }, 
                                             electrician.name || 'Electrician ' + electrician.id
                                         )
                                     )
-                                )
+                                ]
                             ),
                             React.createElement('div', { className: 'flex justify-end mt-4' },
                                 React.createElement('button', { type: 'submit', className: 'btn btn-primary' }, 'Add Job'),
@@ -676,19 +764,19 @@
                             onSubmit: async (e) => {
                                 e.preventDefault();
                                 const formData = new FormData(e.target);
-                                const jobData = {
+                                const editJobData = {
                                     description: formData.get('description'),
                                     scheduledDate: formData.get('scheduledDate'),
                                     completedDate: formData.get('completedDate'),
                                     hoursWorked: parseFloat(formData.get('hoursWorked')) || 0,
                                     status: formData.get('status'),
-                                    customerId: parseInt(formData.get('customerId')),
-                                    electricianId: parseInt(formData.get('electricianId'))
+                                    customer: { id: parseInt(formData.get('customerId')) },
+                                    electrician: { id: parseInt(formData.get('electricianId')) }
                                 };
                                 try {
                                     await api.call('/api/jobs/' + editingJob.id, {
                                         method: 'PUT',
-                                        body: JSON.stringify(jobData)
+                                        body: JSON.stringify(editJobData)
                                     });
                                     setShowEditJob(false);
                                     setEditingJob(null);
@@ -704,25 +792,25 @@
                             React.createElement('textarea', { name: 'description', placeholder: 'Job Description', className: 'form-input', rows: 3, required: true, defaultValue: editingJob.description }),
                             React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1 mt-3' }, 'Customer'),
                             React.createElement('select', { name: 'customerId', className: 'form-input', required: true, defaultValue: editingJob.customer?.id },
-                                [React.createElement('option', { key: 'empty-edit-customer', value: '' }, 'Select Customer')]
-                                .concat(
-                                    clients.map(client => 
+                                [
+                                    React.createElement('option', { key: 'empty-edit-customer', value: '' }, 'Select Customer'),
+                                    ...clients.map(client => 
                                         React.createElement('option', { key: client.id, value: client.id }, 
                                             client.firstName + ' ' + client.lastName
                                         )
                                     )
-                                )
+                                ]
                             ),
                             React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1 mt-3' }, 'Electrician'),
                             React.createElement('select', { name: 'electricianId', className: 'form-input', required: true, defaultValue: editingJob.electrician?.id },
-                                [React.createElement('option', { key: 'empty-edit-electrician', value: '' }, 'Select Electrician')]
-                                .concat(
-                                    electricians.map(electrician => 
+                                [
+                                    React.createElement('option', { key: 'empty-edit-electrician', value: '' }, 'Select Electrician'),
+                                    ...electricians.map(electrician => 
                                         React.createElement('option', { key: electrician.id, value: electrician.id }, 
                                             electrician.name || 'Electrician ' + electrician.id
                                         )
                                     )
-                                )
+                                ]
                             ),
                             React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1 mt-3' }, 'Status'),
                             React.createElement('select', { name: 'status', className: 'form-input', required: true, defaultValue: editingJob.status },
@@ -756,10 +844,13 @@
                                 const formData = new FormData(e.target);
                                 const invoiceData = {
                                     jobId: parseInt(formData.get('jobId')),
-                                    amount: parseFloat(formData.get('amount')),
+                                    laborCost: parseFloat(formData.get('laborCost')) || 0,
+                                    materialsCost: parseFloat(formData.get('materialsCost')) || 0,
+                                    tax: parseFloat(formData.get('tax')) || 0,
+                                    totalAmount: parseFloat(formData.get('totalAmount')) || 0,
                                     issueDate: formData.get('issueDate'),
                                     dueDate: formData.get('dueDate'),
-                                    status: formData.get('status'),
+                                    paid: formData.get('status') === 'PAID',
                                     notes: formData.get('notes')
                                 };
                                 try {
@@ -771,7 +862,7 @@
                                     alert('Invoice created successfully!');
                                     await loadInvoices();
                                     const invoiceDetails = await api.call('/api/invoices/' + createdInvoice.id);
-                                    alert(`Invoice #${invoiceDetails.invoiceNumber || invoiceDetails.id} created for Job: ${invoiceDetails.job?.description || 'No description'}\nAmount: $${invoiceDetails.totalAmount || invoiceDetails.amount || '0.00'}\nStatus: ${invoiceDetails.paid ? 'Paid' : 'Unpaid'}`);
+                                    alert(`Invoice #${invoiceDetails.invoiceNumber || invoiceDetails.id} created for Job: ${invoiceDetails.job?.description || 'No description'}\nAmount: $${invoiceDetails.totalAmount || '0.00'}\nStatus: ${invoiceDetails.paid ? 'Paid' : 'Unpaid'}`);
                                 } catch (error) {
                                     alert('Failed to create invoice: ' + error.message);
                                 }
@@ -785,7 +876,14 @@
                                     )
                                 )
                             ),
-                            React.createElement('input', { type: 'number', name: 'amount', placeholder: 'Amount ($)', className: 'form-input', step: '0.01', min: '0', required: true, autoComplete: 'off' }),
+                            React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1' }, 'Labor Cost ($)'),
+                            React.createElement('input', { type: 'number', name: 'laborCost', placeholder: 'Labor Cost ($)', className: 'form-input', step: '0.01', min: '0', defaultValue: 0, autoComplete: 'off' }),
+                            React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1 mt-3' }, 'Materials Cost ($)'),
+                            React.createElement('input', { type: 'number', name: 'materialsCost', placeholder: 'Materials Cost ($)', className: 'form-input', step: '0.01', min: '0', defaultValue: 0, autoComplete: 'off' }),
+                            React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1 mt-3' }, 'Tax ($)'),
+                            React.createElement('input', { type: 'number', name: 'tax', placeholder: 'Tax ($)', className: 'form-input', step: '0.01', min: '0', defaultValue: 0, autoComplete: 'off' }),
+                            React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1 mt-3' }, 'Total Amount ($)'),
+                            React.createElement('input', { type: 'number', name: 'totalAmount', placeholder: 'Total Amount ($)', className: 'form-input', step: '0.01', min: '0', required: true, autoComplete: 'off' }),
                             React.createElement('input', { type: 'date', name: 'issueDate', className: 'form-input', required: true, autoComplete: 'off' }),
                             React.createElement('input', { type: 'date', name: 'dueDate', className: 'form-input', required: true, autoComplete: 'off' }),
                             React.createElement('select', { name: 'status', className: 'form-input', required: true },
@@ -841,14 +939,14 @@
                         },
                             React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1' }, 'Job'),
                             React.createElement('select', { name: 'jobId', className: 'form-input', required: true, defaultValue: editingInvoice.job?.id },
-                                React.createElement('option', { key: 'empty-edit-invoice-job', value: '' }, 'Select Job')
-                                .concat(
-                                    jobs.map(job => 
+                                [
+                                    React.createElement('option', { key: 'empty-edit-invoice-job', value: '' }, 'Select Job'),
+                                    ...jobs.map(job => 
                                         React.createElement('option', { key: job.id, value: job.id }, 
                                             job.description ? job.description.substring(0, 50) + '...' : 'Job ' + job.id
                                         )
                                     )
-                                )
+                                ]
                             ),
                             React.createElement('label', { className: 'block text-sm font-medium text-gray-700 mb-1 mt-3' }, 'Labor Cost ($)'),
                             React.createElement('input', { type: 'number', name: 'laborCost', placeholder: 'Labor Cost ($)', className: 'form-input', step: '0.01', min: '0', defaultValue: editingInvoice.laborCost || 0, autoComplete: 'off' }),
