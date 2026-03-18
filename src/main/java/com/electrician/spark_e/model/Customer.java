@@ -1,63 +1,44 @@
 package com.electrician.spark_e.model;
 
 import jakarta.persistence.*;
-import java.util.Objects;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.SuperBuilder;
 
+/**
+ * Customer entity representing trade business clients
+ * Extends Auditable for automatic timestamping and user tracking
+ */
+@Data
+@NoArgsConstructor
+@SuperBuilder
+@EqualsAndHashCode(callSuper = true)
 @Entity
-public class Customer {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+@Table(name = "customers")
+public class Customer extends Auditable {
+
+    @Column(name = "first_name", nullable = false, length = 50)
     private String firstName;
+
+    @Column(name = "last_name", nullable = false, length = 50)
     private String lastName;
+
+    @Column(name = "email", nullable = false, length = 100, unique = true)
     private String email;
+
+    @Column(name = "phone", length = 20)
     private String phone;
+
+    @Column(name = "address", length = 200)
     private String address;
 
-    public Customer() {}
+    @Column(name = "company_name", length = 100)
+    private String companyName;
 
-    // Getters and setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    @Column(name = "notes", length = 500)
+    private String notes;
 
-    public String getFirstName() { return firstName; }
-    public void setFirstName(String firstName) { this.firstName = firstName; }
-
-    public String getLastName() { return lastName; }
-    public void setLastName(String lastName) { this.lastName = lastName; }
-
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
-
-    public String getPhone() { return phone; }
-    public void setPhone(String phone) { this.phone = phone; }
-
-    public String getAddress() { return address; }
-    public void setAddress(String address) { this.address = address; }
-
-    // Override equals/hashCode/toString if needed
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Customer customer = (Customer) o;
-        return Objects.equals(id, customer.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
-
-    @Override
-    public String toString() {
-        return "Customer{" +
-                "id=" + id +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", email='" + email + '\'' +
-                ", phone='" + phone + '\'' +
-                ", address='" + address + '\'' +
-                '}';
-    }
+    @Column(name = "is_active", nullable = false)
+    private Boolean isActive = true;
 }
